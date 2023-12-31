@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Api", "Ofta.Api\Ofta.Api.csproj", "{E6A61B9E-E614-40BB-8CC8-34D2A80F4D66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Api", "src\Ofta.Api\Ofta.Api.csproj", "{E6A61B9E-E614-40BB-8CC8-34D2A80F4D66}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Application", "Ofta.Application\Ofta.Application.csproj", "{A534D877-DD2F-4A77-968D-3572C46F325A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Application", "src\Ofta.Application\Ofta.Application.csproj", "{A534D877-DD2F-4A77-968D-3572C46F325A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Domain", "Ofta.Domain\Ofta.Domain.csproj", "{E19D42C7-C056-40A5-9092-3EDE751C4CE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Domain", "src\Ofta.Domain\Ofta.Domain.csproj", "{E19D42C7-C056-40A5-9092-3EDE751C4CE6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Infrastructure", "Ofta.Infrastructure\Ofta.Infrastructure.csproj", "{61A2BC01-EA54-47ED-BBAE-995F1EF2B55E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Infrastructure", "src\Ofta.Infrastructure\Ofta.Infrastructure.csproj", "{61A2BC01-EA54-47ED-BBAE-995F1EF2B55E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Test", "Ofta.Test\Ofta.Test.csproj", "{E67A40EE-C833-4F88-AE56-36652639C21F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofta.Test", "tests\Ofta.Test\Ofta.Test.csproj", "{E67A40EE-C833-4F88-AE56-36652639C21F}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Ofta.Sql", "Ofta.Sql\Ofta.Sql.sqlproj", "{3F5ADFD3-86F4-48E2-B9FE-DC2880B2186D}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Ofta.Sql", "src\Ofta.Sql\Ofta.Sql.sqlproj", "{3F5ADFD3-86F4-48E2-B9FE-DC2880B2186D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{198325E6-1089-4776-BD40-EAA9B8BB0979}"
 	ProjectSection(SolutionItems) = preProject
