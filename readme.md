@@ -11,7 +11,7 @@
 
    2.2. Use-Case 1. Pegawai membutuhkan approval atas sebuah dokumen - Agus: Pegawai - Budi: Kepala Bagian (Sign-1) - Candra: Kepala HRD (Sign-2)
 
-````mermaid
+```mermaid
 sequenceDiagram
     title SKENARIO-1: Request From External App
 
@@ -26,7 +26,7 @@ sequenceDiagram
     Note right of agus: agus: pegawai
     Note right of budi: budi: kepala bagian
     Note right of candra: candra: kepala hrd
-
+    
     agus ->> HRD: 1. Input(Trs.Cuti)
     HRD -->> REMOTECETAK: 2. Print(Trs.Cuti) To PDF
     REMOTECETAK -->> OFTA: 3. Submit(PDF)

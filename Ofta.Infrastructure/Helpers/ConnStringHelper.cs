@@ -3,8 +3,8 @@
 public static class ConnStringHelper
 {
     private static string _connString = string.Empty;
-    private const string USER_ID = "nersLogin";
-    private const string PASS = "ners123!";
+    private const string USER_ID = "oftaLogin";
+    private const string PASS = "ofta123!";
     
     public static string Get(DatabaseOptions options)
     {
