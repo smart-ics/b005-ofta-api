@@ -1,9 +1,11 @@
 ﻿using Dawn;
 using Mapster;
 using MediatR;
-using Ners.Application.BillingContext.UserAgg.Contracts;
 using Nuna.Lib.ValidationHelper;
-using Ofta.Domain.UserAgg;
+using Ofta.Application.UserContext.Contracts;
+using Ofta.Domain.UserContext;
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace Ofta.Application.UserContext.UseCases;
 

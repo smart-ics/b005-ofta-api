@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using Ners.Infrastructure.Helpers;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
 

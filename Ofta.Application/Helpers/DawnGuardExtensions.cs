@@ -1,6 +1,6 @@
 ﻿using Dawn;
 
-namespace Ners.Application.Helpers;
+namespace Ofta.Application.Helpers;
 
 public static class GuardExtensions
 {

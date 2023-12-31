@@ -1,8 +1,7 @@
 ﻿using System.Text.Json;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
-using Ners.Application.BillingContext.UserAgg.Contracts;
-using Ners.Infrastructure.Helpers;
+using Ofta.Application.UserContext.Contracts;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
 using RestSharp.Authenticators;

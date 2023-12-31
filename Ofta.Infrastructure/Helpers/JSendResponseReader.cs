@@ -1,5 +1,4 @@
 ﻿using Dawn;
-using Ners.Infrastructure.Helpers;
 using Newtonsoft.Json;
 using RestSharp;
 

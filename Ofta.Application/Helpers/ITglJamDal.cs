@@ -1,4 +1,4 @@
-﻿namespace Ners.Application.Helpers;
+﻿namespace Ofta.Application.Helpers;
 
 public interface ITglJamDal
 {

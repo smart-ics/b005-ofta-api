@@ -1,7 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using Ners.Infrastructure.Helpers;
 using RestSharp;
 
 namespace Ofta.Infrastructure.Helpers;

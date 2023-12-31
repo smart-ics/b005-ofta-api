@@ -3,11 +3,11 @@ using System.Data.SqlClient;
 using Dapper;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
-using Ners.Infrastructure.Helpers;
 using Nuna.Lib.AutoNumberHelper;
 using Nuna.Lib.DataAccessHelper;
+using Ofta.Infrastructure.Helpers;
 
-namespace Ofta.Infrastructure.Helpers;
+namespace Ofta.Infrastructure.ParamContext;
 
 public class ParamNoDal : INunaCounterDal
 {

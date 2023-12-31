@@ -1,13 +1,13 @@
-﻿using Dapper;
-using Microsoft.Extensions.Options;
-using Ners.Infrastructure.Helpers;
-using Nuna.Lib.DataAccessHelper;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Dapper;
+using Microsoft.Extensions.Options;
+using Nuna.Lib.DataAccessHelper;
+using Ofta.Infrastructure.Helpers;
 using Usman.Lib.NetStandard.Interfaces;
 using Usman.Lib.NetStandard.Models;
 
-namespace Ners.Infrastructure.UserContext.Repos;
+namespace Ofta.Infrastructure.UserContext.Repos;
 
 public class UsmanUserRoleDal : IUsmanUserRoleDal
 {

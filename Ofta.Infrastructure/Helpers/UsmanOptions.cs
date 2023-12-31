@@ -1,4 +1,4 @@
-﻿namespace Ners.Infrastructure.Helpers;
+﻿namespace Ofta.Infrastructure.Helpers;
 
 public class UsmanOptions
 {

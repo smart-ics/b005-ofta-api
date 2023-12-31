@@ -2,8 +2,8 @@
 using System.Data.SqlClient;
 using Dapper;
 using Microsoft.Extensions.Options;
-using Ners.Infrastructure.Helpers;
 using Nuna.Lib.DataAccessHelper;
+using Ofta.Infrastructure.Helpers;
 using Usman.Lib.NetStandard.Interfaces;
 using Usman.Lib.NetStandard.Models;
 

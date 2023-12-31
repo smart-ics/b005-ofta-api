@@ -1,4 +1,4 @@
-﻿namespace Ofta.Domain.UserAgg;
+﻿namespace Ofta.Domain.UserContext;
 
 public class UserModel : IUserKey
 {

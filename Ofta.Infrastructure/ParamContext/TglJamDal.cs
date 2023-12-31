@@ -1,8 +1,9 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using Ners.Application.Helpers;
+using Ofta.Application.Helpers;
+using Ofta.Infrastructure.Helpers;
 
-namespace Ners.Infrastructure.Helpers;
+namespace Ofta.Infrastructure.ParamContext;
 
 public class TglJamDal : ITglJamDal
 {
