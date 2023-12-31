@@ -6,4 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dawn.Guard" Version="1.12.0" />
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="MediatR.Contracts" Version="1.0.1" />
+    <PackageReference Include="Nuna.Lib.NetStandard" Version="1.0.110" />
+    <PackageReference Include="Nuna.Usman.Lib.NetStandard" Version="1.2.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ofta.Domain\Ofta.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
