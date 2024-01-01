@@ -18,7 +18,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{198325E6-1089-4776-BD40-EAA9B8BB0979}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0156FF50-262A-4904-A63B-B12C22E25C27}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D4951C4E-9DD1-4D5F-AEB0-15889354D2C9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1EA00916-675A-4299-8675-0ADA478B01B5}"
+	ProjectSection(SolutionItems) = preProject
+		docs\readme.md = docs\readme.md
+		docs\scene-1-req-form-other-app.mmd = docs\scene-1-req-form-other-app.mmd
+		docs\scene-2-req-by-template-surat.mmd = docs\scene-2-req-by-template-surat.mmd
 	EndProjectSection
 EndProject
 Global
@@ -56,5 +66,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E6A61B9E-E614-40BB-8CC8-34D2A80F4D66} = {0156FF50-262A-4904-A63B-B12C22E25C27}
+		{A534D877-DD2F-4A77-968D-3572C46F325A} = {0156FF50-262A-4904-A63B-B12C22E25C27}
+		{E19D42C7-C056-40A5-9092-3EDE751C4CE6} = {0156FF50-262A-4904-A63B-B12C22E25C27}
+		{61A2BC01-EA54-47ED-BBAE-995F1EF2B55E} = {0156FF50-262A-4904-A63B-B12C22E25C27}
+		{E67A40EE-C833-4F88-AE56-36652639C21F} = {D4951C4E-9DD1-4D5F-AEB0-15889354D2C9}
+		{3F5ADFD3-86F4-48E2-B9FE-DC2880B2186D} = {0156FF50-262A-4904-A63B-B12C22E25C27}
 	EndGlobalSection
 EndGlobal
