@@ -1,0 +1,65 @@
+classDiagram
+	namespace Domain {
+		class DocTypeModel{
+			<<model>>
+			+ string DocTypeId
+			+ string DocTypeName
+			+ bool IsTemplate
+			+ string TemplateUrl
+			+ TemplateTypeEnum TemplateType
+			+ bool IsActive
+			+ List~DocTypeFieldModel~ ListField
+		}
+
+		class DocTypeFieldModel{
+			<<model>>
+			+ string DocTypeId
+			+ string FieldName
+		}
+
+		class TemplateTypeEnum{
+			<<enumeration>>
+			WORD
+			HTML
+		}
+	}
+	DocTypeModel "1" --> "*" DocTypeFieldModel
+
+	namespace POST {
+		class CreateDocTypeCommand{
+			<<command>>
+			+ string docTypeName
+		}
+	}
+
+	namespace PUT {
+		class TemplateDocTypeCommand{
+			<<command>>
+			+ string DocTypeId
+			+ string TemplateUrl
+			+ enum TemplateType [pdf/doc]
+		}
+		class DeactivateDocTypeCommand{
+			<<command>>
+			+ string DocTypeId
+		}
+		class ActivateDocTypeCommand{
+			<<command>>
+			+ string DocTypeId
+		}
+	}
+
+	namespace PATCH{
+		class AddFieldDocTypeCommand{
+			<<command>>
+			+ string DocTypeId
+			+ string FieldName
+		}
+		class RemoveFieldDocTypeCommand{
+			<<command>>
+			+ string DocTypeId
+			+ string FieldName
+		}
+	}
+
+	DocTypeModel
