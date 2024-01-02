@@ -55,13 +55,6 @@ classDiagram
 			+ datetime SignedDate
 		}
 
-		class DocFieldModel{
-			<<model>>
-			+ string DocId
-			+ string FieldName
-			+ string FieldValue
-		}
-
 		class DocJurnalModel{
 			<<model>>
 			+ string DocId
@@ -93,7 +86,6 @@ classDiagram
 	SignPositionEnum ..o DocSigneeModel
 
 	DocModel "1"-->"*" DocSigneeModel
-	DocModel "1"-->"*" DocFieldModel
 	DocModel "1"-->"*" DocJurnalModel
 
 

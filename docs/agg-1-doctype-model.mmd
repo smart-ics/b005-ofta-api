@@ -11,19 +11,12 @@ classDiagram
 			+ List~DocTypeFieldModel~ ListField
 		}
 
-		class DocTypeFieldModel{
-			<<model>>
-			+ string DocTypeId
-			+ string FieldName
-		}
-
 		class TemplateTypeEnum{
 			<<enumeration>>
 			WORD
 			HTML
 		}
 	}
-	DocTypeModel "1" --> "*" DocTypeFieldModel
 
 	namespace POST {
 		class CreateDocTypeCommand{

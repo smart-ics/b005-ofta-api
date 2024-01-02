@@ -9,7 +9,8 @@
             1. Create DocModel
             2. Set DocyType and User sesuai command
             3. Set DocState = Created
-            4. Write DocModel
+            4. AddJurnal(Created)
+            5. Write DocModel
         - Response: DocId
         - Event Subscriber [none]
 
@@ -38,42 +39,20 @@
         - Response [none]
         - Event Subscriber [none]
 
-    4. SetField
-        - Command
-            - DocId
-            - FieldName
-            - FieldValue
-        - Handler
-            1. Guard: DocState harus 'Created'
-            2. Load DocModel
-            3. SetField susuai command
-        - Response [no-response]
-        - Event Subscriber [none]
-
-    5. ClearField
-        - Command
-            - DocId
-            - FieldName
-        - Handler
-            0. Guard DocState harus 'Created'
-            1. Load DocModel
-            2. Replace field value dengan string.EMpty
-            3. Write DocModel
-        - Response [none]
-        - Event Subscriber [none]
-
-    6. InquiryAutoField
+    4. GenDoc
         - Command
             - DocId
         - Handler
             0. Guard DocState harus 'Created'
             1. Load DocId
-            2. Execute Inquiry Macro di Template HTML Document
-            3. 
-        - Respose [none]
-        - Event Subscriber [none]
+            2. Set RequestedDocUrl
+            3. Write DocModel
+            4. Execute GenDocWorker ke RequestedDocUrl
+        - Response
+            - RequestedDocUrl
+        - Event Subscriber
 
-    7. Submit
+    5. Submit
         - Command
             - DocId
         - Handler
@@ -81,12 +60,13 @@
             1. Load DocModel
             2. Set DocState = 'Submited'
             3. Set RequestedDocUrl
-            4. Write DocModel
+            4. AddJurnal(Submited)
+            5. Write DocModel
         - Response [none]
         - Event Subscriber
             1. SaveFileWorker(RequestedDocUrl)
 
-    8. Upload
+    6. Upload
         - Command
             - DocId
         - Handler
@@ -95,11 +75,12 @@
             2. Execute UploadTekenAjaWorker
             3. Set UploadedDocId
             4. Set DocState = 'Uploaded'
-            5. Write DocModel
+            5. AddJurnal(Uploaded)
+            6. Write DocModel
         - Response [none]
         - Event Subscriber [none]
 
-    9. Signed
+    7. Signed
         - Command
             - UploadedDocId
             - Signee
@@ -108,12 +89,13 @@
             1. Load DocId
             2. Update Sign State sesuai command
             3. Update DocState = "Signed"
-            4. Write DocModel
+            4. AddJurnal(Signed)
+            5. Write DocModel
         - Response [none]
         - Event Subscriber [none]
         - Note: Command ini di-trigger ketika ada callback signed document dari tekenAja!
 
-    10. Publish
+    8. Publish
         - Command
             - UploadedDocId
             - DownloadUrl
@@ -123,8 +105,9 @@
             3. UploadedDocUrl = DownloadUrl
             4. PublishedDocUrl = Generate PublishedDocUrl
             5. Update DocState = "Published"
-            6. Writer DocModel
-            7. Execute DownloadUploadedDocWorke; Simpan ke PublishedDocUrl
+            6. AddJurnal(Published)
+            7. Writer DocModel
+            8. Execute DownloadUploadedDocWorke; Simpan ke PublishedDocUrl
         - Resnponse [none]
         - Event Subscriber
             - NotifDocOwnerWorker
