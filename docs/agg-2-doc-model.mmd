@@ -28,13 +28,16 @@ classDiagram
 			+ datetime DocDate
 			+ string DocTypeId
 			+ string DocTypeName
-			+ string DocUrl
 			+ string UserId
 			+ string Email
 			+ DocStateEnum DocState
-			+ string CertifiedDocId
 			+ datetime ExpiredDate
-			+ --~collection~--
+			+ ----
+			+ string RequestedDocUrl
+			+ string UploadedDocId
+			+ string UploadedDocUrl
+			+ string PublishedDocUrl
+			+ ----
 			+ List~DocSigneeModel~ ListSignee
 			+ List~DocFieldModel~ ListField
 			+ List~DocJurnalModel~ ListJurnal

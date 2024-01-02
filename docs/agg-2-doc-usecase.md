@@ -62,37 +62,49 @@
         - Response [none]
         - Event Subscriber [none]
 
-    6. Submit
+    6. InquiryAutoField
+        - Command
+            - DocId
+        - Handler
+            0. Guard DocState harus 'Created'
+            1. Load DocId
+            2. Execute Inquiry Macro di Template HTML Document
+            3. 
+        - Respose [none]
+        - Event Subscriber [none]
+
+    7. Submit
         - Command
             - DocId
         - Handler
             0. Guard DocState harus 'Created'
             1. Load DocModel
             2. Set DocState = 'Submited'
-            3. Write DocModel
+            3. Set RequestedDocUrl
+            4. Write DocModel
         - Response [none]
         - Event Subscriber
-            1. SaveFileWorker
+            1. SaveFileWorker(RequestedDocUrl)
 
-    7. Upload
+    8. Upload
         - Command
             - DocId
         - Handler
             0. Guard DocState harus 'Submited'
             1. Load DocModel
             2. Execute UploadTekenAjaWorker
-            3. Set CertifiedDocId
+            3. Set UploadedDocId
             4. Set DocState = 'Uploaded'
             5. Write DocModel
         - Response [none]
         - Event Subscriber [none]
 
-    8. Signed
+    9. Signed
         - Command
-            - CertifiedDocId
+            - UploadedDocId
             - Signee
         - Handler
-            0. Convert CertifiedId => DocId
+            0. Convert UploadedDocId => DocId
             1. Load DocId
             2. Update Sign State sesuai command
             3. Update DocState = "Signed"
@@ -101,17 +113,18 @@
         - Event Subscriber [none]
         - Note: Command ini di-trigger ketika ada callback signed document dari tekenAja!
 
-    9. Publish
+    10. Publish
         - Command
-            - CertifiedDocId
-            - UrlDownloadDoc
+            - UploadedDocId
+            - DownloadUrl
         - Handler
-            0. Execute DownloadTekenAjaWorker
-            1. Convert CertifiedDocId => DocId
+            1. Convert UploadedDocId => DocId
             2. Load DocId
-            3. Update DocUrl
-            4. Update DocState = "Published"
-            5. Writer DocModel
+            3. UploadedDocUrl = DownloadUrl
+            4. PublishedDocUrl = Generate PublishedDocUrl
+            5. Update DocState = "Published"
+            6. Writer DocModel
+            7. Execute DownloadUploadedDocWorke; Simpan ke PublishedDocUrl
         - Resnponse [none]
         - Event Subscriber
             - NotifDocOwnerWorker

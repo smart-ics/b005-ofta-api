@@ -26,10 +26,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D4951C4E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1EA00916-675A-4299-8675-0ADA478B01B5}"
 	ProjectSection(SolutionItems) = preProject
-		docs\agg-1-doctype.mmd = docs\agg-1-doctype.mmd
+		docs\agg-1-doctype-model.mmd = docs\agg-1-doctype-model.mmd
+		docs\agg-1-doctype-usecase.md = docs\agg-1-doctype-usecase.md
 		docs\agg-2-doc-model.mmd = docs\agg-2-doc-model.mmd
-		docs\agg-2-doc-use-case.md = docs\agg-2-doc-use-case.md
 		docs\readme.md = docs\readme.md
+		docs\agg-2-doc-usecase.md = docs\agg-2-doc-usecase.md
 		docs\scene-1-req-form-other-app.mmd = docs\scene-1-req-form-other-app.mmd
 		docs\scene-2-req-by-template-surat.mmd = docs\scene-2-req-by-template-surat.mmd
 		docs\scene-3-req-from-unregistered-user.mmd = docs\scene-3-req-from-unregistered-user.mmd
