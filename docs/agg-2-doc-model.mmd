@@ -32,7 +32,8 @@ classDiagram
 			+ string UserId
 			+ string Email
 			+ DocStateEnum DocState
-			+ string ProviderDocId
+			+ string CertifiedDocId
+			+ datetime ExpiredDate
 			+ --~collection~--
 			+ List~DocSigneeModel~ ListSignee
 			+ List~DocFieldModel~ ListField
@@ -92,13 +93,6 @@ classDiagram
 	DocModel "1"-->"*" DocFieldModel
 	DocModel "1"-->"*" DocJurnalModel
 
-	namespace BUILDER{
-		class IDocBuilder{
-			<<interface>>
-			+ IDocBuilder Create()
-			+ IDocBuilder Load()
-		}
-	}
 
 
 
