@@ -1,0 +1,27 @@
+sequenceDiagram
+    title SKENARIO-2: Request From Template Surat
+
+    participant agus
+    participant OFTA
+    participant TEKENAJA
+    participant budi
+    participant candra
+
+    Note right of agus: agus: pegawai
+    Note right of budi: budi: kepala bagian
+    Note right of candra: candra: kepala hrd
+
+    agus ->> OFTA: 1.1 Request Template Doc Surat Cuti
+    OFTA -->> agus: 1.2 Downloaded Template
+    agus ->> agus: 2. Isi template document
+    agus -->> OFTA: 3. Submit Document
+    OFTA -->> TEKENAJA: 4. Upload Document
+    TEKENAJA -->> budi: 5. Send Notif
+    budi ->> TEKENAJA: 6. Sign Document
+    TEKENAJA -->> candra: 7. Send Notif
+    candra ->> TEKENAJA: 8. Sign Document
+    TEKENAJA -->> OFTA: 9. Notif Signed Document
+    OFTA -->> TEKENAJA: 10.1 Request Download Signed Document
+    TEKENAJA -->> OFTA: 10.2 Send Signed Document
+    OFTA -->> agus: 11. Notif Trs.Cuti Sudah Approved
+    OFTA -->> OFTA: 12. Archieve Signed Document

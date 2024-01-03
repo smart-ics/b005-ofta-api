@@ -1,0 +1,28 @@
+sequenceDiagram
+    title SKENARIO-1: Request From External App
+
+    participant agus
+    participant HRD
+    participant REMOTECETAK
+    participant OFTA
+    participant TEKENAJA
+    participant budi
+    participant candra
+
+    Note right of agus: agus: pegawai
+    Note right of budi: budi: kepala bagian
+    Note right of candra: candra: kepala hrd
+    
+    agus ->> HRD: 1. Input(Trs.Cuti)
+    HRD -->> REMOTECETAK: 2. Print(Trs.Cuti) To PDF
+    REMOTECETAK -->> OFTA: 3. Submit(PDF)
+    OFTA -->> TEKENAJA: 4. Upload(PDF)
+    TEKENAJA -->> budi: 5. Notif() Req.Sign
+    budi ->> TEKENAJA: 6. Sign() Document
+    TEKENAJA -->> candra: 7. Send() Notif
+    candra ->> TEKENAJA: 8. Sign() Doc
+    TEKENAJA -->> OFTA: 9. Callback Notif() Signed Doc
+    OFTA -->> TEKENAJA: 10.1 Request() Download Signed Doc
+    TEKENAJA -->> OFTA: 10.2 Send Signed Document
+    OFTA -->> agus: 11. Notif Trs.Cuti Sudah Approved
+    OFTA -->> OFTA: 12. Archieve Signed Document

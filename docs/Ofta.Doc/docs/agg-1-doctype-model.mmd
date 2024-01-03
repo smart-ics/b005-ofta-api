@@ -1,0 +1,27 @@
+classDiagram
+	namespace Domain {
+		class DocTypeModel{
+			<<model>>
+			+ string DocTypeId
+			+ string DocTypeName
+			+ bool IsTemplate
+			+ string TemplateUrl
+			+ TemplateTypeEnum TemplateType
+			+ bool IsActive
+			+ ---
+			+ List~DocTypeFieldModel~ ListField
+		}
+
+		class DocTypeTagModel{
+			<<model>>
+			+ string DocTypeId
+			+ string Tag
+		}
+
+		class TemplateTypeEnum{
+			<<enumeration>>
+			WORD
+			HTML
+		}
+	}
+	DocTypeModel "1" --> "*" DocTypeTagModel
