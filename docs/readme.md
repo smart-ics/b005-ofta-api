@@ -40,7 +40,7 @@ sequenceDiagram
     TEKENAJA -->> OFTA: 10.2 Send Signed Document
     OFTA -->> agus: 11. Notif Trs.Cuti Sudah Approved
     OFTA -->> OFTA: 12. Archieve Signed Document
-```mermaid
+```
 
 ```mermaid
 sequenceDiagram
@@ -70,7 +70,7 @@ sequenceDiagram
     TEKENAJA -->> OFTA: 10.2 Send Signed Document
     OFTA -->> agus: 11. Notif Trs.Cuti Sudah Approved
     OFTA -->> OFTA: 12. Archieve Signed Document
-```mermaid
+```
 
 
 ```mermaid
@@ -100,7 +100,7 @@ sequenceDiagram
     OFTA -->> TEKENAJA: 10.1 Request Download Signed Document
     TEKENAJA -->> OFTA: 10.2 Send Signed Document
     OFTA -->> OFTA: 11. Archieve Signed Document
-```mermaid
+```
 
 ```mermaid
 sequenceDiagram
@@ -143,7 +143,7 @@ sequenceDiagram
     OFTA -->> gugun: 20. Notif Surat Selesai Rawat has been signed
     gugun ->> OFTA: 21.1 Request Download Surat Selesai Rawat
     OFTA -->> gugun: 21.2 Dowload Surat Selesai Rawat
-```mermaid
+```
 
 ```mermaid
 erDiagram
@@ -220,6 +220,4 @@ erDiagram
     --DOCUMENT }|--|| DOCUMENT-TYPE : based-on
     --BUNDLING-DOC ||--|| DOCUMENT : is
     --CATALOG-DOCTYPE }|--|| DOCUMENT-TYPE : is
-```mermaid
-
-````
+```
