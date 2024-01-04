@@ -1,13 +1,13 @@
  # USE-CASE DOCTYPE MODEL
 
 1. DocTypeModel
-    1. CreateDoc
+    1. Create
         - Command
             - DocTypeName
         - Handler
-            0. Create DocTypeModel
-            1. Set DocTypeName
-            2. Write DocTypeModel
+            1. Create DocTypeModel
+            2. Set DocTypeName
+            3. Write DocTypeModel
         - Response
             - DocTypeId
         - Event Subscriber [none]
@@ -17,11 +17,11 @@
             - DocTypeId
             - TemplateUrl
         - Handler
-            0. Load DocTypeId
-            1. Set TemplateUrl
-            2. Set TemplateType
-            3. Set Flag IsTemplate
-            4. Write DocTypeModel
+            1. Load DocTypeId
+            2. Set TemplateUrl
+            3. Set TemplateType
+            4. Set Flag IsTemplate
+            5. Write DocTypeModel
         - Response [none]
         - Event Subscribers [none]
 

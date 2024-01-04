@@ -14,4 +14,5 @@ public static class GuardExtensions
                 new ArgumentException($"{argument.Name} is not valid {format} date time format."));
         return ref argument;
     }
+
 }
