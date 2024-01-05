@@ -60,7 +60,7 @@
         - Command
             - DocTypeId
             - Tag
-        - Handler
+        - Handler~~~~
             0. Load DocTypeId
             1. remove Tag sesuai Command
             2. Write DocTypeModel

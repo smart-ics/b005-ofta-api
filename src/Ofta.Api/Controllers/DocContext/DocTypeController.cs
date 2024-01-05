@@ -31,4 +31,30 @@ public class DocTypeController : Controller
         return Ok();
     }
 
+    [HttpPut("activate")]
+    public async Task<IActionResult> ActivateDocType(ActivateDocTypeCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok();
+    }
+
+    [HttpPut("deactivate")]
+    public async Task<IActionResult> DeactivateDocType(DeactivateDocTypeCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok();
+    }
+
+    [HttpPatch("addTag")]
+    public async Task<IActionResult> AddTagDocType(AddTagDocTypeCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok();
+    }
+    [HttpPatch("removeTag")]
+    public async Task<IActionResult> RemoveTagDocType(RemoveTagDocTypeCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok();
+    }
 }

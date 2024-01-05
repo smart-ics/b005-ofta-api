@@ -12,6 +12,8 @@ public interface IDocTypeBuilder : INunaBuilder<DocTypeModel>
     IDocTypeBuilder Name(string name);
     IDocTypeBuilder IsActive(bool isActive);
     IDocTypeBuilder Template(string templateUrl);
+    IDocTypeBuilder AddTag(string tag);
+    IDocTypeBuilder RemoveTag(string tag);
 }
 
 public class DocTypeBuilder : IDocTypeBuilder
@@ -74,6 +76,28 @@ public class DocTypeBuilder : IDocTypeBuilder
             ".docx" or ".doc" => TemplateTypeEnum.Word,
             _ => throw new InvalidOperationException("Invalid template file type")
         };
+        return this;
+    }
+
+    public IDocTypeBuilder AddTag(string tag)
+    {
+        tag = tag.ToLower();
+        
+        if (tag.Contains(' '))
+            throw new InvalidOperationException("Tag cannot contain space");
+
+        _aggregate.ListTag.RemoveAll(x => x.Tag == tag);
+        _aggregate.ListTag.Add(new DocTypeTagModel
+        {
+            Tag = tag
+        });
+        return this;
+    }
+
+    public IDocTypeBuilder RemoveTag(string tag)
+    {
+        tag = tag.ToLower();
+        _aggregate.ListTag.RemoveAll(x => x.Tag == tag);
         return this;
     }
 }
