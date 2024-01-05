@@ -27,7 +27,7 @@ public class DocTypeTagDal : IDocTypeTagDal
         bcp.AddMap("DocTypeId", "DocTypeId");
         bcp.AddMap("Tag", "Tag");
         
-        bcp.DestinationTableName = "dbo.OFTA_DocTypeModel";
+        bcp.DestinationTableName = "dbo.OFTA_DocTypeTag";
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
         bcp.WriteToServer(fetched.AsDataTable());
@@ -38,7 +38,7 @@ public class DocTypeTagDal : IDocTypeTagDal
         //  create query delete
         const string sql = @"
             DELETE FROM
-                OFTA_DocTypeTagModel
+                OFTA_DocTypeTag
             WHERE
                 DocTypeId = @DocTypeId";
 

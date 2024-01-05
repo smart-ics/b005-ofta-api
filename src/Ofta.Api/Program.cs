@@ -1,6 +1,7 @@
 using Ofta.Api;
 using Ofta.Api.Configurations;
 using Ofta.Api.Middlewares;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services
     .AddApplication(builder.Configuration)
     .AddInfrastructure(builder.Configuration)
     .AddPresentation(builder.Configuration);
+
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 var startup = new Startup();
 startup.ConfigureServices(builder.Services);
@@ -30,6 +34,8 @@ app.UseAuthorization();
 app.UseCors("corsapp");
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
+
+app.UseSerilogRequestLogging();
 
 app.MapControllers();
 

@@ -1,4 +1,4 @@
-﻿CREATE TABLE OFTA_DocTypeTagModel(
+﻿CREATE TABLE OFTA_DocTypeTag(
     DocTypeId VARCHAR(5) NOT NULL CONSTRAINT OFTA_DocTypeTagModel_DocTypeId DEFAULT(''),
     Tag VARCHAR(20) NOT NULL CONSTRAINT OFTA_DocTypeTagModel_Tag DEFAULT(''),
     

@@ -61,5 +61,6 @@
     <Build Include="Database\CreateUserLogin.sql" />
     <Build Include="Tables\DocContext\OFTA_DocType.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeTag.sql" />
+    <Build Include="Tables\ParamContext\OFTA_ParamNo.sql" />
   </ItemGroup>
 </Project>

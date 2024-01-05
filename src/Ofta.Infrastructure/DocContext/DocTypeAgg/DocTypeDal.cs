@@ -92,7 +92,7 @@ public class DocTypeDal : IDocTypeDal
             FROM
                 OFTA_DocType
             WHERE
-                DocTypeId = @DocTypeKey";
+                DocTypeId = @DocTypeId";
         
         var dp = new DynamicParameters();
         dp.AddParam("@DocTypeId", key.DocTypeId, SqlDbType.VarChar);
