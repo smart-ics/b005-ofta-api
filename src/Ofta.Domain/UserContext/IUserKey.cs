@@ -2,5 +2,5 @@
 
 public interface IUserKey
 {
-    string UserEmail { get; }
+    string UserId { get; }
 }

@@ -59,8 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Database\CreateUserLogin.sql" />
+    <Build Include="Tables\DocContext\OFTA_Doc.sql" />
+    <Build Include="Tables\DocContext\OFTA_DocJurnal.sql" />
+    <Build Include="Tables\DocContext\OFTA_DocSignee.sql" />
     <Build Include="Tables\DocContext\OFTA_DocType.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeTag.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamNo.sql" />
+    <Build Include="Tables\UserContext\OFTA_User.sql" />
   </ItemGroup>
 </Project>
