@@ -1,7 +1,6 @@
 ﻿using Dawn;
 using Mapster;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Ofta.Application.DocContext.DocTypeAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
 
@@ -20,15 +19,12 @@ public class CreateDocTypeHandler : IRequestHandler<CreateDocTypeCommand, Create
     private DocTypeModel _aggregate;
     private readonly IDocTypeBuilder _builder;
     private readonly IDocTypeWriter _writer;
-    private readonly ILogger<CreateDocTypeHandler> _logger;
 
     public CreateDocTypeHandler(IDocTypeBuilder builder, 
-        IDocTypeWriter writer, 
-        ILogger<CreateDocTypeHandler> logger)
+        IDocTypeWriter writer)
     {
         _builder = builder;
         _writer = writer;
-        _logger = logger;
     }
 
     public Task<CreateDocTypeResponse> Handle(CreateDocTypeCommand request, CancellationToken cancellationToken)
@@ -44,17 +40,9 @@ public class CreateDocTypeHandler : IRequestHandler<CreateDocTypeCommand, Create
             .IsActive(true)
             .Build();
         
-        _logger.LogTrace("Ini trace log!!!!!");
-        _logger.LogDebug("Ini debug log!!!!!");
-        _logger.LogInformation("Ini info log!!!!!");
-        _logger.LogWarning("Ini warning log!!!!!");
-        _logger.LogError("Ini error log!!!!!");
-        _logger.LogCritical("Ini critical log!!!!!");
-        
         //  WRITE
         var result = _writer.Save(_aggregate);
         var response = result.Adapt<CreateDocTypeResponse>();
         return Task.FromResult(response);
-
     }
 }

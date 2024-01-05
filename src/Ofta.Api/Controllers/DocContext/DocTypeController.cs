@@ -20,8 +20,15 @@ public class DocTypeController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateDocType(CreateDocTypeCommand cmd)
     {
-        _logger.LogInformation("CreateDocType executed with {@cmd}", cmd);
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpPut("template")]
+    public async Task<IActionResult> TemplateDocType(TemplateDocTypeCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok();
+    }
+
 }

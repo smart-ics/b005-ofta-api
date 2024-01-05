@@ -33,7 +33,7 @@ public class DocTypeDal : IDocTypeDal
         dp.AddParam("@DocTypeName", model.DocTypeName, SqlDbType.VarChar); 
         dp.AddParam("@IsTemplate", model.IsTemplate, SqlDbType.Bit);
         dp.AddParam("@TemplateUrl", model.TemplateUrl, SqlDbType.VarChar);
-        dp.AddParam("@TemplateType", model.TemplateType, SqlDbType.VarChar); 
+        dp.AddParam("@TemplateType", model.TemplateType, SqlDbType.Int); 
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
@@ -46,14 +46,13 @@ public class DocTypeDal : IDocTypeDal
             UPDATE 
                 OFTA_DocType
             SET
-                DocTypeId = @DocTypeId, 
                 DocTypeName = @DocTypeName, 
                 IsTemplate = @IsTemplate, 
                 TemplateUrl = @TemplateUrl,
                 TemplateType = @TemplateType, 
                 IsActive = @IsActive
             WHERE
-                DocTypeId = model.DocTypeId
+                DocTypeId = @DocTypeId
 ";
 
         var dp = new DynamicParameters();
@@ -61,7 +60,7 @@ public class DocTypeDal : IDocTypeDal
         dp.AddParam("@DocTypeName", model.DocTypeName, SqlDbType.VarChar); 
         dp.AddParam("@IsTemplate", model.IsTemplate, SqlDbType.Bit);
         dp.AddParam("@TemplateUrl", model.TemplateUrl, SqlDbType.VarChar);
-        dp.AddParam("@TemplateType", model.TemplateType, SqlDbType.VarChar); 
+        dp.AddParam("@TemplateType", model.TemplateType, SqlDbType.Int); 
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
