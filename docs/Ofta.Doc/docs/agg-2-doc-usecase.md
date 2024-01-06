@@ -16,7 +16,7 @@
 
     2. AddSignee
         - Command
-            - DocId
+            - DocId~~~~
             - UserId
             - SignTag
             - SignPosition

@@ -34,7 +34,7 @@ public class AddSigneeDocHandler : IRequestHandler<AddSigneeDocCommand>
         var signPosition = (SignPositionEnum)request.SignPosition;
         var aggregate = _builder
             .Load(request)
-            .AddSignee(request.UserOftaId, request.SignTag, signPosition)
+            .AddSignee(request, request.SignTag, signPosition)
             .Build();
         
         //  WRITE

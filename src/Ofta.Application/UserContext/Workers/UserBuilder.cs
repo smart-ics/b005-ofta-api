@@ -17,9 +17,9 @@ public interface IUserBuilder : INunaBuilder<UserOftaModel>
 public class UserBuilder : IUserBuilder
 {
     private UserOftaModel _aggregate = new();
-    private readonly IUserDal _userDal;
+    private readonly IUserOftaDal _userDal;
 
-    public UserBuilder(IUserDal userDal)
+    public UserBuilder(IUserOftaDal userDal)
     {
         _userDal = userDal;
     }

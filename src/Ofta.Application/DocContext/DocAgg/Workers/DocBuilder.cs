@@ -16,7 +16,8 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder Load(IDocKey key);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
-    IDocBuilder AddSignee(string userOftaId, string signTag, SignPositionEnum signPositionEnum);
+    IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum);
+    IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
 }
 public class DocBuilder : IDocBuilder
 {
@@ -25,20 +26,20 @@ public class DocBuilder : IDocBuilder
     private readonly IDocSigneeDal _docSigneeDal;
     private readonly IDocJurnalDal _docJurnalDal;
     private readonly IDocTypeDal _docTypeDal;
-    private readonly IUserDal _userDal;
+    private readonly IUserOftaDal _userOftaDal;
     private readonly ITglJamDal _tglJamDal;
     public DocBuilder(IDocDal docDal, 
         IDocSigneeDal docSigneeDal, 
         IDocJurnalDal docJurnalDal, 
         IDocTypeDal docTypeDal, 
-        IUserDal userDal, 
+        IUserOftaDal userDal, 
         ITglJamDal tglJamDal)
     {
         _docDal = docDal;
         _docSigneeDal = docSigneeDal;
         _docJurnalDal = docJurnalDal;
         _docTypeDal = docTypeDal;
-        _userDal = userDal;
+        _userOftaDal = userDal;
         _tglJamDal = tglJamDal;
     }
 
@@ -82,22 +83,35 @@ public class DocBuilder : IDocBuilder
 
     public IDocBuilder User(IUserOftaKey oftaKey)
     {
-        var user = _userDal.GetData(oftaKey)
+        var user = _userOftaDal.GetData(oftaKey)
             ?? throw new KeyNotFoundException("UserId not found");
         _aggregate.UserOftaId = user.UserOftaId;
         _aggregate.Email = user.Email;
         return this;
     }
 
-    public IDocBuilder AddSignee(string userOftaId, string signTag, SignPositionEnum signPosition)
+    public IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPosition)
     {
+        var userOfta = _userOftaDal.GetData(userOftaKey)
+                       ?? throw new KeyNotFoundException("User Ofta not found");
+        
         _aggregate.ListSignees.RemoveAll(x => x.SignPosition == signPosition);
         _aggregate.ListSignees.Add(new DocSigneeModel
         {
-            UserOftaId = userOftaId,
+            UserOftaId = userOftaKey.UserOftaId,
+            Email = userOfta.Email,
             SignTag = signTag,
             SignPosition = signPosition,
+            SignedDate = new DateTime(3000,1,1),
+            IsSigned = false,
+            Level = 1,
         });
+        return this;
+    }
+
+    public IDocBuilder RemoveSignee(IUserOftaKey userOftaKey)
+    {
+        _aggregate.ListSignees.RemoveAll(x => x.UserOftaId == userOftaKey.UserOftaId);
         return this;
     }
 }

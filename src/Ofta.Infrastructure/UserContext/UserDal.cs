@@ -9,7 +9,7 @@ using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.UserContext;
 
-public class UserDal : IUserDal
+public class UserDal : IUserOftaDal
 {
     private readonly DatabaseOptions _opt;
 

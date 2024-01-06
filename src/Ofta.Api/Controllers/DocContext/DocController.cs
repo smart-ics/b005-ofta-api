@@ -25,4 +25,18 @@ public class DocController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+
+    [HttpPatch("addSignee")]
+    public async Task<IActionResult> AddSigneeDoc(AddSigneeDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
+    [HttpPatch("removeSignee")]
+    public async Task<IActionResult> RemoveSigneeDoc(RemoveSigneeDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
 }

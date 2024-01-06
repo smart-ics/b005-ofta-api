@@ -4,7 +4,7 @@ using Ofta.Domain.UserOftaContext;
 
 namespace Ofta.Application.UserContext.Contracts;
 
-public interface IUserDal :
+public interface IUserOftaDal :
     IInsert<UserOftaModel>,
     IUpdate<UserOftaModel>,
     IDelete<IUserOftaKey>,

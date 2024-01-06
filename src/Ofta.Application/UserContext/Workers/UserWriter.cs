@@ -12,11 +12,11 @@ public interface IUserWriter : INunaWriterWithReturn<UserOftaModel>
 }
 public class UserWriter : IUserWriter
 {
-    private readonly IUserDal _userDal;
+    private readonly IUserOftaDal _userDal;
     private readonly IValidator<UserOftaModel> _validator;
     private readonly INunaCounterBL _counterBL;
 
-    public UserWriter(IUserDal userDal, 
+    public UserWriter(IUserOftaDal userDal, 
         IValidator<UserOftaModel> validator, 
         INunaCounterBL counterBL)
     {
