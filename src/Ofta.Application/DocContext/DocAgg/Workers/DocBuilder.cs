@@ -6,7 +6,7 @@ using Ofta.Application.Helpers;
 using Ofta.Application.UserContext.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
-using Ofta.Domain.UserContext;
+using Ofta.Domain.UserOftaContext;
 
 namespace Ofta.Application.DocContext.DocAgg.Workers;
 
@@ -15,7 +15,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder Create();
     IDocBuilder Load(IDocKey key);
     IDocBuilder DocType(IDocTypeKey key);
-    IDocBuilder User(IUserKey key);
+    IDocBuilder User(IUserOftaKey oftaKey);
 }
 public class DocBuilder : IDocBuilder
 {
@@ -79,11 +79,11 @@ public class DocBuilder : IDocBuilder
         return this;
     }
 
-    public IDocBuilder User(IUserKey key)
+    public IDocBuilder User(IUserOftaKey oftaKey)
     {
-        var user = _userDal.GetData(key)
+        var user = _userDal.GetData(oftaKey)
             ?? throw new KeyNotFoundException("UserId not found");
-        _aggregate.UserId = user.UserId;
+        _aggregate.UserOftaId = user.UserOftaId;
         _aggregate.Email = user.Email;
         return this;
     }

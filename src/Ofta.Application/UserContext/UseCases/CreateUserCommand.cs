@@ -4,12 +4,12 @@ using Ofta.Application.UserContext.Workers;
 
 namespace Ofta.Application.UserContext.UseCases;
 
-public record CreateUserCommand(string UserName, string Email) :
+public record CreateUserCommand(string UserOftaName, string Email) :
     IRequest<CreatUserResponse>;
 
 public class CreatUserResponse
 {
-    public string UserId { get; set; }
+    public string UserOftaId { get; set; }
 }
 
 public class CreateUserHanler : IRequestHandler<CreateUserCommand, CreatUserResponse>
@@ -28,20 +28,20 @@ public class CreateUserHanler : IRequestHandler<CreateUserCommand, CreatUserResp
     {
         //  GUARD
         Guard.Argument(() => request).NotNull()
-            .Member(x => x.UserName, y => y.NotEmpty())
+            .Member(x => x.UserOftaName, y => y.NotEmpty())
             .Member(x => x.Email, y => y.NotEmpty());
         
         //  BUILD
         var aggregate = _builder
             .Create()
-            .UserName(request.UserName)
+            .UserOftaName(request.UserOftaName)
             .Email(request.Email)
             .Build();
 
         aggregate =  _writer.Save(aggregate);
         var response = new CreatUserResponse
         {
-            UserId = aggregate.UserId
+            UserOftaId = aggregate.UserOftaId
         };
         return Task.FromResult(response);
     }

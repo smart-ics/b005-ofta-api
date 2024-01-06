@@ -3,12 +3,12 @@ using Mapster;
 using MediatR;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
-using Ofta.Domain.UserContext;
+using Ofta.Domain.UserOftaContext;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-public record CreateDocCommand(string DocTypeId, string UserId) :
-    IRequest<CreateDocResponse>, IDocTypeKey, IUserKey;
+public record CreateDocCommand(string DocTypeId, string UserOftaId) :
+    IRequest<CreateDocResponse>, IDocTypeKey, IUserOftaKey;
 
 public class CreateDocResponse
 {
@@ -32,7 +32,7 @@ public class CreateDocHandler : IRequestHandler<CreateDocCommand, CreateDocRespo
         //  GUARD
         Guard.Argument(() => request).NotNull()
             .Member(x => x.DocTypeId, y => y.NotEmpty())
-            .Member(x => x.UserId, y => y.NotEmpty());
+            .Member(x => x.UserOftaId, y => y.NotEmpty());
         
         //  BUILD
         var aggregate = _docBuilder

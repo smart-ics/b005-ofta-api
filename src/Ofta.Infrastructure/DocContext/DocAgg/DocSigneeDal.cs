@@ -25,7 +25,7 @@ public class DocSigneeDal : IDocSigneeDal
 
         conn.Open();
         bcp.AddMap("DocId", "DocId");
-        bcp.AddMap("UserId", "UserId");
+        bcp.AddMap("UserOftaId", "UserOftaId");
         bcp.AddMap("Email", "Email");
         bcp.AddMap("SignTag", "SignTag");
         bcp.AddMap("SignPosition", "SignPosition");
@@ -59,7 +59,7 @@ public class DocSigneeDal : IDocSigneeDal
     {
         const string sql = @"
             SELECT
-                DocId, UserId, Email, SignTag, 
+                DocId, UserOftaId, Email, SignTag, 
                 SignPosition, Level, IsSigned, SignedDate
             FROM
                 OFTA_DocSignee

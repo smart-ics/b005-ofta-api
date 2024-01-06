@@ -1,9 +1,9 @@
-﻿namespace Ofta.Domain.UserContext;
+﻿namespace Ofta.Domain.UserOftaContext;
 
-public class UserModel : IUserKey
+public class UserOftaModel : IUserOftaKey
 {
-    public string UserId { get; set; }
-    public string UserName { get; set; }
+    public string UserOftaId { get; set; }
+    public string UserOftaName { get; set; }
     public string Email { get; set; }
     public bool IsVerified { get; set; }
     public DateTime VerifiedDate { get; set; }

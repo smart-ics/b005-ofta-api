@@ -3,21 +3,21 @@ using Nuna.Lib.AutoNumberHelper;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.DataTypeExtension;
 using Ofta.Application.UserContext.Contracts;
-using Ofta.Domain.UserContext;
+using Ofta.Domain.UserOftaContext;
 
 namespace Ofta.Application.UserContext.Workers;
 
-public interface IUserWriter : INunaWriterWithReturn<UserModel>
+public interface IUserWriter : INunaWriterWithReturn<UserOftaModel>
 {
 }
 public class UserWriter : IUserWriter
 {
     private readonly IUserDal _userDal;
-    private readonly IValidator<UserModel> _validator;
+    private readonly IValidator<UserOftaModel> _validator;
     private readonly INunaCounterBL _counterBL;
 
     public UserWriter(IUserDal userDal, 
-        IValidator<UserModel> validator, 
+        IValidator<UserOftaModel> validator, 
         INunaCounterBL counterBL)
     {
         _userDal = userDal;
@@ -25,18 +25,18 @@ public class UserWriter : IUserWriter
         _counterBL = counterBL;
     }
 
-    public UserModel Save(UserModel model)
+    public UserOftaModel Save(UserOftaModel oftaModel)
     {
-        _validator.ValidateAndThrow(model);
-        model.UserId = model.UserId.IsNullOrEmpty()?
+        _validator.ValidateAndThrow(oftaModel);
+        oftaModel.UserOftaId = oftaModel.UserOftaId.IsNullOrEmpty()?
             _counterBL.Generate("USER", IDFormatEnum.PREFYYMnnnnnC): 
-            model.UserId;
+            oftaModel.UserOftaId;
 
-        var db = _userDal.GetData(model);
+        var db = _userDal.GetData(oftaModel);
         if (db is null)
-            _userDal.Insert(model);
+            _userDal.Insert(oftaModel);
         else
-            _userDal.Update(model);
-        return model;
+            _userDal.Update(oftaModel);
+        return oftaModel;
     }
 }

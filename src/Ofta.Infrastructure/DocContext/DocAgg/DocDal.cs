@@ -6,7 +6,7 @@ using Nuna.Lib.DataAccessHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
-using Ofta.Domain.UserContext;
+using Ofta.Domain.UserOftaContext;
 using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.DocContext.DocAgg;
@@ -24,11 +24,11 @@ public class DocDal : IDocDal
     {
         const string sql = @"
             INSERT INTO OFTA_Doc (
-                DocId, DocDate, DocTypeId, UserId, Email,
+                DocId, DocDate, DocTypeId, UserOftaId, Email,
                 DocState, RequestedDocUrl, UploadedDocId,
                 UploadedDocUrl, PublishedDocUrl)
             VALUES (
-                @DocId, @DocDate, @DocTypeId, @UserId, @Email,
+                @DocId, @DocDate, @DocTypeId, @UserOftaId, @Email,
                 @DocState, @RequestedDocUrl, @UploadedDocId,
                 @UploadedDocUrl, @PublishedDocUrl)";
 
@@ -36,7 +36,7 @@ public class DocDal : IDocDal
         dp.AddParam("@DocId", model.DocId, SqlDbType.VarChar);
         dp.AddParam("@DocDate", model.DocDate, SqlDbType.DateTime);
         dp.AddParam("@DocTypeId", model.DocTypeId, SqlDbType.VarChar);
-        dp.AddParam("@UserId", model.UserId, SqlDbType.VarChar);
+        dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@Email", model.Email, SqlDbType.VarChar);
         dp.AddParam("@DocState", model.DocState, SqlDbType.Int);
         dp.AddParam("@RequestedDocUrl", model.RequestedDocUrl, SqlDbType.VarChar);
@@ -57,7 +57,7 @@ public class DocDal : IDocDal
                 DocId = @DocId, 
                 DocDate = @DocDate, 
                 DocTypeId = @DocTypeId, 
-                UserId = @UserId, 
+                UserOftaId = @UserOftaId, 
                 Email = @Email,
                 DocState = @DocState, 
                 RequestedDocUrl = @RequestedDocUrl, 
@@ -71,7 +71,7 @@ public class DocDal : IDocDal
         dp.AddParam("@DocId", model.DocId, SqlDbType.VarChar);
         dp.AddParam("@DocDate", model.DocDate, SqlDbType.DateTime);
         dp.AddParam("@DocTypeId", model.DocTypeId, SqlDbType.VarChar);
-        dp.AddParam("@UserId", model.UserId, SqlDbType.VarChar);
+        dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@Email", model.Email, SqlDbType.VarChar);
         dp.AddParam("@DocState", model.DocState, SqlDbType.Int);
         dp.AddParam("@RequestedDocUrl", model.RequestedDocUrl, SqlDbType.VarChar);
@@ -102,7 +102,7 @@ public class DocDal : IDocDal
     {
         const string sql = @"
             SELECT
-                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserId, aa.Email,
+                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
                 aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
                 aa.UploadedDocUrl, aa.PublishedDocUrl,
                 ISNULL(bb.DocTypeName, '') AS DocTypeName
@@ -119,11 +119,11 @@ public class DocDal : IDocDal
         return conn.ReadSingle<DocModel>(sql, dp);
     }
 
-    public IEnumerable<DocModel> ListData(Periode filter1, IUserKey filter2)
+    public IEnumerable<DocModel> ListData(Periode filter1, IUserOftaKey filter2)
     {
         const string sql = @"
             SELECT
-                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserId, aa.Email,
+                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
                 aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
                 aa.UploadedDocUrl, aa.PublishedDocUrl,
                 ISNULL(bb.DocTypeName, '') AS DocTypeName
@@ -137,7 +137,7 @@ public class DocDal : IDocDal
         var dp = new DynamicParameters();
         dp.AddParam("@Tgl1", filter1.Tgl1, SqlDbType.DateTime);
         dp.AddParam("@Tgl2", filter1.Tgl2, SqlDbType.DateTime);
-        dp.AddParam("@UserId", filter2.UserId, SqlDbType.VarChar);
+        dp.AddParam("@UserId", filter2.UserOftaId, SqlDbType.VarChar);
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<DocModel>(sql, dp);

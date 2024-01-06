@@ -10,7 +10,7 @@ public class DocValidator : AbstractValidator<DocModel>
         RuleFor(x => x.DocDate).NotEmpty();
         RuleFor(x => x.DocTypeId).NotEmpty();
         RuleFor(x => x.DocTypeName).NotEmpty();
-        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.UserOftaId).NotEmpty();
         RuleFor(x => x.Email)
             .NotEmpty()
             .EmailAddress();

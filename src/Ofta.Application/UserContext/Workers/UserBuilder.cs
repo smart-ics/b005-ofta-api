@@ -2,32 +2,29 @@
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.Helpers;
 using Ofta.Application.UserContext.Contracts;
-using Ofta.Domain.UserContext;
+using Ofta.Domain.UserOftaContext;
 
 namespace Ofta.Application.UserContext.Workers;
 
-public interface IUserBuilder : INunaBuilder<UserModel>
+public interface IUserBuilder : INunaBuilder<UserOftaModel>
 {
     IUserBuilder Create();
-    IUserBuilder Load(IUserKey key);
+    IUserBuilder Load(IUserOftaKey userOftaKey);
 
-    IUserBuilder UserName(string userName);
+    IUserBuilder UserOftaName(string userOftaName);
     IUserBuilder Email(string email);
 }
 public class UserBuilder : IUserBuilder
 {
-    private UserModel _aggregate = new();
+    private UserOftaModel _aggregate = new();
     private readonly IUserDal _userDal;
-    private readonly ITglJamDal _tglJamDal;
 
-    public UserBuilder(IUserDal userDal, 
-        ITglJamDal tglJamDal)
+    public UserBuilder(IUserDal userDal)
     {
         _userDal = userDal;
-        _tglJamDal = tglJamDal;
     }
 
-    public UserModel Build()
+    public UserOftaModel Build()
     {
         _aggregate.RemoveNull();
         return _aggregate;
@@ -35,7 +32,7 @@ public class UserBuilder : IUserBuilder
 
     public IUserBuilder Create()
     {
-        _aggregate = new UserModel
+        _aggregate = new UserOftaModel
         {
             ExpiredDate = new DateTime(3000,1,1),
             VerifiedDate = new DateTime(3000,1,1),
@@ -44,16 +41,16 @@ public class UserBuilder : IUserBuilder
         return this;
     }
 
-    public IUserBuilder Load(IUserKey key)
+    public IUserBuilder Load(IUserOftaKey userOftaKey)
     {
-        _aggregate = _userDal.GetData(key)
-            ?? throw new KeyNotFoundException("User not found");
+        _aggregate = _userDal.GetData(userOftaKey)
+            ?? throw new KeyNotFoundException("User Ofta not found");
         return this;
     }
 
-    public IUserBuilder UserName(string userName)
+    public IUserBuilder UserOftaName(string userName)
     {
-        _aggregate.UserName = userName;
+        _aggregate.UserOftaName = userName;
         return this;
     }
 
