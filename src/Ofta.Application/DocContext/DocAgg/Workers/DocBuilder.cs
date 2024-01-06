@@ -16,6 +16,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder Load(IDocKey key);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
+    IDocBuilder AddSignee(string userOftaId, string signTag, SignPositionEnum signPositionEnum);
 }
 public class DocBuilder : IDocBuilder
 {
@@ -85,6 +86,18 @@ public class DocBuilder : IDocBuilder
             ?? throw new KeyNotFoundException("UserId not found");
         _aggregate.UserOftaId = user.UserOftaId;
         _aggregate.Email = user.Email;
+        return this;
+    }
+
+    public IDocBuilder AddSignee(string userOftaId, string signTag, SignPositionEnum signPosition)
+    {
+        _aggregate.ListSignees.RemoveAll(x => x.SignPosition == signPosition);
+        _aggregate.ListSignees.Add(new DocSigneeModel
+        {
+            UserOftaId = userOftaId,
+            SignTag = signTag,
+            SignPosition = signPosition,
+        });
         return this;
     }
 }
