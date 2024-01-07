@@ -30,7 +30,7 @@ public class GenDocHandler : IRequestHandler<GenDocCommand, GenDocResponse>
         //  BUILD
         var aggregate = _builder
             .Create(request)
-            .DocState()
+            .DocState() //
             .Build();
         
         //  WRITE
