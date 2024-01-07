@@ -13,10 +13,10 @@
             5. Write DocModel
         - Response: DocId
         - Event Subscriber [none]
-
+~~~~
     2. AddSignee
         - Command
-            - DocId~~~~
+            - DocId
             - UserId
             - SignTag
             - SignPosition

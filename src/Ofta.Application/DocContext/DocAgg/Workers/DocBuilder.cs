@@ -16,6 +16,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder Load(IDocKey key);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
+    IDocBuilder DocState(DocStateEnum docStateEnum);
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum);
     IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
 }
@@ -28,6 +29,7 @@ public class DocBuilder : IDocBuilder
     private readonly IDocTypeDal _docTypeDal;
     private readonly IUserOftaDal _userOftaDal;
     private readonly ITglJamDal _tglJamDal;
+
     public DocBuilder(IDocDal docDal, 
         IDocSigneeDal docSigneeDal, 
         IDocJurnalDal docJurnalDal, 
@@ -87,6 +89,12 @@ public class DocBuilder : IDocBuilder
             ?? throw new KeyNotFoundException("UserId not found");
         _aggregate.UserOftaId = user.UserOftaId;
         _aggregate.Email = user.Email;
+        return this;
+    }
+
+    public IDocBuilder DocState(DocStateEnum docStateEnum)
+    {
+        _aggregate.DocState = docStateEnum;
         return this;
     }
 
