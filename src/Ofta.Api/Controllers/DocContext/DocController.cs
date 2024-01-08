@@ -39,4 +39,13 @@ public class DocController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+
+    [HttpPatch("genDoc")]
+    public async Task<IActionResult> GenDoc(GenDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    
 }

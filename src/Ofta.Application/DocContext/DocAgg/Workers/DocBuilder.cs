@@ -1,11 +1,14 @@
-﻿using Nuna.Lib.CleanArchHelper;
+﻿using System.Globalization;
+using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
 using Ofta.Application.Helpers;
+using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Application.UserContext.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
+using Ofta.Domain.ParamContext.SystemAgg;
 using Ofta.Domain.UserOftaContext;
 
 namespace Ofta.Application.DocContext.DocAgg.Workers;
@@ -17,6 +20,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
     IDocBuilder DocState(DocStateEnum docStateEnum);
+    IDocBuilder GenRequestedDocUrl();
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum);
     IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
 }
@@ -29,13 +33,15 @@ public class DocBuilder : IDocBuilder
     private readonly IDocTypeDal _docTypeDal;
     private readonly IUserOftaDal _userOftaDal;
     private readonly ITglJamDal _tglJamDal;
+    private readonly IParamSistemDal _paramSistemDal;
 
     public DocBuilder(IDocDal docDal, 
         IDocSigneeDal docSigneeDal, 
         IDocJurnalDal docJurnalDal, 
         IDocTypeDal docTypeDal, 
         IUserOftaDal userDal, 
-        ITglJamDal tglJamDal)
+        ITglJamDal tglJamDal, 
+        IParamSistemDal paramSistemDal)
     {
         _docDal = docDal;
         _docSigneeDal = docSigneeDal;
@@ -43,6 +49,7 @@ public class DocBuilder : IDocBuilder
         _docTypeDal = docTypeDal;
         _userOftaDal = userDal;
         _tglJamDal = tglJamDal;
+        _paramSistemDal = paramSistemDal;
     }
 
     public DocModel Build()
@@ -95,6 +102,16 @@ public class DocBuilder : IDocBuilder
     public IDocBuilder DocState(DocStateEnum docStateEnum)
     {
         _aggregate.DocState = docStateEnum;
+        return this;
+    }
+
+    public IDocBuilder GenRequestedDocUrl()
+    {
+        var storagePath = _paramSistemDal.GetData(Sys.StoragePath)
+            ?? throw new KeyNotFoundException("Parameter StoragePath not found");
+        var docTypeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_aggregate.DocTypeName);
+        var requestedDocUrl = $"{storagePath.ParamSistemValue}/{_aggregate.DocId}_{docTypeName}.pdf";
+        _aggregate.RequestedDocUrl = requestedDocUrl;
         return this;
     }
 
