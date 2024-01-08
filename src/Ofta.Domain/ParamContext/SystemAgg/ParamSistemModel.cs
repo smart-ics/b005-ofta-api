@@ -20,5 +20,6 @@ public interface IParamSistemKey
 
 public static class Sys
 {
-    public static IParamSistemKey StoragePath => new ParamSistemModel("StoragePath");
+    public static IParamSistemKey LocalStoragePath => new ParamSistemModel("local-storage-path");
+    public static IParamSistemKey OftaStorageUrl => new ParamSistemModel("ofta-storage-url");
 }

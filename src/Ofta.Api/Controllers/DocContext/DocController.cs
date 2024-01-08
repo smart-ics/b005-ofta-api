@@ -40,8 +40,8 @@ public class DocController : Controller
         return Ok(new JSendOk(result));
     }
 
-    [HttpPatch("genDoc")]
-    public async Task<IActionResult> GenDoc(GenDocCommand cmd)
+    [HttpPatch("submit")]
+    public async Task<IActionResult> GenDoc(SubmitDocCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));

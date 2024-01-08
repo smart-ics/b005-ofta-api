@@ -17,6 +17,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
 {
     IDocBuilder Create();
     IDocBuilder Load(IDocKey key);
+    IDocBuilder Attach(DocModel model);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
     IDocBuilder DocState(DocStateEnum docStateEnum);
@@ -81,6 +82,12 @@ public class DocBuilder : IDocBuilder
         return this;
     }
 
+    public IDocBuilder Attach(DocModel model)
+    {
+        _aggregate = model;
+        return this;
+    }
+
     public IDocBuilder DocType(IDocTypeKey key)
     {
         var docType = _docTypeDal.GetData(key)
@@ -107,7 +114,7 @@ public class DocBuilder : IDocBuilder
 
     public IDocBuilder GenRequestedDocUrl()
     {
-        var storagePath = _paramSistemDal.GetData(Sys.StoragePath)
+        var storagePath = _paramSistemDal.GetData(Sys.LocalStoragePath)
             ?? throw new KeyNotFoundException("Parameter StoragePath not found");
         var docTypeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_aggregate.DocTypeName);
         var requestedDocUrl = $"{storagePath.ParamSistemValue}/{_aggregate.DocId}_{docTypeName}.pdf";

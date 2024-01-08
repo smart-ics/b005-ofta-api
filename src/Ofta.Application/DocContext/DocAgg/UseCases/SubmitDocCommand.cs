@@ -7,42 +7,47 @@ using Ofta.Domain.ParamContext.SystemAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-public record GenDocCommand(string DocId, string ContentBase64) : IRequest<GenDocResponse>, IDocKey;
+public record SubmitDocCommand(string DocId, string ContentBase64) : IRequest<SubmitDocResponse>, IDocKey;
 
-public class GenDocResponse
+public class SubmitDocResponse
 {
     public string RequestedDocUrl { get; set; }
 }
 
-public class GenDocHandler : IRequestHandler<GenDocCommand, GenDocResponse>
+public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocResponse>
 {
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
-    private readonly IParamSistemDal _paramSistemDal;
     private readonly SaveDocFileWorker _saveDocFileWorker;
 
-    public GenDocHandler(IDocBuilder builder, 
+    public SubmitDocHandler(IDocBuilder builder, 
         IDocWriter writer, 
-        IParamSistemDal paramSistemDal, SaveDocFileWorker saveDocFileWorker)
+        SaveDocFileWorker saveDocFileWorker)
     {
         _builder = builder;
         _writer = writer;
-        _paramSistemDal = paramSistemDal;
         _saveDocFileWorker = saveDocFileWorker;
     }
 
-    public Task<GenDocResponse> Handle(GenDocCommand request, CancellationToken cancellationToken)
+    public Task<SubmitDocResponse> Handle(SubmitDocCommand request, CancellationToken cancellationToken)
     {
         //  GUARD
         Guard.Argument(() => request).NotNull()
             .Member(x => x.DocId, y => y.NotEmpty());
-        
-        //  BUILD
         var aggregate = _builder
             .Load(request)
-            .GenRequestedDocUrl()
             .Build();
-
+        if (aggregate.DocState != DocStateEnum.Created)
+            throw new Exception($"Submit failed: DocState has been {aggregate.DocState.ToString()}");
+        
+        
+        //  BUILD
+        aggregate = _builder
+            .Attach(aggregate)
+            .GenRequestedDocUrl()
+            .DocState(DocStateEnum.Submited)
+            .Build();
+        
         var saveDocFileRequest = new SaveDocFileRequest
         {
             FilePathName = aggregate.RequestedDocUrl,
@@ -52,7 +57,7 @@ public class GenDocHandler : IRequestHandler<GenDocCommand, GenDocResponse>
         
         //  WRITE
         _writer.Save(aggregate);
-        var response = new GenDocResponse
+        var response = new SubmitDocResponse
         {
             RequestedDocUrl = aggregate.RequestedDocUrl
         };
