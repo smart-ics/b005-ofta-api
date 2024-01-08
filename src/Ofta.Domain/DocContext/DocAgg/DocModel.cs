@@ -2,7 +2,7 @@
 
 namespace Ofta.Domain.DocContext.DocAgg;
 
-public class DocModel : IDocKey, IUserOftaKey
+public class DocModel : IDocKey, IUserOftaKey, IUploadedDocKey
 {
     public string DocId { get; set; }
     public DateTime DocDate { get; set; }
@@ -18,4 +18,9 @@ public class DocModel : IDocKey, IUserOftaKey
     
     public List<DocSigneeModel> ListSignees { get; set; }
     public List<DocJurnalModel> ListJurnal { get; set; }
+}
+
+public interface IUploadedDocKey
+{
+    string UploadedDocId { get; }
 }

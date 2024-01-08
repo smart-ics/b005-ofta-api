@@ -1,5 +1,6 @@
 ﻿using Dawn;
 using MediatR;
+using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
@@ -18,15 +19,18 @@ public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocRespo
 {
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
-    private readonly SaveDocFileWorker _saveDocFileWorker;
+    private readonly ISaveFileService _saveFileService;
+    private readonly IMediator _mediator;
 
     public SubmitDocHandler(IDocBuilder builder, 
         IDocWriter writer, 
-        SaveDocFileWorker saveDocFileWorker)
+        ISaveFileService saveFileService, 
+        IMediator mediator)
     {
         _builder = builder;
         _writer = writer;
-        _saveDocFileWorker = saveDocFileWorker;
+        _saveFileService = saveFileService;
+        _mediator = mediator;
     }
 
     public Task<SubmitDocResponse> Handle(SubmitDocCommand request, CancellationToken cancellationToken)
@@ -38,22 +42,16 @@ public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocRespo
             .Load(request)
             .Build();
         if (aggregate.DocState != DocStateEnum.Created)
-            throw new Exception($"Submit failed: DocState has been {aggregate.DocState.ToString()}");
+            throw new ArgumentException($"Submit failed: DocState has been {aggregate.DocState.ToString()}");
         
         
         //  BUILD
         aggregate = _builder
             .Attach(aggregate)
             .GenRequestedDocUrl()
-            .DocState(DocStateEnum.Submited)
+            .DocState(DocStateEnum.Submited, string.Empty)
             .Build();
         
-        var saveDocFileRequest = new SaveDocFileRequest
-        {
-            FilePathName = aggregate.RequestedDocUrl,
-            FileContentBase64 = request.ContentBase64
-        };
-        _saveDocFileWorker.Execute(saveDocFileRequest);
         
         //  WRITE
         _writer.Save(aggregate);
@@ -61,6 +59,17 @@ public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocRespo
         {
             RequestedDocUrl = aggregate.RequestedDocUrl
         };
+        _mediator.Publish(new SubmittedDocEvent
+        {
+            Aggregate = aggregate,
+            Command = request
+        }, cancellationToken);
         return Task.FromResult(response);
     }
 } 
+
+public class SubmittedDocEvent : INotification
+{
+    public DocModel Aggregate { get; set; }
+    public SubmitDocCommand Command { get; set; }
+}

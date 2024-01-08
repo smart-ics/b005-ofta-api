@@ -10,6 +10,7 @@ public interface  IDocDal :
     IUpdate<DocModel>,
     IDelete<IDocKey>,
     IGetData<DocModel, IDocKey>,
+    IGetData<DocModel, IUploadedDocKey>, 
     IListData<DocModel, Periode, IUserOftaKey>
 {
 }

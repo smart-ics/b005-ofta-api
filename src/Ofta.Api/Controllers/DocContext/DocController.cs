@@ -40,12 +40,24 @@ public class DocController : Controller
         return Ok(new JSendOk(result));
     }
 
-    [HttpPatch("submit")]
+    [HttpPut("submit")]
     public async Task<IActionResult> GenDoc(SubmitDocCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
     
+    [HttpPut("sign")]
+    public async Task<IActionResult> SignDoc(SignDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
     
+    [HttpPut("publish")]
+    public async Task<IActionResult> PublishDoc(PublishDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
 }

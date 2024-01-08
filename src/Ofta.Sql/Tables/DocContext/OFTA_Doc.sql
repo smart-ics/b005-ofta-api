@@ -19,3 +19,8 @@ CREATE INDEX IX_OFTA_Doc_DocDate
     ON OFTA_Doc(DocDate, DocId)
     WITH(FILLFACTOR = 90)
 GO
+
+CREATE INDEX IX_OFTA_Doc_UploadedDocId
+    ON OFTA_Doc(UploadedDocId, DocId)
+    WITH(FILLFACTOR = 75)
+GO

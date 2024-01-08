@@ -1,14 +1,8 @@
-﻿using Nuna.Lib.CleanArchHelper;
+﻿using Ofta.Application.DocContext.DocAgg.Contracts;
 
-namespace Ofta.Application.DocContext.DocAgg.Workers;
+namespace Ofta.Infrastructure.DocContext.DocAgg;
 
-public class SaveDocFileRequest
-{
-    public string FilePathName { get; set; }
-    public string FileContentBase64 { get; set; }
-}
-
-public class SaveDocFileWorker : INunaServiceVoid<SaveDocFileRequest>
+public class SaveFileWorker : ISaveFileService
 {
     public void Execute(SaveDocFileRequest req)
     {
