@@ -142,4 +142,25 @@ public class DocDal : IDocDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<DocModel>(sql, dp);
     }
+
+    public DocModel GetData(IUploadedDocKey key)
+    {
+        const string sql = @"
+            SELECT
+                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
+                aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.UploadedDocUrl, aa.PublishedDocUrl,
+                ISNULL(bb.DocTypeName, '') AS DocTypeName
+            FROM    
+                OFTA_Doc aa
+                LEFT JOIN OFTA_DocType bb ON aa.DocTypeId = bb.DocTypeId
+            WHERE
+                UploadedDocId = @UploadedDocId";
+        
+        var dp = new DynamicParameters();
+        dp.AddParam("@UploadedDocId", key.UploadedDocId, SqlDbType.VarChar);
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.ReadSingle<DocModel>(sql, dp);
+    }
 }

@@ -40,7 +40,7 @@ public class DocWriter : IDocWriter
         model.ListSignees.ForEach(x => x.DocId = model.DocId);
         model.ListJurnal.ForEach(x => x.DocId = model.DocId);
 
-        var db = _docDal.GetData(model);
+        var db = _docDal.GetData((IDocKey)model);
 
         using var trans = TransHelper.NewScope();
         if (db is null)
