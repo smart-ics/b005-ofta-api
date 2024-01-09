@@ -6,7 +6,11 @@ using Ofta.Domain.UserOftaContext;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-public record AddSigneeDocCommand(string DocId, string UserOftaId, string SignTag, int SignPosition)
+public record AddSigneeDocCommand(
+    string DocId, 
+    string UserOftaId, 
+    string SignTag, 
+    int SignPosition)
     : IRequest, IDocKey, IUserOftaKey;
 
 public class AddSigneeDocHandler : IRequestHandler<AddSigneeDocCommand>

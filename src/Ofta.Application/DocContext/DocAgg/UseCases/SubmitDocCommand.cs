@@ -2,34 +2,26 @@
 using MediatR;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
-using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
-using Ofta.Domain.ParamContext.SystemAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
 public record SubmitDocCommand(string DocId, string ContentBase64) : IRequest<SubmitDocResponse>, IDocKey;
 
-public class SubmitDocResponse
-{
-    public string RequestedDocUrl { get; set; }
-}
+public record SubmitDocResponse(string RequestedDocUrl);
 
 public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocResponse>
 {
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
-    private readonly ISaveFileService _saveFileService;
     private readonly IMediator _mediator;
 
     public SubmitDocHandler(IDocBuilder builder, 
         IDocWriter writer, 
-        ISaveFileService saveFileService, 
         IMediator mediator)
     {
         _builder = builder;
         _writer = writer;
-        _saveFileService = saveFileService;
         _mediator = mediator;
     }
 
@@ -52,24 +44,17 @@ public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocRespo
             .DocState(DocStateEnum.Submited, string.Empty)
             .Build();
         
-        
         //  WRITE
         _writer.Save(aggregate);
-        var response = new SubmitDocResponse
-        {
-            RequestedDocUrl = aggregate.RequestedDocUrl
-        };
-        _mediator.Publish(new SubmittedDocEvent
-        {
-            Aggregate = aggregate,
-            Command = request
-        }, cancellationToken);
+
+        var submitEvent = new SubmittedDocEvent(aggregate, request);
+        _mediator.Publish(submitEvent, cancellationToken);
+        
+        var response = new SubmitDocResponse(aggregate.RequestedDocUrl);
         return Task.FromResult(response);
     }
-} 
-
-public class SubmittedDocEvent : INotification
-{
-    public DocModel Aggregate { get; set; }
-    public SubmitDocCommand Command { get; set; }
 }
+
+public record SubmittedDocEvent(
+    DocModel Aggregate,
+    SubmitDocCommand Command) : INotification;

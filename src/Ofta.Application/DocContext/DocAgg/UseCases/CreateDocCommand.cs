@@ -1,6 +1,7 @@
 ﻿using Dawn;
 using Mapster;
 using MediatR;
+using Ofta.Application.DocContext.DocAgg.UseCases;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.UserOftaContext;
@@ -10,10 +11,8 @@ namespace Ofta.Application.DocContext.DocAgg.UseCases;
 public record CreateDocCommand(string DocTypeId, string UserOftaId) :
     IRequest<CreateDocResponse>, IDocTypeKey, IUserOftaKey;
 
-public class CreateDocResponse
-{
-    public string DocId { get; set; }
-}
+public record CreateDocResponse(string DocId);
+
 
 public class CreateDocHandler : IRequestHandler<CreateDocCommand, CreateDocResponse>
 {
@@ -43,7 +42,7 @@ public class CreateDocHandler : IRequestHandler<CreateDocCommand, CreateDocRespo
         
         //  WRITE
         aggregate = _docWriter.Save(aggregate);
-        var response = aggregate.Adapt<CreateDocResponse>();
+        var response = new CreateDocResponse(aggregate.DocId);
         return Task.FromResult(response);
     }
 }
