@@ -98,4 +98,22 @@ public class UserDal : IUserOftaDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.ReadSingle<UserOftaModel>(sql, dp);
     }
+
+    public UserOftaModel GetData(string email)
+    {
+        const string sql = @"
+            SELECT
+                UserOftaId, UserOftaName, Email, 
+                IsVerified, VerifiedDate, ExpiredDate
+            FROM
+                OFTA_UserOfta
+            WHERE
+                Email  = @Email";
+        
+        var dp = new DynamicParameters();
+        dp.AddParam("@Email", email, SqlDbType.VarChar);
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.ReadSingle<UserOftaModel>(sql, dp);
+    }
 }

@@ -73,6 +73,22 @@ public static class InfrastructureService
                     .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                     .AsSelfWithInterfaces()
                     .WithScopedLifetime()
+                .FromAssemblyOf<InfrastructureAssemblyAnchor>()
+                    .AddClasses(c => c.AssignableTo(typeof(INunaService<,>)))
+                    .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                    .AsSelfWithInterfaces()
+                    .WithScopedLifetime()
+                .FromAssemblyOf<InfrastructureAssemblyAnchor>()
+                    .AddClasses(c => c.AssignableTo(typeof(INunaService<>)))
+                    .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                    .AsSelfWithInterfaces()
+                    .WithScopedLifetime()
+                .FromAssemblyOf<InfrastructureAssemblyAnchor>()
+                    .AddClasses(c => c.AssignableTo(typeof(INunaServiceVoid<>)))
+                    .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                    .AsSelfWithInterfaces()
+                    .WithScopedLifetime()
+            
             );
         return services;
     }

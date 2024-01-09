@@ -10,4 +10,5 @@ public interface IUserOftaDal :
     IDelete<IUserOftaKey>,
     IGetData<UserOftaModel, IUserOftaKey>
 {
+    UserOftaModel GetData(string email);
 }
