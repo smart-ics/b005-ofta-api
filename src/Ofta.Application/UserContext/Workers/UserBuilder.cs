@@ -10,6 +10,7 @@ public interface IUserBuilder : INunaBuilder<UserOftaModel>
 {
     IUserBuilder Create();
     IUserBuilder Load(IUserOftaKey userOftaKey);
+    IUserBuilder Load(string email);
 
     IUserBuilder UserOftaName(string userOftaName);
     IUserBuilder Email(string email);
@@ -45,6 +46,13 @@ public class UserBuilder : IUserBuilder
     {
         _aggregate = _userDal.GetData(userOftaKey)
             ?? throw new KeyNotFoundException("User Ofta not found");
+        return this;
+    }
+
+    public IUserBuilder Load(string email)
+    {
+        _aggregate = _userDal.GetData(email)
+                     ?? throw new KeyNotFoundException("Email not found");
         return this;
     }
 
