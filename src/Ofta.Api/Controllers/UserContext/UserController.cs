@@ -22,4 +22,18 @@ public class UserController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpGet("{email}")]
+    public async Task<IActionResult> GetUser(string email)
+    {
+        var result = await _mediator.Send(new GetUserQuery(email));
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> ListUser()
+    {
+        var result = await _mediator.Send(new ListUserQuery());
+        return Ok(new JSendOk(result));
+    }
 }

@@ -116,4 +116,17 @@ public class UserDal : IUserOftaDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.ReadSingle<UserOftaModel>(sql, dp);
     }
+
+    public IEnumerable<UserOftaModel> ListData()
+    {
+        const string sql = @"
+            SELECT
+                UserOftaId, UserOftaName, Email, 
+                IsVerified, VerifiedDate, ExpiredDate
+            FROM
+                OFTA_UserOfta ";
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Read<UserOftaModel>(sql);
+    }
 }
