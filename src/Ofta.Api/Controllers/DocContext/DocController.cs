@@ -10,13 +10,10 @@ namespace Ofta.Api.Controllers.DocContext;
 public class DocController : Controller
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<DocController> _logger;
 
-    public DocController(IMediator mediator, 
-        ILogger<DocController> logger)
+    public DocController(IMediator mediator)
     {
         _mediator = mediator;
-        _logger = logger;
     }
     
     [HttpPost]
@@ -58,6 +55,22 @@ public class DocController : Controller
     public async Task<IActionResult> PublishDoc(PublishDocCommand cmd)
     {
         var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetDataDoc(string id)
+    {
+        var query = new GetDocQuery(id);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
+
+    [HttpGet("{email}/{tglYmd1}/{tglYmd2}")]
+    public async Task<IActionResult> GetDataDoc(string email, string tglYmd1, string tglYmd2)
+    {
+        var query = new ListDocQuery(email, tglYmd1, tglYmd2);
+        var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
 }
