@@ -16,12 +16,12 @@ public static class ApplicationService
     public static IServiceCollection AddApplication(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddMediatR(typeof(ApplicationAssemblyAnchor));
-        services.AddValidatorsFromAssembly(Assembly.Load(APPLICATION_ASSEMBLY));
+        services
+            .AddMediatR(typeof(ApplicationAssemblyAnchor))
+            .AddValidatorsFromAssembly(Assembly.Load(APPLICATION_ASSEMBLY))
+            .AddScoped<INunaCounterBL, NunaCounterBL>()
+            .AddScoped<DateTimeProvider, DateTimeProvider>();
 
-        services.AddScoped<INunaCounterBL, NunaCounterBL>();
-        services.AddScoped<DateTimeProvider, DateTimeProvider>();
-        
         services
             .Scan(selector => selector
                 .FromAssemblyOf<ApplicationAssemblyAnchor>()
