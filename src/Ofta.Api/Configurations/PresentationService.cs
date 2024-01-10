@@ -13,7 +13,6 @@ public static class PresentationService
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        //services.AddRouting(options => options.LowercaseUrls = true);
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
@@ -36,6 +35,8 @@ public static class PresentationService
                 .AllowAnyHeader()
                 .AllowAnyOrigin();
         }));
+
+        services.AddHttpContextAccessor();
         
         return services;
     }

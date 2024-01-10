@@ -1,4 +1,5 @@
-﻿using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Infrastructure;
 using Ofta.Infrastructure.Helpers;
 using Ofta.Infrastructure.ParamContext.ConnectionAgg;
@@ -7,8 +8,11 @@ using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.DataAccessHelper;
 using Ofta.Application.Helpers;
 using Ofta.Infrastructure.ParamContext;
+using Ofta.Infrastructure.UserContext.Repos;
 using Ofta.Infrastructure.UserContext.Services;
 using Scrutor;
+using Usman.Lib.NetStandard;
+using Usman.Lib.NetStandard.Interfaces;
 using TglJamDal = Ofta.Infrastructure.ParamContext.TglJamDal;
 
 namespace Ofta.Api.Configurations;
@@ -18,13 +22,22 @@ public static class InfrastructureService
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, 
         IConfiguration configuration)
     {
-        services.AddTransient<IUsmanGetTokenService, UsmanGetTokenService>();
-        services.AddScoped<INunaCounterDal, ParamNoDal>();
-        services.AddScoped<IDbConnectionDal, DbConnectionDal>();
-        services.AddScoped<ITglJamDal, TglJamDal>();
-
-        services.AddMemoryCache();
-        services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SECTION_NAME));
+        services
+            .AddTransient<IUsmanGetTokenService, UsmanGetTokenService>()
+            .AddScoped<INunaCounterDal, ParamNoDal>()
+            .AddScoped<IDbConnectionDal, DbConnectionDal>()
+            .AddScoped<ITglJamDal, TglJamDal>()
+            .AddScoped<IUsmanUserDal, UsmanUserDal>()
+            .AddScoped<IUsmanUserRoleDal, UsmanUserRoleDal>()
+            .AddScoped<IUsmanPegDal, UsmanPegDal>()
+            .AddScoped<CommandHandler, CommandHandler>()
+            .AddScoped<ITokenService, TokenService>()
+            .AddScoped<IMemoryCache, MemoryCache>()
+            .AddScoped<INunaCounterDal, ParamNoDal>()
+            .AddMemoryCache();
+        
+        services
+            .Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SECTION_NAME));
 
         services
             .Scan(selector => selector
