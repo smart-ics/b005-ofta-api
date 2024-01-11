@@ -42,7 +42,7 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
         var contentBase64 = _getContentBase64Service.Execute(aggregate.RequestedDocUrl);
         var sendToSignProviderRequest = 
             new SendToSignProviderRequest
-            (aggregate.DocId, contentBase64);
+            (aggregate, contentBase64);
         var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
         aggregate = _builder
             .Attach(aggregate)
