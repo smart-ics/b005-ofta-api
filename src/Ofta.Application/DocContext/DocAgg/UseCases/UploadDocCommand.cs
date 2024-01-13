@@ -1,4 +1,5 @@
 ﻿using Dawn;
+using Mapster;
 using MediatR;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
@@ -15,12 +16,12 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
     private readonly ISendToSignProviderService _sendToSignProviderService;
     private readonly IGetContentBase64Service _getContentBase64Service;
 
-    public UploadDocHandler(IDocBuilder builder, 
+    public UploadDocHandler(IDocBuilder builder,
         IDocWriter writer, 
         ISendToSignProviderService sendToSignProviderService, 
         IGetContentBase64Service getContentBase64Service)
     {
-        _builder = builder;
+        _builder = builder;        
         _writer = writer;
         _sendToSignProviderService = sendToSignProviderService;
         _getContentBase64Service = getContentBase64Service;
@@ -36,13 +37,13 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
             .Build();
         if (aggregate.DocState != DocStateEnum.Submited)
             throw new ArgumentException("Upload failed: DocState should be Submited");
-        
+
         
         //  BUILD
         var contentBase64 = _getContentBase64Service.Execute(aggregate.RequestedDocUrl);
         var sendToSignProviderRequest = 
             new SendToSignProviderRequest
-            (aggregate.DocId, contentBase64);
+            (aggregate, contentBase64);
         var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
         aggregate = _builder
             .Attach(aggregate)

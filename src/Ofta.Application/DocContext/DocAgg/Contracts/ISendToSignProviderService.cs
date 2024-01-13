@@ -1,8 +1,9 @@
 ﻿using Nuna.Lib.CleanArchHelper;
+using Ofta.Domain.DocContext.DocAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.Contracts;
 
-public record SendToSignProviderRequest(string FileName, string FielContentBase64);
+public record SendToSignProviderRequest(DocModel FileName, string FielContentBase64);
 
 public class SendToSignProviderResponse
 {
