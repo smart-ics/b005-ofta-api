@@ -11,7 +11,7 @@ public static class SerilogConfiguration
     public static void SerilogRequestLoggingOption(RequestLoggingOptions options)
     {
         // Customize the message template
-        options.MessageTemplate = "[{RequestMethod}] {RequestScheme}://{RequestHost}{RequestPath} from {ClientIp} responded {StatusCode} in {Elapsed} ms";
+        options.MessageTemplate = "[{RequestMethod}] {RequestScheme}://{RequestHost}{PathBase}{RequestPath} from {ClientIp} responded {StatusCode} in {Elapsed:N0} ms";
     
         // Attach additional properties to the request completion event
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
@@ -22,7 +22,8 @@ public static class SerilogConfiguration
             diagnosticContext.Set("Referer", httpContext.Request.Headers["Referer"]);
             diagnosticContext.Set("UserAgent", httpContext.Request.Headers["sec-ch-ua"]);
             diagnosticContext.Set("UserName", httpContext.User.Identity?.Name??string.Empty);
-        };        
+            diagnosticContext.Set("PathBase", httpContext.Request?.PathBase ?? string.Empty);
+        }; 
     }
 
     public static void ContextConfiguration(HostBuilderContext context, LoggerConfiguration configuration)
