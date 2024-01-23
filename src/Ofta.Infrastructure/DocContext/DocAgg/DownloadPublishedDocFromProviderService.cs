@@ -1,4 +1,5 @@
 ﻿using Ofta.Application.DocContext.DocAgg.Contracts;
+using System.Net;
 
 namespace Ofta.Infrastructure.DocContext.DocAgg;
 
@@ -10,6 +11,12 @@ public class DownloadPublishedDocFromProviderService : IDownloadPublishedDocFrom
     //      Lalu simpan dokumen tersebut ke folder yang ditentukan
     public void Execute(DownloadPublishedDocFromProviderRequest req)
     {
-        return;
+        string url = req.DownloadUrl;
+        string outputPath = req.DestinationPathFileName;
+
+        using (WebClient client = new WebClient())
+        {
+            client.DownloadFile(url, outputPath);
+        }
     }
 }
