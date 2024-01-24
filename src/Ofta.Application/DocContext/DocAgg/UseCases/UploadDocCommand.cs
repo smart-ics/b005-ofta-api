@@ -14,17 +14,14 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
     private readonly ISendToSignProviderService _sendToSignProviderService;
-    private readonly IGetContentBase64Service _getContentBase64Service;
 
     public UploadDocHandler(IDocBuilder builder,
         IDocWriter writer, 
-        ISendToSignProviderService sendToSignProviderService, 
-        IGetContentBase64Service getContentBase64Service)
+        ISendToSignProviderService sendToSignProviderService)
     {
         _builder = builder;        
         _writer = writer;
         _sendToSignProviderService = sendToSignProviderService;
-        _getContentBase64Service = getContentBase64Service;
     }
 
     public Task<Unit> Handle(UploadDocCommand request, CancellationToken cancellationToken)
@@ -40,17 +37,13 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
 
         
         //  BUILD
-        var contentBase64 = _getContentBase64Service.Execute(aggregate.RequestedDocUrl);
-        var sendToSignProviderRequest = 
-            new SendToSignProviderRequest
-            (aggregate, contentBase64);
+        var sendToSignProviderRequest = new SendToSignProviderRequest(aggregate);
         var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
         aggregate = _builder
             .Attach(aggregate)
             .DocState(DocStateEnum.Uploaded, string.Empty)
             .UploadedDocId(sendToSignProviderResponse.UploadedDocId)
             .Build();
-        
         
         //  WRITE
         _writer.Save(aggregate);

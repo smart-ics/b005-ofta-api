@@ -2,6 +2,5 @@
 
 public enum SignPositionEnum
 {
-    TopLeft, TopCenter, TopRight,
-    BottomLeft, BottomCenter, BottomRight
+    SignLeft, SignCenter, SignRight
 }

@@ -15,7 +15,7 @@ public class DocController : Controller
     {
         _mediator = mediator;
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreateDoc(CreateDocCommand cmd)
     {

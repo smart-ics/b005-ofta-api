@@ -21,7 +21,7 @@ public class ParamSistemDal : IParamSistemDal
     public void Insert(ParamSistemModel model)
     {
         const string sql = @"
-            INSERT INTO ParamSistem (
+            INSERT INTO OFTA_ParamSistem (
                 ParamSistemId, ParamSistemValue )
             VALUES (
                 @ParamSistemId, @ParamSistemValue )";
@@ -38,7 +38,7 @@ public class ParamSistemDal : IParamSistemDal
     {
         const string sql = @"
             UPDATE
-                ParamSistem
+                OFTA_ParamSistem
             SET 
                 ParamSistemValue = @ParamSistemValue
             WHERE
@@ -56,7 +56,7 @@ public class ParamSistemDal : IParamSistemDal
     {
         const string sql = @"
             DELETE FROM
-                ParamSistem
+                OFTA_ParamSistem
             WHERE
                 ParamSistemId = @ParamSistemId";
         
@@ -73,7 +73,7 @@ public class ParamSistemDal : IParamSistemDal
             SELECT
                 ParamSistemId, ParamSistemValue
             FROM
-                ParamSistem
+                OFTA_ParamSistem
             WHERE
                 ParamSistemId = @ParamSistemId";
         
@@ -90,7 +90,7 @@ public class ParamSistemDal : IParamSistemDal
             SELECT
                 ParamSistemId, ParamSistemValue
             FROM
-                ParamSistem";
+                OFTA_ParamSistem";
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<ParamSistemModel>(sql);
