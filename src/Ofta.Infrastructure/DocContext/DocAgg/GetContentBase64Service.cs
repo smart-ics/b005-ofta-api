@@ -11,8 +11,8 @@ public class GetContentBase64Service : IGetContentBase64Service
 
     public string Execute(string filePathName)
     {
-        File.ReadAllBytes(filePathName);
-        string fileBase64 = Convert.ToBase64String(File.ReadAllBytes(filePathName));
+        var fileBytes = File.ReadAllBytes(filePathName);
+        var fileBase64 = Convert.ToBase64String(fileBytes);
         return fileBase64 ?? string.Empty;
     }
 }

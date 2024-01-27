@@ -8,10 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Dawn.Guard" Version="1.12.0" />
+    <PackageReference Include="itext7" Version="8.0.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Nuna.Lib.NetStandard" Version="1.0.110" />
     <PackageReference Include="Nuna.Usman.Lib.NetStandard" Version="1.2.15" />
     <PackageReference Include="RestSharp" Version="108.0.1" />

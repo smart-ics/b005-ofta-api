@@ -35,9 +35,10 @@ public static class InfrastructureService
             .AddScoped<IMemoryCache, MemoryCache>()
             .AddScoped<INunaCounterDal, ParamNoDal>()
             .AddMemoryCache();
-        
+
         services
-            .Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SECTION_NAME));
+            .Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SECTION_NAME))
+            .Configure<TekenAjaProviderOptions>(configuration.GetSection(TekenAjaProviderOptions.SECTION_NAME));
 
         services
             .Scan(selector => selector
