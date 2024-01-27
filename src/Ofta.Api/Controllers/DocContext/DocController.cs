@@ -43,16 +43,8 @@ public class DocController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
-    [HttpPut("sign")]
-    public async Task<IActionResult> SignDoc(SignDocCommand cmd)
-    {
-        var result = await _mediator.Send(cmd);
-        return Ok(new JSendOk(result));
-    }
-    
-    [HttpPut("publish")]
-    public async Task<IActionResult> PublishDoc(PublishDocCommand cmd)
+    [HttpPut("upload")]
+    public async Task<IActionResult> UploadDoc(UploadDocCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));

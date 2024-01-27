@@ -3,6 +3,7 @@ using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
 using Microsoft.Extensions.Options;
+// ReSharper disable InconsistentNaming
 
 namespace Ofta.Infrastructure.DocContext.DocAgg;
 
@@ -21,7 +22,6 @@ public class SendToTekenAjaService : ISendToSignProviderService
 
     public SendToSignProviderResponse Execute(SendToSignProviderRequest req)
     {
-        
         var data = Task.Run(() => GetDocIdTekenAja(req)).GetAwaiter().GetResult();
         var result = new SendToSignProviderResponse { UploadedDocId = data?.data.id ?? string.Empty };
         return result;
@@ -47,7 +47,7 @@ public class SendToTekenAjaService : ISendToSignProviderService
                     w = y.w,
                     h = y.h
                 }).ToList()
-            });
+            }).ToList();
         var signJson = JsonSerializer.Serialize(listSignee);
         var endpoint = _opt.UploadEnpoint;
         var client = new RestClient(endpoint);
@@ -67,7 +67,6 @@ public class SendToTekenAjaService : ISendToSignProviderService
 
 
         //  RETURN
-
         return resp;
     }
 
@@ -84,7 +83,7 @@ public class SendToTekenAjaService : ISendToSignProviderService
     public class RespTekenAjaDataDto
     {
         public string id { get; set; }
-        public string stamp { get; set; }
+        public string[] stamp { get; set; }
         public List<RespoTekenAjaSignDto> sign
         {
             get; set;

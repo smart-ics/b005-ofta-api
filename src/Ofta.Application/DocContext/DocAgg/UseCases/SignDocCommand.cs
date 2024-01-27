@@ -6,7 +6,12 @@ using Ofta.Domain.DocContext.DocAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-public record SignDocCommand(string UploadedDocId, string Email) : IRequest;
+public interface ISignDocTarget
+{
+    string UploadedDocId { get; init; }
+    string Email { get; init; }
+}
+public record SignDocCommand(string UploadedDocId, string Email) : IRequest, ISignDocTarget;
 
 public class SignDocHandler : IRequestHandler<SignDocCommand>
 {

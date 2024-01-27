@@ -184,6 +184,8 @@ public class DocBuilder : IDocBuilder
     {
         var signedUser = _aggregate.ListSignees.FirstOrDefault(x => x.Email == email)
             ?? throw new KeyNotFoundException($"Email {email} is not a signee");
+        if (signedUser.IsSigned)
+            throw new ArgumentException("User has already signed");
         signedUser.IsSigned = true;
         signedUser.SignedDate = _tglJamDal.Now;
         return this;

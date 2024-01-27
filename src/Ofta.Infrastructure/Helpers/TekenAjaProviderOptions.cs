@@ -15,5 +15,5 @@ public class TekenAjaProviderOptions
     public string UploadEnpoint { get; set; }
     public string ApiKey { get; set; }
     public int ValidityPeriod { get; set; }
-    public List<SignLayout> SignLayout { get; set; }
+    public IEnumerable<SignLayout> SignLayout { get; set; }
 }

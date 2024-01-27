@@ -38,7 +38,7 @@ public static class InfrastructureService
 
         services
             .Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SECTION_NAME))
-            .Configure<DatabaseOptions>(configuration.GetSection(TekenAjaProviderOptions.SECTION_NAME));
+            .Configure<TekenAjaProviderOptions>(configuration.GetSection(TekenAjaProviderOptions.SECTION_NAME));
 
         services
             .Scan(selector => selector
