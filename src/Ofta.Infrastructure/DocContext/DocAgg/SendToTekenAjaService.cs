@@ -9,10 +9,6 @@ namespace Ofta.Infrastructure.DocContext.DocAgg;
 
 public class SendToTekenAjaService : ISendToSignProviderService
 {
-    //  TODO: Implement SendToTekenAjaService
-    //      kirim dokumen dengan nama sesuai request dan content-nya (base64)
-    //      ke server TekenAJa. Lalu kembalikan response dari server TekenAJa
-    //      yang berupa DocumentId (GUID) sebagai return value-nya
     private readonly TekenAjaProviderOptions _opt;
 
     public SendToTekenAjaService(IOptions<TekenAjaProviderOptions> options)
@@ -23,31 +19,21 @@ public class SendToTekenAjaService : ISendToSignProviderService
     public SendToSignProviderResponse Execute(SendToSignProviderRequest req)
     {
         var data = Task.Run(() => GetDocIdTekenAja(req)).GetAwaiter().GetResult();
-        var result = new SendToSignProviderResponse { UploadedDocId = data?.data.id ?? string.Empty };
+        var result = new Application.DocContext.DocAgg.Contracts.SendToSignProviderResponse { UploadedDocId = data?.data.id ?? string.Empty };
         return result;
     }
 
-    private async Task<ResponseTekenAjaDto?> GetDocIdTekenAja(SendToSignProviderRequest request)
+    private async Task<SendToTekenAjaResponse?> GetDocIdTekenAja(SendToSignProviderRequest request)
     {
         //  BUILD REQUEST
         var filePathName = request.doc.RequestedDocUrl;
         var docPageCount = PdfHelper.GetPageCount(filePathName);
         var expiredDate = request.doc.DocDate.AddDays(_opt.ValidityPeriod).ToString("yyyy-MM-dd");
         var listSignee = request.doc.ListSignees
-            .Select(x => new TekenAjaSignatureReqDto
-            {
-                email = x.Email,
-                detail = _opt.SignLayout
-                    .Where(y => y.SignPosition == (int)x.SignPosition)
-                    .Select(y => new TekenAjaSignatureDetailReqDto
-                {
-                    p = docPageCount,
-                    x = y.x,
-                    y = y.y,
-                    w = y.w,
-                    h = y.h
-                }).ToList()
-            }).ToList();
+            .Select(x => new SendToTekenAjaRequest(x.Email, _opt.SignLayout
+                .Where(y => y.SignPosition == (int)x.SignPosition)
+                .Select(y => new SendToTekenAjaRequestDetail(docPageCount, y.x, y.y, y.w, y.h))));
+        
         var signJson = JsonSerializer.Serialize(listSignee);
         var endpoint = _opt.UploadEnpoint;
         var client = new RestClient(endpoint);
@@ -63,53 +49,16 @@ public class SendToTekenAjaService : ISendToSignProviderService
         var response = await client.ExecuteAsync(req);
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
-        var resp = JsonSerializer.Deserialize<ResponseTekenAjaDto>(response.Content ?? string.Empty);
-
+        var resp = JsonSerializer.Deserialize<SendToTekenAjaResponse>(response.Content ?? string.Empty);
 
         //  RETURN
         return resp;
     }
 
-    public class ResponseTekenAjaDto
-    {
-        public string status { get; set; }
-        public string ref_id { get; set; }
-        public string code { get; set; }
-        public string timestamp { get; set; }
-        public string message { get; set; }
-        public RespTekenAjaDataDto data { get; set; }
+    private record SendToTekenAjaResponse(string status, string ref_id, string code, string timestamp, string message, SendToTekenAjaResponseData data);
+    private record SendToTekenAjaResponseData(string id, string[] stamp, IEnumerable<SendToTekenAjaResponseDataSign> sign);
+    private record SendToTekenAjaResponseDataSign(string teken_id, string email, string url);
 
-    }
-    public class RespTekenAjaDataDto
-    {
-        public string id { get; set; }
-        public string[] stamp { get; set; }
-        public List<RespoTekenAjaSignDto> sign
-        {
-            get; set;
-        }
-
-        public class RespoTekenAjaSignDto
-        {
-            public string teken_id { get; set; }
-            public string email { get; set; }
-            public string url { get; set; }
-        }
-
-    }
-
-    public class TekenAjaSignatureDetailReqDto
-    {
-        public int p { get; set; }
-        public int x { get; set; }
-        public int y { get; set; }
-        public int w { get; set; }
-        public int h { get; set; }
-    }
-
-    public class TekenAjaSignatureReqDto
-    {
-        public string email { get; set; }
-        public List<TekenAjaSignatureDetailReqDto> detail { get; set; }
-    }
+    private record SendToTekenAjaRequest(string email, IEnumerable<SendToTekenAjaRequestDetail> detail);
+    private record SendToTekenAjaRequestDetail(int p, int x, int y, int w, int h);
 }
