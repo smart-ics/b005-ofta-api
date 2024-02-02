@@ -9,7 +9,7 @@ public class SendToSignProviderResponse
 {
     public string UploadedDocId { get; set; }
 }
-public interface ISendToSignProviderService : INunaService<SendToSignProviderResponse, SendToSignProviderRequest>
+public interface ISendToSignProviderService 
+    : INunaService<SendToSignProviderResponse, SendToSignProviderRequest>
 {
-    
 }

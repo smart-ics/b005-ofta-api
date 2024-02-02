@@ -1,11 +1,11 @@
-﻿using System.Text.Json;
+﻿// ReSharper disable InconsistentNaming
+using System.Text.Json;
+using Microsoft.Extensions.Options;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
-using Microsoft.Extensions.Options;
-// ReSharper disable InconsistentNaming
 
-namespace Ofta.Infrastructure.DocContext.DocAgg;
+namespace Ofta.Infrastructure.DocContext.DocAgg.TekenAjaIntegration;
 
 public class SendToTekenAjaService : ISendToSignProviderService
 {
@@ -55,10 +55,15 @@ public class SendToTekenAjaService : ISendToSignProviderService
         return resp;
     }
 
+    #region REQUEST COMMAND
+    private record SendToTekenAjaRequest(string email, IEnumerable<SendToTekenAjaRequestDetail> detail);
+    private record SendToTekenAjaRequestDetail(int p, int x, int y, int w, int h);
+    #endregion
+    
+    #region RESPONSE COMMAND
     private record SendToTekenAjaResponse(string status, string ref_id, string code, string timestamp, string message, SendToTekenAjaResponseData data);
     private record SendToTekenAjaResponseData(string id, string[] stamp, IEnumerable<SendToTekenAjaResponseDataSign> sign);
     private record SendToTekenAjaResponseDataSign(string teken_id, string email, string url);
+    #endregion
 
-    private record SendToTekenAjaRequest(string email, IEnumerable<SendToTekenAjaRequestDetail> detail);
-    private record SendToTekenAjaRequestDetail(int p, int x, int y, int w, int h);
 }
