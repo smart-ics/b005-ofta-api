@@ -132,7 +132,7 @@ public class DocDal : IDocDal
                 LEFT JOIN OFTA_DocType bb ON aa.DocTypeId = bb.DocTypeId
             WHERE
                 DocDate BETWEEN @Tgl1 AND @Tgl2 
-                AND UserId = @UserId";
+                AND Email = @UserId";
         
         var dp = new DynamicParameters();
         dp.AddParam("@Tgl1", filter1.Tgl1, SqlDbType.DateTime);
