@@ -11,7 +11,6 @@ public interface IDocTypeBuilder : INunaBuilder<DocTypeModel>
     IDocTypeBuilder Load(IDocTypeKey key);
     IDocTypeBuilder Name(string name);
     IDocTypeBuilder IsActive(bool isActive);
-    IDocTypeBuilder Template(string templateUrl);
     IDocTypeBuilder AddTag(string tag);
     IDocTypeBuilder RemoveTag(string tag);
 }
@@ -62,20 +61,6 @@ public class DocTypeBuilder : IDocTypeBuilder
     public IDocTypeBuilder IsActive(bool isActive)
     {
         _aggregate.IsActive = isActive;
-        return this;
-    }
-
-    public IDocTypeBuilder Template(string templateUrl)
-    {
-        _aggregate.TemplateUrl = templateUrl;
-        //  get extension from url
-        var ext = Path.GetExtension(templateUrl);
-        _aggregate.TemplateType = ext.ToLower() switch
-        {
-            ".html" => TemplateTypeEnum.Html,
-            ".docx" or ".doc" => TemplateTypeEnum.Word,
-            _ => throw new InvalidOperationException("Invalid template file type")
-        };
         return this;
     }
 

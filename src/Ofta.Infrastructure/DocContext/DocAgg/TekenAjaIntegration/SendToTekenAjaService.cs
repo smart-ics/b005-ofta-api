@@ -19,7 +19,7 @@ public class SendToTekenAjaService : ISendToSignProviderService
     public SendToSignProviderResponse Execute(SendToSignProviderRequest req)
     {
         var data = Task.Run(() => GetDocIdTekenAja(req)).GetAwaiter().GetResult();
-        var result = new Application.DocContext.DocAgg.Contracts.SendToSignProviderResponse { UploadedDocId = data?.data.id ?? string.Empty };
+        var result = new SendToSignProviderResponse { UploadedDocId = data?.data.id ?? string.Empty };
         return result;
     }
 

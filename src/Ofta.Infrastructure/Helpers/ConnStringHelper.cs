@@ -19,4 +19,6 @@ public static class ConnStringHelper
         var result = $"Server={server};Database={db};User Id={USER_ID};Password={PASS};";
         return result;
     }
+    
+    // 
 }

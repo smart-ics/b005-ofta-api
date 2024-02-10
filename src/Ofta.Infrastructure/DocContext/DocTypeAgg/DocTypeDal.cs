@@ -22,18 +22,14 @@ public class DocTypeDal : IDocTypeDal
     {
         const string sql = @"
             INSERT INTO OFTA_DocType(
-                DocTypeId, DocTypeName, IsTemplate, TemplateUrl,
-                TemplateType, IsActive)
+                DocTypeId, DocTypeName, IsStandard, IsActive)
             VALUES (
-                @DocTypeId, @DocTypeName, @IsTemplate, @TemplateUrl,
-                @TemplateType, @IsActive)";
+                @DocTypeId, @DocTypeName, @IsStandard, @IsActive)";
 
         var dp = new DynamicParameters();
         dp.AddParam("@DocTypeId", model.DocTypeId, SqlDbType.VarChar);
         dp.AddParam("@DocTypeName", model.DocTypeName, SqlDbType.VarChar); 
-        dp.AddParam("@IsTemplate", model.IsTemplate, SqlDbType.Bit);
-        dp.AddParam("@TemplateUrl", model.TemplateUrl, SqlDbType.VarChar);
-        dp.AddParam("@TemplateType", model.TemplateType, SqlDbType.Int); 
+        dp.AddParam("@IsStandard", model.IsStandard, SqlDbType.Bit);
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
@@ -47,9 +43,7 @@ public class DocTypeDal : IDocTypeDal
                 OFTA_DocType
             SET
                 DocTypeName = @DocTypeName, 
-                IsTemplate = @IsTemplate, 
-                TemplateUrl = @TemplateUrl,
-                TemplateType = @TemplateType, 
+                IsStandard = @IsStandard,
                 IsActive = @IsActive
             WHERE
                 DocTypeId = @DocTypeId
@@ -58,9 +52,7 @@ public class DocTypeDal : IDocTypeDal
         var dp = new DynamicParameters();
         dp.AddParam("@DocTypeId", model.DocTypeId, SqlDbType.VarChar);
         dp.AddParam("@DocTypeName", model.DocTypeName, SqlDbType.VarChar); 
-        dp.AddParam("@IsTemplate", model.IsTemplate, SqlDbType.Bit);
-        dp.AddParam("@TemplateUrl", model.TemplateUrl, SqlDbType.VarChar);
-        dp.AddParam("@TemplateType", model.TemplateType, SqlDbType.Int); 
+        dp.AddParam("@IsStandard", model.IsStandard, SqlDbType.Bit);
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
@@ -86,8 +78,7 @@ public class DocTypeDal : IDocTypeDal
     {
         const string sql = @"
             SELECT
-                DocTypeId, DocTypeName, IsTemplate, TemplateUrl,
-                TemplateType, IsActive
+                DocTypeId, DocTypeName, IsStandard, IsActive
             FROM
                 OFTA_DocType
             WHERE
@@ -104,8 +95,7 @@ public class DocTypeDal : IDocTypeDal
     {
         const string sql = @"
             SELECT
-                DocTypeId, DocTypeName, IsTemplate, TemplateUrl,
-                TemplateType, IsActive
+                DocTypeId, DocTypeName, IsStandard, IsActive
             FROM
                 OFTA_DocType ";
         
