@@ -1,4 +1,4 @@
-﻿using Ofta.Domain.UserOftaContext;
+﻿using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Domain.DocContext.DocAgg;
 

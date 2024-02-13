@@ -1,14 +1,11 @@
-﻿using System.Data;
-using Nuna.Lib.CleanArchHelper;
+﻿using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.BlueprintAgg.Contracts;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
-using Ofta.Application.UserContext.Contracts;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.BlueprintAgg;
-using Ofta.Domain.DocContext.BundleSpecAgg;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
-using Usman.Lib.NetStandard.Interfaces;
 
 namespace Ofta.Application.DocContext.BlueprintAgg.Workers;
 

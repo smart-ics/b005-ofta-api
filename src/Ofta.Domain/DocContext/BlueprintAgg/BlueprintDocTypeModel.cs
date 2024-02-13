@@ -1,5 +1,4 @@
-﻿using Ofta.Domain.DocContext.BundleSpecAgg;
-using Ofta.Domain.DocContext.DocTypeAgg;
+﻿using Ofta.Domain.DocContext.DocTypeAgg;
 
 namespace Ofta.Domain.DocContext.BlueprintAgg;
 

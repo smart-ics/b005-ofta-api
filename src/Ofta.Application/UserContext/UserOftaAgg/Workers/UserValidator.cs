@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
-namespace Ofta.Application.UserContext.Workers;
+namespace Ofta.Application.UserContext.UserOftaAgg.Workers;
 
 public class UserValidator : AbstractValidator<UserOftaModel>
 {

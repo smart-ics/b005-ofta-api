@@ -1,9 +1,8 @@
 ﻿using Dawn;
 using MediatR;
-using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Domain.DocContext.DocAgg;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 

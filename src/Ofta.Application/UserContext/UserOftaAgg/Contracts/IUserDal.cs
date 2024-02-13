@@ -1,8 +1,7 @@
 ﻿using Nuna.Lib.DataAccessHelper;
-using Ofta.Domain.DocContext.DocAgg;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
-namespace Ofta.Application.UserContext.Contracts;
+namespace Ofta.Application.UserContext.UserOftaAgg.Contracts;
 
 public interface IUserOftaDal :
     IInsert<UserOftaModel>,

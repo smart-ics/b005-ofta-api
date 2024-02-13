@@ -3,11 +3,11 @@ using System.Data.SqlClient;
 using Dapper;
 using Microsoft.Extensions.Options;
 using Nuna.Lib.DataAccessHelper;
-using Ofta.Application.UserContext.Contracts;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.UserContext.UserOftaAgg;
 using Ofta.Infrastructure.Helpers;
 
-namespace Ofta.Infrastructure.UserContext;
+namespace Ofta.Infrastructure.UserContext.UserOftaAgg;
 
 public class UserDal : IUserOftaDal
 {

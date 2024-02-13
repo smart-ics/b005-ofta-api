@@ -7,7 +7,7 @@ using Ofta.Infrastructure.Helpers;
 using Usman.Lib.NetStandard.Interfaces;
 using Usman.Lib.NetStandard.Models;
 
-namespace Ofta.Infrastructure.UserContext.Repos
+namespace Ofta.Infrastructure.UserContext.UserUsmanAgg.Repos
 {
     public class UsmanPegDal : IUsmanPegDal
     {

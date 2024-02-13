@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 using Ofta.Application.DocContext.BlueprintAgg.Workers;
-using Ofta.Domain.DocContext.BundleSpecAgg;
+using Ofta.Domain.DocContext.BlueprintAgg;
 
 namespace Ofta.Application.DocContext.BlueprintAgg.UseCases;
 

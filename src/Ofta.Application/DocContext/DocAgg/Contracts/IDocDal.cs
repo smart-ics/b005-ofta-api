@@ -1,7 +1,7 @@
 ﻿using Nuna.Lib.DataAccessHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Domain.DocContext.DocAgg;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.Contracts;
 

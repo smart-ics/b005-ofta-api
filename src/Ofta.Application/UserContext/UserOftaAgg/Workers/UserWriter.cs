@@ -2,10 +2,10 @@
 using Nuna.Lib.AutoNumberHelper;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.DataTypeExtension;
-using Ofta.Application.UserContext.Contracts;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
-namespace Ofta.Application.UserContext.Workers;
+namespace Ofta.Application.UserContext.UserOftaAgg.Workers;
 
 public interface IUserWriter : INunaWriterWithReturn<UserOftaModel>
 {

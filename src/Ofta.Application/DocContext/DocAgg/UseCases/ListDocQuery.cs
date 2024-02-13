@@ -2,9 +2,8 @@
 using MediatR;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocAgg.Contracts;
-using Ofta.Application.UserContext.Contracts;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
-using Usman.Lib.NetStandard.Interfaces;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 

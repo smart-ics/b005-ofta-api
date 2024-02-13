@@ -1,4 +1,4 @@
-﻿namespace Ofta.Domain.UserOftaContext;
+﻿namespace Ofta.Domain.UserContext.UserOftaAgg;
 
 public class UserOftaModel : IUserOftaKey
 {

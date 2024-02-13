@@ -1,8 +1,8 @@
 ﻿using Dawn;
 using MediatR;
-using Ofta.Application.UserContext.Workers;
+using Ofta.Application.UserContext.UserOftaAgg.Workers;
 
-namespace Ofta.Application.UserContext.UseCases;
+namespace Ofta.Application.UserContext.UserOftaAgg.UseCases;
 
 public record GetUserQuery(string Email) : IRequest<GetUserResponse>;
 

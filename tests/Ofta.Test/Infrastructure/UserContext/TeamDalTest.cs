@@ -1,28 +1,26 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Nuna.Lib.TransactionHelper;
-using Ofta.Application.DocContext.BlueprintAgg.Contracts;
-using Ofta.Domain.DocContext.BlueprintAgg;
-using Ofta.Infrastructure.DocContext.BlueprintAgg;
+using Ofta.Domain.UserContext.TeamAgg;
 using Ofta.Infrastructure.Helpers;
+using Ofta.Infrastructure.UserContext.TeamAgg;
 
-namespace Ofta.Test.Infrastructure.DocContext;
+namespace Ofta.Test.Infrastructure.UserContext;
 
-public class BlueprintDalTest
+public class TeamDalTest
 {
-    private readonly IBlueprintDal _sut = new BlueprintDal(Options.Create(new DatabaseOptions
+    private readonly TeamDal _sut = new TeamDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
         DbName = "dev",
     }));
-
-    private readonly BlueprintModel _faker = new()
-    {
-        BlueprintId = "A",
-        BlueprintName = "B"
-    };
     
-    //  write unit test for BluepirntDal.Insert
+    private readonly TeamModel _faker = new()
+    {
+        TeamId = "A",
+        TeamName = "B"
+    };
+
     [Fact]
     public void InsertTest()
     {
@@ -43,7 +41,7 @@ public class BlueprintDalTest
         using var trans = TransHelper.NewScope();
         _sut.Delete(_faker);
     }
-    
+
     [Fact]
     public void GetDataTest()
     {
@@ -59,6 +57,6 @@ public class BlueprintDalTest
         using var trans = TransHelper.NewScope();
         _sut.Insert(_faker);
         var actual = _sut.ListData();
-        actual.Should().BeEquivalentTo(new List<BlueprintModel> { _faker });
+        actual.Should().BeEquivalentTo(new List<TeamModel> { _faker });
     }
 }

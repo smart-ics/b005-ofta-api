@@ -1,10 +1,9 @@
 ﻿using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
-using Ofta.Application.Helpers;
-using Ofta.Application.UserContext.Contracts;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
-namespace Ofta.Application.UserContext.Workers;
+namespace Ofta.Application.UserContext.UserOftaAgg.Workers;
 
 public interface IUserBuilder : INunaBuilder<UserOftaModel>
 {

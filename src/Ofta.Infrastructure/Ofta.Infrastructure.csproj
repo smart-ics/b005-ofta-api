@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Ofta.Domain\Ofta.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UserContext\UserUsmanAgg\" />
+  </ItemGroup>
+
 </Project>

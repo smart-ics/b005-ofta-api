@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
-using Ofta.Application.UserContext.UseCases;
+using Ofta.Application.UserContext.UserOftaAgg.UseCases;
 
 namespace Ofta.Api.Controllers.UserContext;
 

@@ -1,4 +1,4 @@
-﻿namespace Ofta.Domain.DocContext.BundleSpecAgg;
+﻿namespace Ofta.Domain.DocContext.BlueprintAgg;
 
 public interface IBlueprintKey
 {

@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using Ofta.Application.UserContext.Contracts;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
-namespace Ofta.Application.UserContext.UseCases;
+namespace Ofta.Application.UserContext.UserOftaAgg.UseCases;
 
 public record ListUserQuery : IRequest<IEnumerable<ListUserResponse>>;
 

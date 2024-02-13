@@ -60,7 +60,6 @@
     <Folder Include="Tables\" />
     <Folder Include="Tables\DocContext\" />
     <Folder Include="Tables\ParamContext\" />
-    <Folder Include="Tables\UserContext\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Database\CreateUserLogin.sql" />
@@ -75,6 +74,8 @@
     <Build Include="Tables\DocContext\OFTA_DocTypeTag.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamNo.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamSistem.sql" />
+    <Build Include="Tables\UserContext\OFTA_Team.sql" />
+    <Build Include="Tables\UserContext\OFTA_TeamUserOfta.sql" />
     <Build Include="Tables\UserContext\OFTA_User.sql" />
   </ItemGroup>
 </Project>

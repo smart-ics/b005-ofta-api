@@ -1,6 +1,4 @@
-﻿using Ofta.Domain.DocContext.BundleSpecAgg;
-
-namespace Ofta.Domain.DocContext.BlueprintAgg;
+﻿namespace Ofta.Domain.DocContext.BlueprintAgg;
 
 public class BlueprintModel : IBlueprintKey
 {

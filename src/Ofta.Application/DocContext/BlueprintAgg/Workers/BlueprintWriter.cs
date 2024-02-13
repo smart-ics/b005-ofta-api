@@ -5,7 +5,6 @@ using Nuna.Lib.DataTypeExtension;
 using Nuna.Lib.TransactionHelper;
 using Ofta.Application.DocContext.BlueprintAgg.Contracts;
 using Ofta.Domain.DocContext.BlueprintAgg;
-using Ofta.Domain.DocContext.BundleSpecAgg;
 
 namespace Ofta.Application.DocContext.BlueprintAgg.Workers;
 

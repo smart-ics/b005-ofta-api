@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
 
-namespace Ofta.Infrastructure.UserContext.Services;
+namespace Ofta.Infrastructure.UserContext.UserUsmanAgg.Services;
 
 public interface IUsmanGetTokenService
 {
