@@ -32,7 +32,6 @@ public class TemplateDocTypeHandler : IRequestHandler<TemplateDocTypeCommand>
         //  BUILDER
         _aggregate = _builder
             .Load(request)
-            .Template(request.TemplateUrl)
             .Build();
         
         //  WRITE

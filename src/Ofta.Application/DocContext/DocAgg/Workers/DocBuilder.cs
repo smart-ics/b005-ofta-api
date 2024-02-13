@@ -27,6 +27,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
     IDocBuilder UploadedDocId(string uploadedDocId);
     IDocBuilder Sign(string email);
+    IDocBuilder RejectSign(string email);
     IDocBuilder UploadedDocUrl(string uploadedDocUrl);
 }
 public class DocBuilder : IDocBuilder
@@ -162,7 +163,7 @@ public class DocBuilder : IDocBuilder
             SignTag = signTag,
             SignPosition = signPosition,
             SignedDate = new DateTime(3000,1,1),
-            IsSigned = false,
+            SignState = SignStateEnum.NotSigned,
             Level = 1,
         });
         return this;
@@ -184,11 +185,21 @@ public class DocBuilder : IDocBuilder
     {
         var signedUser = _aggregate.ListSignees.FirstOrDefault(x => x.Email == email)
             ?? throw new KeyNotFoundException($"Email {email} is not a signee");
-        if (signedUser.IsSigned)
+        if (signedUser.SignState == SignStateEnum.Signed)
             throw new ArgumentException("User has already signed");
-        signedUser.IsSigned = true;
+        signedUser.SignState = SignStateEnum.Signed;
         signedUser.SignedDate = _tglJamDal.Now;
         return this;
+    }
+
+    public IDocBuilder RejectSign(string email)
+    {
+        var rejectedUser = _aggregate.ListSignees.FirstOrDefault(x => x.Email == email)
+            ?? throw new KeyNotFoundException($"Email {email} is not a signee");
+        rejectedUser.SignState = SignStateEnum.Rejected;
+        rejectedUser.SignedDate = _tglJamDal.Now;
+        return this;
+        
     }
 
     public IDocBuilder UploadedDocUrl(string uploadedDocUrl)

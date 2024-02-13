@@ -38,7 +38,7 @@ public record GetDocResponseSignee(
     string SignTag,
     string SignPosition,
     int Level,
-    bool IsSigned,
+    string SignState,
     string SignedDate);
 
 public class GetDocQueryHandler : IRequestHandler<GetDocQuery, GetDocResponse>
@@ -81,7 +81,7 @@ public class GetDocQueryHandler : IRequestHandler<GetDocQuery, GetDocResponse>
                 x.SignTag,
                 x.SignPosition.ToString(),
                 x.Level,
-                x.IsSigned,
+                x.SignState.ToString(),
                 x.SignedDate.ToString("yyyy-MM-dd")
             )).ToList(),
             doc.ListJurnal.Select(x => new GetDocResponseJurnal(

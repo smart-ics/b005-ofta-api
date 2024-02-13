@@ -8,6 +8,13 @@ public class DocSigneeModel : IDocKey
     public string SignTag { get; set; }
     public SignPositionEnum SignPosition { get; set; }
     public int Level { get; set; }  
-    public bool IsSigned { get; set; }
+    public SignStateEnum SignState { get; set; }
     public DateTime SignedDate { get; set; }
+}
+
+public enum SignStateEnum
+{
+    NotSigned = 0,
+    Signed = 1,
+    Rejected = 2
 }
