@@ -29,6 +29,7 @@ public class BlueprintDocTypeDal : IBlueprintDocTypeDal
         bcp.AddMap("BlueprintDocTypeId", "BlueprintDocTypeId");
         bcp.AddMap("NoUrut", "NoUrut");
         bcp.AddMap("DocTypeId", "DocTypeId");
+        
 
         var fetched = listModel.ToList();   
         bcp.BatchSize = fetched.Count;

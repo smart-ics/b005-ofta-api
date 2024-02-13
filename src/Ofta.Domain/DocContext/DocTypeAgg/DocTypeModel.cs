@@ -2,6 +2,11 @@
 
 public class DocTypeModel : IDocTypeKey
 {
+    public DocTypeModel()
+    {
+    }
+
+    public DocTypeModel(string id) => DocTypeId = id;
     public string DocTypeId { get; set; }
     public string DocTypeName { get; set; }
     public bool IsStandard { get; set; }

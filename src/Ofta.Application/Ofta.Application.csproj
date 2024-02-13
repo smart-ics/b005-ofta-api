@@ -28,8 +28,6 @@
   <ItemGroup>
     <Folder Include="DocContext\BundleAgg\UseCases\" />
     <Folder Include="DocContext\BundleAgg\Workers\" />
-    <Folder Include="DocContext\BlueprintAgg\UseCases\" />
-    <Folder Include="DocContext\BlueprintAgg\Workers\" />
   </ItemGroup>
 
 </Project>
