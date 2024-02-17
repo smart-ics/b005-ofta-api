@@ -1,6 +1,6 @@
 ﻿using FluentValidation.TestHelper;
-using Ofta.Application.DocContext.BlueprintAgg.Workers;
-using Ofta.Domain.DocContext.BlueprintAgg;
+using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Workers;
+using Ofta.Domain.KlaimBpjsContext.BlueprintAgg;
 
 namespace Ofta.Test.Application.DocContext.BlueprintAgg;
 

@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="KlaimBpjsContext\" />
     <Folder Include="UserContext\UserUsmanAgg\" />
   </ItemGroup>
 

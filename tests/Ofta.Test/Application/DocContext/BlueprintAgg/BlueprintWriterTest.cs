@@ -2,9 +2,9 @@
 using FluentValidation.Results;
 using Moq;
 using Nuna.Lib.AutoNumberHelper;
-using Ofta.Application.DocContext.BlueprintAgg.Contracts;
-using Ofta.Application.DocContext.BlueprintAgg.Workers;
-using Ofta.Domain.DocContext.BlueprintAgg;
+using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Contracts;
+using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Workers;
+using Ofta.Domain.KlaimBpjsContext.BlueprintAgg;
 
 namespace Ofta.Test.Application.DocContext.BlueprintAgg;
 

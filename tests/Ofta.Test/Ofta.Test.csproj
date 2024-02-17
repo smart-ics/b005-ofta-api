@@ -34,4 +34,8 @@
     <ProjectReference Include="..\..\src\Ofta.Infrastructure\Ofta.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\DocContext\" />
+  </ItemGroup>
+
 </Project>
