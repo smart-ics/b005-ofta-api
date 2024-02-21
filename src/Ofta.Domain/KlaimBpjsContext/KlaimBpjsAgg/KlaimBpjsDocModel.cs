@@ -3,7 +3,7 @@
 public class KlaimBpjsDocModel : IKlaimBpjsKey
 {
     public string KlaimBpjsId { get; set; }
-    public string KlaimBpjsId2 { get; set; }
+    public string KlaimBpjsDocId { get; set; }
     public int NoUrut { get; set; }
 
     public string DocTypeId { get; set; }
@@ -11,5 +11,4 @@ public class KlaimBpjsDocModel : IKlaimBpjsKey
     
     public string DocId { get; set; }
     public string DocUrl { get; set; }
-    
 }
