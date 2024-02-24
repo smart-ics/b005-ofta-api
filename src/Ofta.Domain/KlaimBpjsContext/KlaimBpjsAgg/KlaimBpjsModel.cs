@@ -2,7 +2,7 @@
 
 namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
-public abstract class KlaimBpjsModel : IKlaimBpjsKey
+public class KlaimBpjsModel : IKlaimBpjsKey
 {
     public string KlaimBpjsId { get; set; }
     public DateTime KlaimBpjsDate { get; set; }

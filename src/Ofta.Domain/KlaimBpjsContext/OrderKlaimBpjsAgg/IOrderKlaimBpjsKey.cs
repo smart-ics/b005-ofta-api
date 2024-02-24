@@ -2,5 +2,5 @@
 
 public interface IOrderKlaimBpjsKey
 {
-    string OrderKlaimBpjsId { get; set; }
+    string OrderKlaimBpjsId { get; }
 }

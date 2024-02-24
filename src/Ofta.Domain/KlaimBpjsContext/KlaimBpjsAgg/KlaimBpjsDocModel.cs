@@ -11,4 +11,6 @@ public class KlaimBpjsDocModel : IKlaimBpjsKey
     
     public string DocId { get; set; }
     public string DocUrl { get; set; }
+    
+    public List<KlaimBpjsSigneeModel> ListSign { get; set; }
 }
