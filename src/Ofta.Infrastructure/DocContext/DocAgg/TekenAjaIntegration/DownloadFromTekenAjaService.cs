@@ -1,7 +1,7 @@
-﻿using Ofta.Application.DocContext.DocAgg.Contracts;
-using System.Net;
+﻿using System.Net;
+using Ofta.Application.DocContext.DocAgg.Contracts;
 
-namespace Ofta.Infrastructure.DocContext.DocAgg;
+namespace Ofta.Infrastructure.DocContext.DocAgg.TekenAjaIntegration;
 
 public class DownloadFromTekenAjaService : IDownloadPublishedDocFromProviderService
 {

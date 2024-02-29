@@ -1,10 +1,8 @@
 ﻿using Dawn;
-using Mapster;
 using MediatR;
-using Ofta.Application.DocContext.DocAgg.UseCases;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 

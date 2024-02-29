@@ -5,11 +5,11 @@ using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
 using Ofta.Application.Helpers;
 using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
-using Ofta.Application.UserContext.Contracts;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.ParamContext.SystemAgg;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.Workers;
 
