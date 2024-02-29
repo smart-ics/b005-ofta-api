@@ -61,6 +61,7 @@
     <Folder Include="Tables\DocContext\" />
     <Folder Include="Tables\ParamContext\" />
     <Folder Include="Tables\UserContext\" />
+    <Folder Include="DataSeed\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Database\CreateUserLogin.sql" />

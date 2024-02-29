@@ -148,3 +148,22 @@ sequenceDiagram
     OFTA -->> gugun: 21.2 Dowload Surat Selesai Rawat
 ```
 
+```mermaid
+sequenceDiagram
+    title Skenario : Tidak Upload Tekenaja
+    actor PETUGAS
+    participant OFTA
+    participant REMOTE CETAK
+    participant TEKEN AJA
+    autonumber
+
+    PETUGAS ->> OFTA : Request Template Surat
+    OFTA -->> PETUGAS: Template Surat
+    loop
+    PETUGAS ->> PETUGAS : Compose Surat
+    end
+    PETUGAS ->> OFTA: Submit Surat
+    OFTA ->>REMOTE CETAK : Request Cetak Surat
+    PETUGAS ->> OFTA : Download Surat
+
+```
