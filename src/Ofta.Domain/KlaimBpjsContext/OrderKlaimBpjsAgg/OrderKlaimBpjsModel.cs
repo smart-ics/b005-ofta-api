@@ -1,9 +1,12 @@
-﻿namespace Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
+﻿using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class OrderKlaimBpjsModel : IOrderKlaimBpjsKey, IRegPasien
+namespace Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
+
+public class OrderKlaimBpjsModel : IOrderKlaimBpjsKey, IRegPasien, IKlaimBpjsKey
 {
     public string OrderKlaimBpjsId { get; set; }
     public DateTime OrderKlaimBpjsDate { get; set; }
+    public string KlaimBpjsId { get; set; }
     public string  UserOftaId { get; set; }
     public string RegId { get; set; }
     public string PasienId { get; set; }

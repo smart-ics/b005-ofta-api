@@ -1,0 +1,4 @@
+﻿INSERT INTO OFTA_Blueprint
+SELECT 'BPX01', 'Klaim BPJS'
+GO
+

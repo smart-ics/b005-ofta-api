@@ -5,11 +5,13 @@ using Ofta.Application.DocContext.DocTypeAgg.Contracts;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Workers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
+using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.BlueprintAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
+using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
@@ -20,6 +22,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder Load(IKlaimBpjsKey klaimBpjsKey);
     IKlaimBpjsBuilder Attach(KlaimBpjsModel klaimBpjs);
     IKlaimBpjsBuilder UserOfta(IUserOftaKey userOftaKey);
+    IKlaimBpjsBuilder OrderKlaimBpjs(IOrderKlaimBpjsKey orderKlaimBpjsKey);
     IKlaimBpjsBuilder GenListBlueprint();
     IKlaimBpjsBuilder AttachDoc(IDocTypeKey docTypeKey, IDocKey docKey);
     IKlaimBpjsBuilder DetachDoc(IDocKey docKey);
@@ -40,6 +43,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
     private readonly IBlueprintBuilder _blueprintBuilder;
     private readonly IDocBuilder _docBuilder;
     private readonly IDocTypeDal _docTypeDal;
+    private readonly IOrderKlaimBpjsBuilder _orderKlaimBpjsBuilder;
     
     private readonly  ITglJamDal _tglJamDal;
     private KlaimBpjsModel _agg = new KlaimBpjsModel();
@@ -51,7 +55,8 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         IUserOftaDal userOftaDal, 
         IBlueprintBuilder blueprintBuilder, 
         IDocBuilder docBuilder, 
-        IDocTypeDal docTypeDal)
+        IDocTypeDal docTypeDal, 
+        IOrderKlaimBpjsBuilder orderKlaimBpjsBuilder)
     {
         _klaimBpjsDal = klaimBpjsDal;
         _klaimBpjsDocDal = klaimBpjsDocDal;
@@ -61,6 +66,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         _blueprintBuilder = blueprintBuilder;
         _docBuilder = docBuilder;
         _docTypeDal = docTypeDal;
+        _orderKlaimBpjsBuilder = orderKlaimBpjsBuilder;
     }
 
     public KlaimBpjsModel Build()
@@ -122,14 +128,26 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
+    public IKlaimBpjsBuilder OrderKlaimBpjs(IOrderKlaimBpjsKey orderKlaimBpjsKey)
+    {
+        var order = _orderKlaimBpjsBuilder.Load(orderKlaimBpjsKey).Build();
+        _agg.OrderKlaimBpjsId = order.OrderKlaimBpjsId;
+        _agg.RegId = order.RegId;
+        _agg.PasienId = order.PasienId;
+        _agg.PasienName = order.PasienName;
+        _agg.DokterName = order.DokterName;
+        _agg.LayananName = order.LayananName;
+        return this;
+    }
+
     public IKlaimBpjsBuilder GenListBlueprint()
     {
-        var blueprintBpjs = new BlueprintModel { BlueprintId = "KBPJS" };
+        var blueprintBpjs = new BlueprintModel { BlueprintId = "BPX01" };
         var blueprint = _blueprintBuilder.Load(blueprintBpjs).Build();
         _agg.ListDoc = blueprint.ListDocType.Select(c => new KlaimBpjsDocModel
         {
-            KlaimBpjsId = _agg.KlaimBpjsId,
-            KlaimBpjsDocId = Guid.NewGuid().ToString(),
+            KlaimBpjsId = string.Empty,
+            KlaimBpjsDocId = string.Empty,
             NoUrut = c.NoUrut,
             DocTypeId = c.DocTypeId,
             DocTypeName = c.DocTypeName,

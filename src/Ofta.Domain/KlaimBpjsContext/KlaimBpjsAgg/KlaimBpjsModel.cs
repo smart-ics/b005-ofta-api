@@ -2,10 +2,11 @@
 
 namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class KlaimBpjsModel : IKlaimBpjsKey
+public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey
 {
     public string KlaimBpjsId { get; set; }
     public DateTime KlaimBpjsDate { get; set; }
+    public string OrderKlaimBpjsId { get; set; }
     public string UserOftaId { get; set; }
     public KlaimBpjsStateEnum BundleState { get; set; }
     public string RegId { get; set; }

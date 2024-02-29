@@ -23,17 +23,18 @@ public class OrderKlaimBpjsDal : IOrderKlaimBpjsDal
     {
         const string sql = @"
             INSERT INTO OFTA_OrderKlaimBpjs (
-                OrderKlaimBpjsId, OrderKlaimBpjsDate, UserOftaId, RegId,
-                PasienId, PasienName, NoSep,
+                OrderKlaimBpjsId, OrderKlaimBpjsDate, KlaimBpjsId, 
+                UserOftaId, RegId, PasienId, PasienName, NoSep,
                 LayananName, DokterName, RajalRanap)
             VALUES(
-                @OrderKlaimBpjsId, @OrderKlaimBpjsDate, @UserOftaId, @RegId,
-                @PasienId, @PasienName, @NoSep,
+                @OrderKlaimBpjsId, @OrderKlaimBpjsDate, @KlaimBpjsId, 
+                @UserOftaId, @RegId, @PasienId, @PasienName, @NoSep,
                 @LayananName, @DokterName, @RajalRanap)";
         
         var dp = new DynamicParameters();
         dp.AddParam("@OrderKlaimBpjsId", model.OrderKlaimBpjsId, SqlDbType.VarChar);
         dp.AddParam("@OrderKlaimBpjsDate", model.OrderKlaimBpjsDate, SqlDbType.DateTime);
+        dp.AddParam("@KlaimBpjsId", model.KlaimBpjsId, SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@RegId", model.RegId, SqlDbType.VarChar);
         dp.AddParam("@PasienId", model.PasienId, SqlDbType.VarChar);
@@ -54,6 +55,7 @@ public class OrderKlaimBpjsDal : IOrderKlaimBpjsDal
                 OFTA_OrderKlaimBpjs
             SET
                 OrderKlaimBpjsDate = @OrderKlaimBpjsDate,
+                KlaimBpjsId = @KlaimBpjsId,
                 UserOftaId = @UserOftaId,
                 RegId = @RegId,
                 PasienId = @PasienId,
@@ -68,6 +70,7 @@ public class OrderKlaimBpjsDal : IOrderKlaimBpjsDal
         var dp = new DynamicParameters();
         dp.AddParam("@OrderKlaimBpjsId", model.OrderKlaimBpjsId, SqlDbType.VarChar);
         dp.AddParam("@OrderKlaimBpjsDate", model.OrderKlaimBpjsDate, SqlDbType.DateTime);
+        dp.AddParam("@KlaimBpjsId", model.KlaimBpjsId, SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@RegId", model.RegId, SqlDbType.VarChar);
         dp.AddParam("@PasienId", model.PasienId, SqlDbType.VarChar);
@@ -100,9 +103,9 @@ public class OrderKlaimBpjsDal : IOrderKlaimBpjsDal
     {
         const string sql = @"
             SELECT 
-                OrderKlaimBpjsId, OrderKlaimBpjsDate, UserOftaId, 
-                RegId,  PasienId, PasienName, NoSep, LayananName, 
-                DokterName, RajalRanap 
+                OrderKlaimBpjsId, OrderKlaimBpjsDate, KlaimBpjsId, 
+                UserOftaId, RegId,  PasienId, PasienName, 
+                NoSep, LayananName, DokterName, RajalRanap 
             FROM 
                 OFTA_OrderKlaimBpjs 
             WHERE 
@@ -119,9 +122,9 @@ public class OrderKlaimBpjsDal : IOrderKlaimBpjsDal
     {
         const string sql = @"
             SELECT 
-                OrderKlaimBpjsId, OrderKlaimBpjsDate, UserOftaId, 
-                RegId,  PasienId, PasienName, NoSep, LayananName, 
-                DokterName, RajalRanap 
+                OrderKlaimBpjsId, OrderKlaimBpjsDate, KlaimBpjsId, 
+                UserOftaId, RegId,  PasienId, PasienName, 
+                NoSep, LayananName, DokterName, RajalRanap 
             FROM 
                 OFTA_OrderKlaimBpjs 
             WHERE 

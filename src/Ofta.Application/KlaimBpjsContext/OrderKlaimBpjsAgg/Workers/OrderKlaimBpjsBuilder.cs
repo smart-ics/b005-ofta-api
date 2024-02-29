@@ -3,6 +3,7 @@ using Nuna.Lib.ValidationHelper;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
@@ -18,6 +19,7 @@ public interface IOrderKlaimBpjsBuilder : INunaBuilder<OrderKlaimBpjsModel>
     IOrderKlaimBpjsBuilder Dokter(string dokterName);
     IOrderKlaimBpjsBuilder RajalRanap(RajalRanapEnum rajalRanap);
     IOrderKlaimBpjsBuilder User(IUserOftaKey userOftaKey);
+    IOrderKlaimBpjsBuilder KlaimBpjs(IKlaimBpjsKey klaimBpjsKey);
 
 }
 public class OrderKlaimBpjsBuilder : IOrderKlaimBpjsBuilder
@@ -97,6 +99,12 @@ public class OrderKlaimBpjsBuilder : IOrderKlaimBpjsBuilder
         var user = _userOftaDal.GetData(userOftaKey)
             ?? throw new KeyNotFoundException($"UserOftaKey {userOftaKey} not found");
         _agg.UserOftaId = user.UserOftaId;
+        return this;
+    }
+
+    public IOrderKlaimBpjsBuilder KlaimBpjs(IKlaimBpjsKey klaimBpjsKey)
+    {
+        _agg.KlaimBpjsId = klaimBpjsKey.KlaimBpjsId;
         return this;
     }
 }
