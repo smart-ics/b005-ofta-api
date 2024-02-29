@@ -1,0 +1,6 @@
+﻿CREATE TABLE OFTA_DocTypeFileUrl(
+    DocTypeId VARCHAR(5) NOT NULL CONSTRAINT DF_OFTA_DocTypeFileUrl_DocTypeId DEFAULT(''),
+    FileUrl VARCHAR(255) NOT NULL CONSTRAINT DF_OFTA_DocTypeFileUrl_FileUrl DEFAULT(''),
+    
+    CONSTRAINT PK_OFTA_DocTypeFileUrl PRIMARY KEY (DocTypeId),
+)

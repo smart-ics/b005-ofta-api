@@ -15,18 +15,21 @@ public class DocTypeWriter : IDocTypeWriter
 {
     private readonly IDocTypeDal _docTypeDal;
     private readonly IDocTypeTagDal _docTypeTagDal;
+    private readonly IDocTypeFileUrlDal _docTypeFileUrlDal;
     private readonly IValidator<DocTypeModel> _validator;
     private readonly INunaCounterBL _counter;
 
     public DocTypeWriter(IDocTypeDal docTypeDal, 
         IDocTypeTagDal docTypeTagDal, 
         IValidator<DocTypeModel> validator, 
-        INunaCounterBL counter)
+        INunaCounterBL counter, 
+        IDocTypeFileUrlDal docTypeFileUrlDal)
     {
         _docTypeDal = docTypeDal;
         _docTypeTagDal = docTypeTagDal;
         _validator = validator;
         _counter = counter;
+        _docTypeFileUrlDal = docTypeFileUrlDal;
     }
 
     public DocTypeModel Save(DocTypeModel model)
@@ -49,6 +52,9 @@ public class DocTypeWriter : IDocTypeWriter
         else
             _docTypeDal.Update(model);
 
+        _docTypeFileUrlDal.Delete(model);
+        _docTypeFileUrlDal.Insert(model);
+        
         _docTypeTagDal.Delete(model);
         _docTypeTagDal.Insert(model.ListTag);
 

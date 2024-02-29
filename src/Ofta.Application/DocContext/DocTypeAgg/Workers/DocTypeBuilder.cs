@@ -13,19 +13,23 @@ public interface IDocTypeBuilder : INunaBuilder<DocTypeModel>
     IDocTypeBuilder IsActive(bool isActive);
     IDocTypeBuilder AddTag(string tag);
     IDocTypeBuilder RemoveTag(string tag);
+    IDocTypeBuilder FileUrl(string fileUrl);
 }
 
 public class DocTypeBuilder : IDocTypeBuilder
 {
     private DocTypeModel _aggregate = new();
     private readonly IDocTypeDal _docTypeDal;
+    private readonly IDocTypeFileUrlDal _docTypeFileUrlDal;
     private readonly IDocTypeTagDal _docTypeTagDal;
 
     public DocTypeBuilder(IDocTypeDal docTypeDal, 
-        IDocTypeTagDal docTypeTagDal)
+        IDocTypeTagDal docTypeTagDal, 
+        IDocTypeFileUrlDal docTypeFileUrlDal)
     {
         _docTypeDal = docTypeDal;
         _docTypeTagDal = docTypeTagDal;
+        _docTypeFileUrlDal = docTypeFileUrlDal;
     }
 
     public DocTypeModel Build()
@@ -49,6 +53,12 @@ public class DocTypeBuilder : IDocTypeBuilder
                      ?? throw new KeyNotFoundException("DocType not found");
         _aggregate.ListTag = _docTypeTagDal.ListData(key)?.ToList()
                              ?? new List<DocTypeTagModel>();
+
+        _aggregate.FileUrl = string.Empty;
+        var docFileUrs = _docTypeFileUrlDal.GetData(key);
+        if (docFileUrs != null)
+            _aggregate.FileUrl = docFileUrs.FileUrl;
+        
         return this;
     }
 
@@ -83,6 +93,12 @@ public class DocTypeBuilder : IDocTypeBuilder
     {
         tag = tag.ToLower();
         _aggregate.ListTag.RemoveAll(x => x.Tag == tag);
+        return this;
+    }
+
+    public IDocTypeBuilder FileUrl(string fileUrl)
+    {
+        _aggregate.FileUrl = fileUrl;
         return this;
     }
 }

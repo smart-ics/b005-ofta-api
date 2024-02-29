@@ -5,16 +5,16 @@ using Ofta.Domain.DocContext.DocTypeAgg;
 
 namespace Ofta.Application.DocContext.DocTypeAgg.UseCases;
 
-public record TemplateDocTypeCommand(string DocTypeId, string TemplateUrl)
+public record FileUrlDocTypeCommand(string DocTypeId, string FileUrl)
     : IRequest, IDocTypeKey;
 
-public class TemplateDocTypeHandler : IRequestHandler<TemplateDocTypeCommand>
+public class FileUrlDocTypeHandler : IRequestHandler<FileUrlDocTypeCommand>
 {
     private DocTypeModel _aggregate = new();
     private readonly IDocTypeBuilder _builder;
     private readonly IDocTypeWriter _writer;
 
-    public TemplateDocTypeHandler(IDocTypeBuilder builder, 
+    public FileUrlDocTypeHandler(IDocTypeBuilder builder, 
         IDocTypeWriter writer)
     {
         _builder = builder;
@@ -22,16 +22,17 @@ public class TemplateDocTypeHandler : IRequestHandler<TemplateDocTypeCommand>
     }
 
 
-    public Task<Unit> Handle(TemplateDocTypeCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(FileUrlDocTypeCommand request, CancellationToken cancellationToken)
     {
         //  GUARD
         Guard.Argument(() => request).NotNull()
             .Member(x => x.DocTypeId, y => y.NotEmpty())
-            .Member(x => x.TemplateUrl, y => y.NotEmpty());
+            .Member(x => x.FileUrl, y => y.NotEmpty());
         
         //  BUILDER
         _aggregate = _builder
             .Load(request)
+            .FileUrl(request.FileUrl)
             .Build();
         
         //  WRITE
