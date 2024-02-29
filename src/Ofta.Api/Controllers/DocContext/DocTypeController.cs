@@ -24,8 +24,8 @@ public class DocTypeController : Controller
         return Ok(new JSendOk(result));
     }
     
-    [HttpPut("template")]
-    public async Task<IActionResult> TemplateDocType(TemplateDocTypeCommand cmd)
+    [HttpPut("fileUrl")]
+    public async Task<IActionResult> FileUrlDocType(FileUrlDocTypeCommand cmd)
     {
         await _mediator.Send(cmd);
         return Ok();
@@ -57,10 +57,16 @@ public class DocTypeController : Controller
         await _mediator.Send(cmd);
         return Ok();
     }
-    [HttpGet("{tag}")]
+    [HttpGet("{tag}/list")]
     public async Task<IActionResult> ListDocType(string tag)
     {
         var result = await _mediator.Send(new ListDocTypeQuery(tag));
+        return Ok(new JSendOk(result));
+    }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetDocType(string id)
+    {
+        var result = await _mediator.Send(new GetDocTypeQuery(id));
         return Ok(new JSendOk(result));
     }
 }
