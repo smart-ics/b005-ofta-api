@@ -17,11 +17,17 @@ public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey
     public string DokterName { get; set; }
     public RajalRanapEnum RajalRanap { get; set; }
     public List<KlaimBpjsDocModel> ListDoc { get; set; }
+    public List<KlaimBpjsJurnalModel> ListJurnal { get; set; }
 }
 
 public enum KlaimBpjsStateEnum
 {
-    Created = 0,
-    Prepared = 1,
-    Published = 2
+    Created,    //    pertama kali dibuat
+    Listed,     //    list dokumen disesuaikan kebuutuhan
+    Sorted,     //    list dokumen sudah disortir/pilah
+    Printed,    //    dokumen ter-print semua
+    Signing,    //    dokumen sedang di-ttd
+    Signed,     //    dokumen sudah ada yg ttd (tapi belum semua)
+    Merged,     //    dokumen sudah di-merge
+    Downloaded, //    dokumen sudah di-merge  
 }
