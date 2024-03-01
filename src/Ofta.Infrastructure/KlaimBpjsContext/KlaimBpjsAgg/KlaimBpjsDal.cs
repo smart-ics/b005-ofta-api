@@ -36,7 +36,7 @@ public class KlaimBpjsDal : IKlaimBpjsDal
         dp.AddParam("@KlaimBpjsDate", model.KlaimBpjsDate, SqlDbType.DateTime);
         dp.AddParam("@OrderKlaimBpjsId", model.OrderKlaimBpjsId, SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
-        dp.AddParam("@BundleState", model.BundleState, SqlDbType.Int);
+        dp.AddParam("@BundleState", model.KlaimBpjsState, SqlDbType.Int);
         dp.AddParam("@RegId", model.RegId, SqlDbType.VarChar);
         dp.AddParam("@PasienId", model.PasienId, SqlDbType.VarChar);
         dp.AddParam("@PasienName", model.PasienName, SqlDbType.VarChar);
@@ -74,7 +74,7 @@ public class KlaimBpjsDal : IKlaimBpjsDal
         dp.AddParam("@KlaimBpjsDate", model.KlaimBpjsDate, SqlDbType.DateTime);
         dp.AddParam("@OrderKlaimBpjsId", model.OrderKlaimBpjsId, SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
-        dp.AddParam("@BundleState", model.BundleState, SqlDbType.Int);
+        dp.AddParam("@BundleState", model.KlaimBpjsState, SqlDbType.Int);
         dp.AddParam("@RegId", model.RegId, SqlDbType.VarChar);
         dp.AddParam("@PasienId", model.PasienId, SqlDbType.VarChar);
         dp.AddParam("@PasienName", model.PasienName, SqlDbType.VarChar);

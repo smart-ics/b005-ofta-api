@@ -40,7 +40,7 @@ public class SignDocHandler : IRequestHandler<SignDocCommand>
         var aggregate = _builder
             .Load(doc)
             .Sign(request.Email)
-            .DocState(DocStateEnum.Signed, request.Email)
+            .AddJurnal(DocStateEnum.Signed, request.Email)
             .Build();
         
         //  WRITE

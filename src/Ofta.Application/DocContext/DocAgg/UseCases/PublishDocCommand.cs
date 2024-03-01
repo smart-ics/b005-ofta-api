@@ -49,7 +49,7 @@ public class PublishDocHandler : IRequestHandler<PublishDocCommand>
         
         aggregate = _builder
             .Attach(aggregate)
-            .DocState(DocStateEnum.Published, string.Empty)
+            .AddJurnal(DocStateEnum.Published, string.Empty)
             .Build();
         
         //  WRITE

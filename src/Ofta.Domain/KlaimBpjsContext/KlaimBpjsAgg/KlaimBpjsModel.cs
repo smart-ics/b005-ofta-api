@@ -8,7 +8,7 @@ public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey
     public DateTime KlaimBpjsDate { get; set; }
     public string OrderKlaimBpjsId { get; set; }
     public string UserOftaId { get; set; }
-    public KlaimBpjsStateEnum BundleState { get; set; }
+    public KlaimBpjsStateEnum KlaimBpjsState { get; set; }
     public string RegId { get; set; }
     public string PasienId { get; set; }
     public string PasienName { get; set; }

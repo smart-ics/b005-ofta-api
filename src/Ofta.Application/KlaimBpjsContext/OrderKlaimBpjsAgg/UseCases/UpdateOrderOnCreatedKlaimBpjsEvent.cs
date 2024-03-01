@@ -1,7 +1,8 @@
 ﻿using MediatR;
+using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Workers;
 
-namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
+namespace Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.UseCases;
 
 public class UpdateOrderOnCreatedKlaimBpjsEvent : INotificationHandler<CreatedKlaimBpjsEvent>
 {
