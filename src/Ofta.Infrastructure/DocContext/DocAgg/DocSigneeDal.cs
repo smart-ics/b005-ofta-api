@@ -30,7 +30,7 @@ public class DocSigneeDal : IDocSigneeDal
         bcp.AddMap("SignTag", "SignTag");
         bcp.AddMap("SignPosition", "SignPosition");
         bcp.AddMap("Level", "Level");
-        bcp.AddMap("SignState", "IsSigned");
+        bcp.AddMap("SignState", "SignState");
         bcp.AddMap("SignedDate", "SignedDate");
 
         var fetched = listModel.ToList();
@@ -60,7 +60,7 @@ public class DocSigneeDal : IDocSigneeDal
         const string sql = @"
             SELECT
                 DocId, UserOftaId, Email, SignTag, 
-                SignPosition, Level, IsSigned, SignedDate
+                SignPosition, Level, SignState, SignedDate
             FROM
                 OFTA_DocSignee
             WHERE
