@@ -30,7 +30,7 @@ public class DocSigneeDal : IDocSigneeDal
         bcp.AddMap("SignTag", "SignTag");
         bcp.AddMap("SignPosition", "SignPosition");
         bcp.AddMap("Level", "Level");
-        bcp.AddMap("IsSigned", "IsSigned");
+        bcp.AddMap("SignState", "IsSigned");
         bcp.AddMap("SignedDate", "SignedDate");
 
         var fetched = listModel.ToList();
