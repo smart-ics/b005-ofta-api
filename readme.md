@@ -138,18 +138,6 @@ sequenceDiagram
     note over REMOTE_CETAK, FO/EMR: EVENT-F
     layanan ->> FO/EMR : Create IncompleteDoc
     FO/EMR -->> REMOTE_CETAK: Print Doc
-```
-
-```mermaid
-sequenceDiagram
-    title BUNDLING DOCUMENT BPJS Revisi-3, Part-2
-    actor kasir
-    participant OFTA
-    actor casemix
-    participant REMOTE_CETAK
-    actor layanan 
-    participant FO/EMR
-    autonumber 12
 
     note over OFTA, REMOTE_CETAK: EVENT-G
     loop Loop Until All IncompleteDoc Printed
