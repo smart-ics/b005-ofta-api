@@ -107,45 +107,61 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    title SKENARIO-4: Bundling Document By Catalog
-
-    participant gugun
+    title BUNDLING DOCUMENT BPJS Revisi-3, Part-1
+    actor kasir
     participant OFTA
-    participant REMOTECETAK
-    participant TEKENAJA
-    participant hanum
-    participant indah
+    actor casemix
+    participant REMOTE_CETAK
+    actor layanan
+    participant FO/EMR
+    autonumber 1
 
-    Note right of gugun: gugun: petugas klaim bpjs
-    Note right of hanum: hanum: dokter lab
-    Note right of indah: indah: dokter dpjp
+    note over kasir, casemix: EVENT-A [Done]
+    kasir ->> OFTA: Order KlaimBpjs 
+    OFTA -->> casemix: List Order KlaimBpjs 
 
-    OFTA ->> gugun : 1. Request Catalog Klaim BPJS
-    gugun ->> gugun: 2. Input Catalog Header (Data Pasien)
-    OFTA -->> gugun: 3. Download List Document Required by Catalog
+    note over OFTA, casemix: EVENT-B [Done]
+    casemix ->> OFTA: Create KlaimBpjs
+    OFTA -->> casemix: List DocType
+
+    note over casemix: EVENT-C [Done]
+    casemix ->> casemix: Sorting ListedDoc
+    
+    note over casemix, REMOTE_CETAK: EVENT-D
+    casemix ->> REMOTE_CETAK: Print SortedDoc
+    REMOTE_CETAK -->> casemix : PrintedDoc
+
+    note over OFTA, layanan: EVENT-E
+    casemix ->> OFTA: Order Create IncompleteDoc 
+    OFTA -->> layanan: Notif Create IncompleteDoc
+    
+    note over REMOTE_CETAK, FO/EMR: EVENT-F
+    layanan ->> FO/EMR : Create IncompleteDoc
+    FO/EMR -->> REMOTE_CETAK: Print Doc
+
+    note over OFTA, REMOTE_CETAK: EVENT-G
+    loop Loop Until All IncompleteDoc Printed
+        OFTA ->> REMOTE_CETAK : Cek Print IncompleteDoc
+    end
+    
+    note over OFTA, casemix: EVENT-H
+    OFTA ->> casemix : Notif Doc Completed
+
+    note over OFTA, layanan: EVENT-J
+    casemix ->> OFTA: Order Sign PrintedDoc
+    OFTA -->> layanan: Notif Sign PrintedDoc
 
 
-    gugun ->> REMOTECETAK: 4. Print Unlisted Document: Hasil Lab
-    REMOTECETAK -->> OFTA: 5. Submit Hasil Lab
-    OFTA -->> TEKENAJA: 6. Upload Hasil Lab
-    TEKENAJA -->> hanum: 7. Notif Sign
-    hanum ->> TEKENAJA: 8. Sign HasilLab
-    TEKENAJA -->> OFTA : 9. CallBack HasilLab has been signed
-    OFTA -->> gugun: 10. Notif HasilLab has been signed
-    OFTA ->> gugun: 11. Dowload HasilLab
+    note over OFTA, layanan: EVENT-K
+    loop Loop Until All PrintedDoc Signed
+        layanan ->> OFTA: Sign PrintedDoc
+    end
 
+    note over OFTA, casemix: EVENT-L
+    OFTA ->> casemix: Sign PrintedDoc Completed
 
-    gugun ->> OFTA: 13.1 Request Template Surat Selesai Rawat
-    OFTA -->> gugun: 13.2 Download Template Surat Selesai Rawat
-    gugun ->> gugun: 14. Lengkapi Template Surat Selesai Rawat
-    gugun ->> OFTA: 15. Submit Surat Selesai Rawat
-    OFTA -->> TEKENAJA: 16. Upload Document
-    TEKENAJA -->> indah: 17. Notif Sign Document
-    indah ->> TEKENAJA: 18. Sign Document
-    TEKENAJA -->> OFTA: 19. CallBack Surat Selesai Rawat has been signed
-    OFTA -->> gugun: 20. Notif Surat Selesai Rawat has been signed
-    gugun ->> OFTA: 21.1 Request Download Surat Selesai Rawat
-    OFTA -->> gugun: 21.2 Dowload Surat Selesai Rawat
+    note over OFTA, casemix: EVENT-M
+    casemix ->> OFTA: Merge Document
 ```
 
 ```mermaid

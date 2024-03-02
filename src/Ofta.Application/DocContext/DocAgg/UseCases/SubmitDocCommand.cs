@@ -42,7 +42,7 @@ public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocRespo
         aggregate = _builder
             .Attach(aggregate)
             .GenRequestedDocUrl()
-            .DocState(DocStateEnum.Submited, string.Empty)
+            .AddJurnal(DocStateEnum.Submited, string.Empty)
             .Build();
         var writeFileRequest = new WriteFileRequest(aggregate.RequestedDocUrl, request.ContentBase64);
         

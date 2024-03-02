@@ -57,25 +57,32 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Database\" />
-    <Folder Include="Tables\" />
-    <Folder Include="Tables\DocContext\" />
     <Folder Include="Tables\ParamContext\" />
     <Folder Include="Tables\UserContext\" />
     <Folder Include="DataSeed\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Database\CreateUserLogin.sql" />
+    <Build Include="DataSeed\OFTA_Blueprint.sql" />
+    <Build Include="DataSeed\OFTA_BlueprintDocType.sql" />
     <Build Include="DataSeed\OFTA_DocTypeDataSeed.sql" />
-    <Build Include="Tables\DocContext\OFTA_Blueprint.sql" />
-    <Build Include="Tables\DocContext\OFTA_BlueprintDocType.sql" />
-    <Build Include="Tables\DocContext\OFTA_BlueprintSignee.sql" />
     <Build Include="Tables\DocContext\OFTA_Doc.sql" />
     <Build Include="Tables\DocContext\OFTA_DocJurnal.sql" />
     <Build Include="Tables\DocContext\OFTA_DocSignee.sql" />
     <Build Include="Tables\DocContext\OFTA_DocType.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeTag.sql" />
+    <Build Include="Tables\DocContext\OFTA_DocTypeUrl.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_Blueprint.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_BlueprintDocType.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_BlueprintSignee.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjs.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsDoc.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsSignee.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_OrderKlaimBpjs.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamNo.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamSistem.sql" />
+    <Build Include="Tables\UserContext\OFTA_Team.sql" />
+    <Build Include="Tables\UserContext\OFTA_TeamUserOfta.sql" />
     <Build Include="Tables\UserContext\OFTA_User.sql" />
   </ItemGroup>
 </Project>

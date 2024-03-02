@@ -1,14 +1,13 @@
 ﻿using FluentAssertions;
 using Moq;
-using Ofta.Application.DocContext.BlueprintAgg.Contracts;
-using Ofta.Application.DocContext.BlueprintAgg.Workers;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
-using Ofta.Application.UserContext.Contracts;
-using Ofta.Domain.DocContext.BlueprintAgg;
-using Ofta.Domain.DocContext.BundleSpecAgg;
+using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Contracts;
+using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Workers;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
-using Ofta.Domain.UserOftaContext;
+using Ofta.Domain.KlaimBpjsContext.BlueprintAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Test.Application.DocContext.BlueprintAgg;
 

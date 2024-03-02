@@ -13,6 +13,7 @@
     <PackageReference Include="MediatR.Contracts" Version="1.0.1" />
     <PackageReference Include="Nuna.Lib.NetStandard" Version="1.0.110" />
     <PackageReference Include="Nuna.Usman.Lib.NetStandard" Version="1.2.15" />
+    <PackageReference Include="Polly" Version="8.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,9 @@
   <ItemGroup>
     <Folder Include="DocContext\BundleAgg\UseCases\" />
     <Folder Include="DocContext\BundleAgg\Workers\" />
+    <Folder Include="UserContext\TeamAgg\UseCases\" />
+    <Folder Include="UserContext\TeamAgg\Workers\" />
+    <Folder Include="UserContext\UserOftaAgg\" />
   </ItemGroup>
 
 </Project>

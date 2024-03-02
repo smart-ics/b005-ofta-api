@@ -1,11 +1,11 @@
 ﻿using Nuna.Lib.DataAccessHelper;
-using Ofta.Domain.DocContext.BundleAgg;
+using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.DocContext.BundleAgg.Contracts;
 
 public interface IBundleDocDal :
-    IInsertBulk<BundleDocModel>,
-    IDelete<IBundleKey>,
-    IListData<BundleDocModel, IBundleKey>
+    IInsertBulk<KlaimBpjsDocModel>,
+    IDelete<IKlaimBpjsKey>,
+    IListData<KlaimBpjsDocModel, IKlaimBpjsKey>
 {
 }

@@ -1,6 +1,6 @@
 ﻿namespace Ofta.Domain.DocContext.DocTypeAgg;
 
-public class DocTypeModel : IDocTypeKey
+public class DocTypeModel : IDocTypeKey, IDocTypeFileUrl
 {
     public DocTypeModel()
     {
@@ -11,6 +11,11 @@ public class DocTypeModel : IDocTypeKey
     public string DocTypeName { get; set; }
     public bool IsStandard { get; set; }
     public bool IsActive { get; set; }
-    
+    public string FileUrl { get; set; }
     public List<DocTypeTagModel> ListTag { get; set; }
+}
+
+public interface IDocTypeFileUrl : IDocTypeKey
+{
+    string FileUrl { get; }
 }

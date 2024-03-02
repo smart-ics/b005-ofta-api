@@ -1,5 +1,4 @@
 ﻿using Dawn;
-using Mapster;
 using MediatR;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
@@ -41,7 +40,7 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
         var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
         aggregate = _builder
             .Attach(aggregate)
-            .DocState(DocStateEnum.Uploaded, string.Empty)
+            .AddJurnal(DocStateEnum.Uploaded, string.Empty)
             .UploadedDocId(sendToSignProviderResponse.UploadedDocId)
             .Build();
         
