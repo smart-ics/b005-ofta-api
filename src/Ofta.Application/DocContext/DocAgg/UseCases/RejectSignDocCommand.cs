@@ -30,7 +30,7 @@ public class RejectSignDocCommandHandler : IRequestHandler<RejectSignDocCommand>
         var aggregate = _builder
             .Load(request)
             .Sign(request.Email)
-            .DocState(DocStateEnum.Rejected, request.Email)
+            .AddJurnal(DocStateEnum.Rejected, request.Email)
             .Build();
         
         //  WRITE

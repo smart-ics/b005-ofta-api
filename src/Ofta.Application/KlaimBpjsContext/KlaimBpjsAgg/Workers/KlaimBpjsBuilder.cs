@@ -32,6 +32,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder AddSignee(IDocTypeKey docTypeKey, string email,
         string signTag, SignPositionEnum signPos);
     IKlaimBpjsBuilder RemoveSignee(IDocTypeKey docTypeKey, string email);
+    IKlaimBpjsBuilder AddJurnal(KlaimBpjsStateEnum docStateEnum, string description);
 }
 
 public class KlaimBpjsBuilder : IKlaimBpjsBuilder
@@ -241,6 +242,22 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             return this;
         
         klaimDoc.ListSign.RemoveAll(x => x.Email == email);
+        return this;
+    }
+
+    public IKlaimBpjsBuilder AddJurnal(KlaimBpjsStateEnum docStateEnum, string description)
+    {
+        var noUrut = _agg.ListJurnal.DefaultIfEmpty(new KlaimBpjsJurnalModel{NoUrut = 1})
+            .Max(c => c.NoUrut) + 1;
+        var desc = docStateEnum.ToString();
+        desc += description.Length != 0 ? description : string.Empty;
+        _agg.ListJurnal.Add(new KlaimBpjsJurnalModel
+        {
+            KlaimBpjsId = _agg.KlaimBpjsId,
+            NoUrut = noUrut,
+            JurnalDate = _tglJamDal.Now,
+            Description = desc
+        });
         return this;
     }
 }

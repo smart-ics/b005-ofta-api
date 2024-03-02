@@ -20,7 +20,6 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder Attach(DocModel model);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
-    IDocBuilder DocState(DocStateEnum docStateEnum, string description);
     IDocBuilder GenRequestedDocUrl();
     IDocBuilder GenPublishedDocUrl();
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum);
@@ -29,7 +28,9 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder Sign(string email);
     IDocBuilder RejectSign(string email);
     IDocBuilder UploadedDocUrl(string uploadedDocUrl);
+    IDocBuilder AddJurnal(DocStateEnum docStateEnum, string description);
 }
+
 public class DocBuilder : IDocBuilder
 {
     private DocModel _aggregate = new();
@@ -73,6 +74,15 @@ public class DocBuilder : IDocBuilder
             ListJurnal = new List<DocJurnalModel>(),
             ListSignees = new List<DocSigneeModel>()
         };
+        
+        var jurnal = new DocJurnalModel
+        {
+            NoUrut = 1,
+            JurnalDate = _tglJamDal.Now,
+            DocState = DocStateEnum.Created,
+            JurnalDesc = "Doc Created",
+        };
+        _aggregate.ListJurnal.Add(jurnal);
         return this;
     }
 
@@ -108,25 +118,6 @@ public class DocBuilder : IDocBuilder
             ?? throw new KeyNotFoundException("UserId not found");
         _aggregate.UserOftaId = user.UserOftaId;
         _aggregate.Email = user.Email;
-        return this;
-    }
-
-    public IDocBuilder DocState(DocStateEnum docStateEnum, string description)
-    {
-        _aggregate.DocState = docStateEnum;
-        var noUrut = _aggregate.ListJurnal.DefaultIfEmpty(new DocJurnalModel{NoUrut = 1})
-            .Max(x => x.NoUrut);
-        noUrut++;
-        var desc = docStateEnum.ToString();
-        desc += description.Length != 0 ? description : string.Empty;
-        var jurnal = new DocJurnalModel
-        {
-            NoUrut = noUrut,
-            JurnalDate = _tglJamDal.Now,
-            DocState = docStateEnum,
-            JurnalDesc = desc, 
-        };
-        _aggregate.ListJurnal.Add(jurnal);
         return this;
     }
 
@@ -205,6 +196,25 @@ public class DocBuilder : IDocBuilder
     public IDocBuilder UploadedDocUrl(string uploadedDocUrl)
     {
         _aggregate.UploadedDocUrl = uploadedDocUrl;
+        return this;
+    }
+
+    public IDocBuilder AddJurnal(DocStateEnum docStateEnum, string description)
+    {
+        var noUrut = _aggregate.ListJurnal.DefaultIfEmpty(new DocJurnalModel{NoUrut = 1})
+            .Max(x => x.NoUrut);
+        noUrut++;
+        var desc = docStateEnum.ToString();
+        desc += description.Length != 0 ? description : string.Empty;
+        var jurnal = new DocJurnalModel
+        {
+            NoUrut = noUrut,
+            JurnalDate = _tglJamDal.Now,
+            DocState = docStateEnum,
+            JurnalDesc = desc, 
+        };
+        _aggregate.DocState = docStateEnum;
+        _aggregate.ListJurnal.Add(jurnal);
         return this;
     }
 }

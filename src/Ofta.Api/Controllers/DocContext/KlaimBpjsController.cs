@@ -22,4 +22,12 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetKlaimBpjs(string id)
+    {
+        var query = new GetKlaimBpjsQuery(id);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 }
