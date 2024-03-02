@@ -50,6 +50,7 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
             .OrderKlaimBpjs(request)
             .UserOfta(request)
             .GenListBlueprint()
+            .AddJurnal(KlaimBpjsStateEnum.Created, string.Empty)
             .Build();
         
         //  WRITE

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Ofta.Application.DocContext.DocTypeAgg.Workers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
@@ -14,14 +15,17 @@ public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimB
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
     private readonly IValidator<RemoveDocTypeKlaimBpjsCommand> _guard;
+    private readonly IDocTypeBuilder _docTypeBuilder;
 
     public RemoveDocTypeKlaimBpjsHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
-        IValidator<RemoveDocTypeKlaimBpjsCommand> guard)
+        IValidator<RemoveDocTypeKlaimBpjsCommand> guard, 
+        IDocTypeBuilder docTypeBuilder)
     {
         _builder = builder;
         _writer = writer;
         _guard = guard;
+        _docTypeBuilder = docTypeBuilder;
     }
 
     public Task<Unit> Handle(RemoveDocTypeKlaimBpjsCommand request, CancellationToken cancellationToken)
@@ -32,9 +36,11 @@ public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimB
             throw new ValidationException(validationResult.Errors);
         
         //  BUILD
+        var docType = _docTypeBuilder.Load(request).Build(); 
         var klaimBpjs = _builder
             .Load(request)
             .RemoveDocType(request)
+            .AddJurnal(KlaimBpjsStateEnum.Listed, $"Remove DocType {docType.DocTypeName}")
             .Build();
         
         //  WRITE

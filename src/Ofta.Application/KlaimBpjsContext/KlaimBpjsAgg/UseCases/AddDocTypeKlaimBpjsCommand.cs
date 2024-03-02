@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Ofta.Application.DocContext.DocTypeAgg.Workers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
@@ -14,14 +15,17 @@ public class AddDocTypeKlaimBpjsHandler : IRequestHandler<AddDocTypeKlaimBpjsCom
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
     private readonly IValidator<AddDocTypeKlaimBpjsCommand> _guard;
+    private readonly IDocTypeBuilder _docTypeBuilder;
 
     public AddDocTypeKlaimBpjsHandler(IKlaimBpjsBuilder builder,
         IKlaimBpjsWriter writer,
-        IValidator<AddDocTypeKlaimBpjsCommand> guard)
+        IValidator<AddDocTypeKlaimBpjsCommand> guard, 
+        IDocTypeBuilder docTypeBuilder)
     {
         _builder = builder;
         _writer = writer;
         _guard = guard;
+        _docTypeBuilder = docTypeBuilder;
     }
 
     public Task<Unit> Handle(AddDocTypeKlaimBpjsCommand request, CancellationToken cancellationToken)
@@ -32,9 +36,13 @@ public class AddDocTypeKlaimBpjsHandler : IRequestHandler<AddDocTypeKlaimBpjsCom
             throw new ValidationException(validationResult.Errors);
         
         //  BUILD
+        var docType = _docTypeBuilder
+            .Load(request)
+            .Build();
         var klaimBpjs = _builder
             .Load(request)
             .AddDocType(request)
+            .AddJurnal(KlaimBpjsStateEnum.Listed, $"Add DocType {docType.DocTypeName}")
             .Build();
         
         //  WRITE
