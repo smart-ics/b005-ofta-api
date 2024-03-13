@@ -23,6 +23,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder Attach(KlaimBpjsModel klaimBpjs);
     IKlaimBpjsBuilder UserOfta(IUserOftaKey userOftaKey);
     IKlaimBpjsBuilder OrderKlaimBpjs(IOrderKlaimBpjsKey orderKlaimBpjsKey);
+    IKlaimBpjsBuilder PrintReffId(int noUrut, string printReffId);
     IKlaimBpjsBuilder GenListBlueprint();
     IKlaimBpjsBuilder AttachDoc(IDocTypeKey docTypeKey, IDocKey docKey);
     IKlaimBpjsBuilder DetachDoc(IDocKey docKey);
@@ -95,6 +96,8 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         var listSignee = _klaimBpjsSigneeDal.ListData(klaimBpjsKey)?.ToList()
                       ?? new List<KlaimBpjsSigneeModel>();
         
+        //  TODO: List JurnalDoc
+        
         // assign listDoc to _agg and listSignee to _agg using LINQ
         _agg.ListDoc = ( 
             from c in listDoc
@@ -138,6 +141,16 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         _agg.PasienName = order.PasienName;
         _agg.DokterName = order.DokterName;
         _agg.LayananName = order.LayananName;
+        return this;
+    }
+
+    public IKlaimBpjsBuilder PrintReffId(int noUrut, string printReffId)
+    {
+        var klaimDoc = _agg.ListDoc.FirstOrDefault(c => c.NoUrut == noUrut);
+        if (klaimDoc is null)
+            throw new KeyNotFoundException($"NoUrut '{noUrut}' not found");
+        
+        klaimDoc.PrintReffId = printReffId;
         return this;
     }
 

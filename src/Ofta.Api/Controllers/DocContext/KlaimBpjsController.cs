@@ -30,4 +30,26 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpPatch("addDocType")]
+    public async Task<IActionResult> AddDocType(AddDocTypeKlaimBpjsCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpPatch("removeDocType")]
+    public async Task<IActionResult> RemoveDocType(RemoveDocTypeKlaimBpjsCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpPatch("printReffId")]
+    public async Task<IActionResult> SetPrintReffId(SetPrintReffIdKlaimBpjsCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
 }

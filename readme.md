@@ -114,7 +114,7 @@ sequenceDiagram
     participant REMOTE_CETAK
     actor layanan
     participant FO/EMR
-    autonumber 1
+    autonumber 18
 
     note over kasir, casemix: EVENT-A [Done]
     kasir ->> OFTA: Order KlaimBpjs 
@@ -163,4 +163,10 @@ sequenceDiagram
     note over OFTA, casemix: EVENT-M
     casemix ->> OFTA: Merge Document
 ```
-
+```
+- mapping event => use-case
+  - Event-A => CreateOrderKlaimBpjsCommand;
+  - Event-B => CreateKlaimBpjsCommand;
+  - Event-C => AddDocTypeToKlaimBpjsCommand, RemoveDocTypeFromKlaimBpjsCommand;
+  - Event-D => PrintDocKlaimBpjsCommand;
+```

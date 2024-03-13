@@ -31,13 +31,15 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
         bcp.AddMap("DocTypeId", "DocTypeId");
         bcp.AddMap("DocId", "DocId");
         bcp.AddMap("DocUrl", "DocUrl");
-
+        bcp.AddMap("PrintReffId", "PrintReffId");
+        bcp.AddMap("PrintState", "PrintState");
+ 
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
         bcp.DestinationTableName = "OFTA_KlaimBpjsDoc";
         bcp.WriteToServer(fetched.AsDataTable());
     }
-
+    
     public void Delete(IKlaimBpjsKey key)
     {
         const string sql = @"
@@ -57,10 +59,11 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
     {
         const string sql = @"
             SELECT
-                KlaimBpjsId, KlaimBpjsDocId, NoUrut, DocTypeId, DocId, DocUrl
+                KlaimBpjsId, KlaimBpjsDocId, NoUrut, DocTypeId, 
+                DocId, DocUrl, PrintReffId, PrintState
             FROM
                 OFTA_KlaimBpjsDoc
-            WHERE
+            WHERE 
                 KlaimBpjsId = @KlaimBpjsId";
 
         var dp = new DynamicParameters();

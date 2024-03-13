@@ -5,7 +5,7 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record PrintDocKlaimBpjsCommand(string KlaimBpjsId) : IRequest, IKlaimBpjsKey;
+public record PrintDocKlaimBpjsCommand(string KlaimBpjsId, int NoUrut) : IRequest, IKlaimBpjsKey;
 
 public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand>
 {
@@ -40,5 +40,14 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
         //  WRITE
         _writer.Save(klaimBpjs);
         return Task.FromResult(Unit.Value);
+    }
+}
+
+public class PrintDocKlaimBpjsCommandValidator : AbstractValidator<PrintDocKlaimBpjsCommand>
+{
+    public PrintDocKlaimBpjsCommandValidator()
+    {
+        RuleFor(x => x.KlaimBpjsId).NotEmpty();
+        RuleFor(x => x.NoUrut).GreaterThan(0);
     }
 }

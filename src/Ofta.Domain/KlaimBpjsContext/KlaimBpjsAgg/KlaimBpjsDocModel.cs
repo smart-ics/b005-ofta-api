@@ -12,8 +12,7 @@ public class KlaimBpjsDocModel : IKlaimBpjsKey
     public string DocId { get; set; }
     public string DocUrl { get; set; }
     
-    //  kode transaksi sistem yang akan di-print via remote-cetak
-    public string ReffId { get; set; }
+    public string PrintReffId { get; set; }
     public PrintStateEnum PrintState { get; set; }
     
     public List<KlaimBpjsSigneeModel> ListSign { get; set; }
