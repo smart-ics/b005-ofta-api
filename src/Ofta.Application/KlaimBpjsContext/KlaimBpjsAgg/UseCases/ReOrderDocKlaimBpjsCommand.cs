@@ -34,7 +34,34 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
             return Task.FromResult(Unit.Value);
 
         //  BUILD
-        _agg = _builder.Load(request).Build();
+        _agg = _builder
+            .Load(request)
+            .Build();
+        if (!RecordEvent(request))
+            return Task.FromResult(Unit.Value);
+        ProsesGeser(request);        
+        
+        //  WRITE
+        _writer.Save(_agg);
+        return Task.FromResult(Unit.Value);
+    }
+
+    private bool RecordEvent(ReOrderDocKlaimBpjsCommand request)
+    {
+        var doc = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrutAsal);
+        if (doc is null)
+            return false;
+        _agg = _builder
+            .Attach(_agg)
+            .AddEvent(KlaimBpjsStateEnum.InProgress, 
+                $"ReOrder {doc.DocTypeName} ({request.NoUrutAsal}) -> ({request.NoUrutTujuan})")
+            .Build();
+        
+        return true;
+    }
+
+    private void ProsesGeser(ReOrderDocKlaimBpjsCommand request)
+    {
         var selisih = Math.Abs(request.NoUrutTujuan - request.NoUrutAsal) + 1;
         var pointer = request.NoUrutAsal;
         for (var i = 1; i < selisih; i++)
@@ -50,12 +77,8 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
                 pointer--;
             }
         }
-        
-        //  WRITE
-        _writer.Save(_agg);
-        return Task.FromResult(Unit.Value);
     }
-
+    
     private void MoveRight(int noUrut)
     {
         var current = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == noUrut);
@@ -68,6 +91,7 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
         current.NoUrut = noUrut + 1;
         next.NoUrut = noUrut;
     }
+    
     private void MoveLeft(int noUrut)
     {
         var current = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == noUrut);
