@@ -23,7 +23,7 @@ public class SetPrintReffIdKlaimBpjsHandler : IRequestHandler<SetPrintReffIdKlai
         var agg = _builder
             .Load(request)
             .PrintReffId(request.NoUrut, request.PrintReffId)
-            .AddEvent(KlaimBpjsStateEnum.Listed, $"Set Print Reff ID {request.PrintReffId}")
+            .AddEvent(KlaimBpjsStateEnum.InProgress, $"Set Print Reff ID {request.PrintReffId}")
             .Build();
         _writer.Save(agg);
         return Task.FromResult(Unit.Value);

@@ -23,11 +23,8 @@ public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey
 public enum KlaimBpjsStateEnum
 {
     Created,    //    pertama kali dibuat
-    Listed,     //    list dokumen disesuaikan kebuutuhan
-    Sorted,     //    list dokumen sudah disortir/pilah
-    Printed,    //    dokumen ter-print semua
-    Signing,    //    dokumen sedang di-ttd
-    Signed,     //    dokumen sudah ada yg ttd (tapi belum semua)
-    Merged,     //    dokumen sudah di-merge
+    InProgress, //    add-remove or sign or print
+    Completed,  //    siap di-merge
+    Merged,     //    sudah di-merge 
     Downloaded, //    dokumen sudah di-merge  
 }

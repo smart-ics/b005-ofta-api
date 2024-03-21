@@ -114,7 +114,7 @@ sequenceDiagram
     participant REMOTE_CETAK
     actor layanan
     participant FO/EMR
-    autonumber 18
+    autonumber 1
 
     note over kasir, casemix: EVENT-A [Done]
     kasir ->> OFTA: Order KlaimBpjs 
