@@ -114,7 +114,7 @@ sequenceDiagram
     participant REMOTE_CETAK
     actor layanan
     participant FO/EMR
-    autonumber 18
+    autonumber 1
 
     note over kasir, casemix: EVENT-A [Done]
     kasir ->> OFTA: Order KlaimBpjs 
@@ -169,4 +169,24 @@ sequenceDiagram
   - Event-B => CreateKlaimBpjsCommand;
   - Event-C => AddDocTypeToKlaimBpjsCommand, RemoveDocTypeFromKlaimBpjsCommand;
   - Event-D => PrintDocKlaimBpjsCommand;
+```
+
+```mermaid
+sequenceDiagram
+    title Skenario : Tidak Upload Tekenaja
+    actor PETUGAS
+    participant OFTA
+    participant REMOTE CETAK
+    participant TEKEN AJA
+    autonumber
+
+    PETUGAS ->> OFTA : Request Template Surat
+    OFTA -->> PETUGAS: Template Surat
+    loop
+    PETUGAS ->> PETUGAS : Compose Surat
+    end
+    PETUGAS ->> OFTA: Submit Surat
+    OFTA ->>REMOTE CETAK : Request Cetak Surat
+    PETUGAS ->> OFTA : Download Surat
+
 ```
