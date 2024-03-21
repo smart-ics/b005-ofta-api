@@ -12,7 +12,7 @@ public class KlaimBpjsDocModel : IKlaimBpjsKey
     public string DocId { get; set; }
     public string DocUrl { get; set; }
     
-    public string PrintReffId { get; set; }
+    public string PrintOutReffId { get; set; }
     public PrintStateEnum PrintState { get; set; }
     
     public List<KlaimBpjsSigneeModel> ListSign { get; set; }

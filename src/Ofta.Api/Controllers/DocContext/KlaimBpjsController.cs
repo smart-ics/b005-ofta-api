@@ -45,7 +45,7 @@ public class KlaimBpjsController : Controller
         return Ok(new JSendOk(result));
     }
     
-    [HttpPatch("printReffId")]
+    [HttpPatch("setReffId")]
     public async Task<IActionResult> SetPrintReffId(SetPrintReffIdKlaimBpjsCommand cmd)
     {
         var result = await _mediator.Send(cmd);

@@ -16,18 +16,21 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
     private readonly IKlaimBpjsDal _klaimBpjsDal;
     private readonly IKlaimBpjsDocDal _klaimBpjsDocDal;
     private readonly IKlaimBpjsSigneeDal _klaimBpjsSigneeDal;
+    private readonly IKlaimBpjsEventDal _klaimBpjsJurnalDal;
     private readonly INunaCounterBL _counter;
     private readonly IValidator<KlaimBpjsModel> _validator;
 
     public KlaimBpjsWriter(IKlaimBpjsDal klaimBpjsDal,
         IKlaimBpjsDocDal klaimBpjsDocDal,
         IKlaimBpjsSigneeDal klaimBpjsSigneeDal,
-        INunaCounterBL counter,
+        IKlaimBpjsEventDal klaimBpjsJurnalDal,
+        INunaCounterBL counter, 
         IValidator<KlaimBpjsModel> validator)
     {
         _klaimBpjsDal = klaimBpjsDal;
         _klaimBpjsDocDal = klaimBpjsDocDal;
         _klaimBpjsSigneeDal = klaimBpjsSigneeDal;
+        _klaimBpjsJurnalDal = klaimBpjsJurnalDal;
         _counter = counter;
         _validator = validator;
     }
@@ -53,6 +56,12 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
                 y.KlaimBpjsSigneeId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}";
             });
         });
+        model.ListEvent.ForEach(x =>
+        {
+            x.KlaimBpjsId = model.KlaimBpjsId;
+            x.KlaimBpjsJurnalId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}";
+        });
+        
         var allSignee = model.ListDoc.SelectMany(x => x.ListSign).ToList();
         
         //  WRITE
@@ -70,6 +79,9 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
         _klaimBpjsSigneeDal.Delete(model);
         _klaimBpjsSigneeDal.Insert(allSignee);
 
+        _klaimBpjsJurnalDal.Delete(model);
+        _klaimBpjsJurnalDal.Insert(model.ListEvent);
+        
         trans.Complete();
         return model;
     }

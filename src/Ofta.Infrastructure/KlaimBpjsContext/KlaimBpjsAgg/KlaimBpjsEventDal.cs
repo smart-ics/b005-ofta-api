@@ -9,43 +9,38 @@ using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class KlaimBpjsDocDal : IKlaimBpjsDocDal
+public class KlaimBpjsEventDal : IKlaimBpjsEventDal
 {
     private readonly DatabaseOptions _opt;
 
-    public KlaimBpjsDocDal(IOptions<DatabaseOptions> opt)
+    public KlaimBpjsEventDal(IOptions<DatabaseOptions> opt)
     {
         _opt = opt.Value;
     }
-
-
-    public void Insert(IEnumerable<KlaimBpjsDocModel> listModel)
+    
+    public void Insert(IEnumerable<KlaimBpjsEventModel> listModel)
     {
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         using var bcp = new SqlBulkCopy(conn);
+
         conn.Open();
-        
         bcp.AddMap("KlaimBpjsId", "KlaimBpjsId");
-        bcp.AddMap("KlaimBpjsDocId", "KlaimBpjsDocId");
+        bcp.AddMap("KlaimBpjsJurnalId", "KlaimBpjsJurnalId");
         bcp.AddMap("NoUrut", "NoUrut");
-        bcp.AddMap("DocTypeId", "DocTypeId");
-        bcp.AddMap("DocTypeName", "DocTypeName");
-        bcp.AddMap("DocId", "DocId");
-        bcp.AddMap("DocUrl", "DocUrl");
-        bcp.AddMap("PrintOutReffId", "PrintOutReffId");
-        bcp.AddMap("PrintState", "PrintState");
- 
+        bcp.AddMap("EventDate", "EventDate");
+        bcp.AddMap("Description", "Description");
+        
+        bcp.DestinationTableName = "OFTA_KlaimBpjsEvent";
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
-        bcp.DestinationTableName = "OFTA_KlaimBpjsDoc";
         bcp.WriteToServer(fetched.AsDataTable());
     }
-    
+
     public void Delete(IKlaimBpjsKey key)
     {
         const string sql = @"
             DELETE FROM
-                OFTA_KlaimBpjsDoc
+                OFTA_KlaimBpjsEvent
             WHERE
                 KlaimBpjsId = @KlaimBpjsId";
         
@@ -56,22 +51,21 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
         conn.Execute(sql, dp);
     }
 
-    public IEnumerable<KlaimBpjsDocModel> ListData(IKlaimBpjsKey filter)
+    public IEnumerable<KlaimBpjsEventModel> ListData(IKlaimBpjsKey filter)
     {
         const string sql = @"
             SELECT
-                KlaimBpjsId, KlaimBpjsDocId, NoUrut, 
-                DocTypeId, DocTypeName, 
-                DocId, DocUrl, PrintOutReffId, PrintState
-            FROM
-                OFTA_KlaimBpjsDoc
-            WHERE 
+                KlaimBpjsId, KlaimBpjsJurnalId, NoUrut, 
+                EventDate, Description
+            FROM 
+                OFTA_KlaimBpjsEvent
+            WHERE
                 KlaimBpjsId = @KlaimBpjsId";
-
+        
         var dp = new DynamicParameters();
         dp.AddParam("@KlaimBpjsId", filter.KlaimBpjsId, SqlDbType.VarChar);
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
-        return conn.Query<KlaimBpjsDocModel>(sql, dp);
+        return conn.Read<KlaimBpjsEventModel>(sql, dp);
     }
 }

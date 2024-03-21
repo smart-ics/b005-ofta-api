@@ -1,11 +1,10 @@
 ﻿namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class KlaimBpjsJurnalModel
+public class KlaimBpjsEventModel
 {
     public string KlaimBpjsId { get; set; }
+    public string KlaimBpjsJurnalId { get; set; }
     public int NoUrut { get; set; }
-    public DateTime JurnalDate { get; set; }
+    public DateTime EventDate { get; set; }
     public string Description { get; set; }
-    
-    public KlaimBpjsStateEnum KlaimBpjsState { get; set; }
 }

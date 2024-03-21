@@ -17,7 +17,7 @@ public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey
     public string DokterName { get; set; }
     public RajalRanapEnum RajalRanap { get; set; }
     public List<KlaimBpjsDocModel> ListDoc { get; set; }
-    public List<KlaimBpjsJurnalModel> ListJurnal { get; set; }
+    public List<KlaimBpjsEventModel> ListEvent { get; set; }
 }
 
 public enum KlaimBpjsStateEnum

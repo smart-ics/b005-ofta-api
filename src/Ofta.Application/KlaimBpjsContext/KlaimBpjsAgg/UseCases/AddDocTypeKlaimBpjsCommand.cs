@@ -42,7 +42,7 @@ public class AddDocTypeKlaimBpjsHandler : IRequestHandler<AddDocTypeKlaimBpjsCom
         var klaimBpjs = _builder
             .Load(request)
             .AddDocType(request)
-            .AddJurnal(KlaimBpjsStateEnum.Listed, $"Add DocType {docType.DocTypeName}")
+            .AddEvent(KlaimBpjsStateEnum.Listed, $"Add DocType {docType.DocTypeName}")
             .Build();
         
         //  WRITE

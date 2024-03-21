@@ -24,7 +24,6 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder UserOfta(IUserOftaKey userOftaKey);
     IKlaimBpjsBuilder OrderKlaimBpjs(IOrderKlaimBpjsKey orderKlaimBpjsKey);
     IKlaimBpjsBuilder PrintReffId(int noUrut, string printReffId);
-    IKlaimBpjsBuilder GenListBlueprint();
     IKlaimBpjsBuilder AttachDoc(IDocTypeKey docTypeKey, IDocKey docKey);
     IKlaimBpjsBuilder DetachDoc(IDocKey docKey);
     IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey);
@@ -33,7 +32,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder AddSignee(IDocTypeKey docTypeKey, string email,
         string signTag, SignPositionEnum signPos);
     IKlaimBpjsBuilder RemoveSignee(IDocTypeKey docTypeKey, string email);
-    IKlaimBpjsBuilder AddJurnal(KlaimBpjsStateEnum docStateEnum, string description);
+    IKlaimBpjsBuilder AddEvent(KlaimBpjsStateEnum docStateEnum, string description);
 }
 
 public class KlaimBpjsBuilder : IKlaimBpjsBuilder
@@ -46,6 +45,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
     private readonly IDocBuilder _docBuilder;
     private readonly IDocTypeDal _docTypeDal;
     private readonly IOrderKlaimBpjsBuilder _orderKlaimBpjsBuilder;
+    private readonly IKlaimBpjsEventDal _klaimBpjJurnalDal;
     
     private readonly  ITglJamDal _tglJamDal;
     private KlaimBpjsModel _agg = new KlaimBpjsModel();
@@ -58,7 +58,8 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         IBlueprintBuilder blueprintBuilder, 
         IDocBuilder docBuilder, 
         IDocTypeDal docTypeDal, 
-        IOrderKlaimBpjsBuilder orderKlaimBpjsBuilder)
+        IOrderKlaimBpjsBuilder orderKlaimBpjsBuilder, 
+        IKlaimBpjsEventDal klaimBpjJurnalDal)
     {
         _klaimBpjsDal = klaimBpjsDal;
         _klaimBpjsDocDal = klaimBpjsDocDal;
@@ -69,6 +70,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         _docBuilder = docBuilder;
         _docTypeDal = docTypeDal;
         _orderKlaimBpjsBuilder = orderKlaimBpjsBuilder;
+        _klaimBpjJurnalDal = klaimBpjJurnalDal;
     }
 
     public KlaimBpjsModel Build()
@@ -82,7 +84,8 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         _agg = new KlaimBpjsModel
         {
             KlaimBpjsDate = _tglJamDal.Now,
-            ListDoc = new List<KlaimBpjsDocModel>()
+            ListDoc = new List<KlaimBpjsDocModel>(),
+            ListEvent = new List<KlaimBpjsEventModel>()
         };
         return this;
     }
@@ -95,8 +98,9 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             ?? new List<KlaimBpjsDocModel>();
         var listSignee = _klaimBpjsSigneeDal.ListData(klaimBpjsKey)?.ToList()
                       ?? new List<KlaimBpjsSigneeModel>();
-        
-        //  TODO: List JurnalDoc
+        var listJurnal = _klaimBpjJurnalDal.ListData(klaimBpjsKey)?.ToList()
+                      ?? new List<KlaimBpjsEventModel>();
+
         
         // assign listDoc to _agg and listSignee to _agg using LINQ
         _agg.ListDoc = ( 
@@ -113,8 +117,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 DocUrl = c.DocUrl,
                 ListSign = g.ToList()
             }).ToList();
-
-        _agg.ListDoc = listDoc;
+        _agg.ListEvent = listJurnal;
         return this;
     }
 
@@ -150,25 +153,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         if (klaimDoc is null)
             throw new KeyNotFoundException($"NoUrut '{noUrut}' not found");
         
-        klaimDoc.PrintReffId = printReffId;
-        return this;
-    }
-
-    public IKlaimBpjsBuilder GenListBlueprint()
-    {
-        var blueprintBpjs = new BlueprintModel { BlueprintId = "BPX01" };
-        var blueprint = _blueprintBuilder.Load(blueprintBpjs).Build();
-        _agg.ListDoc = blueprint.ListDocType.Select(c => new KlaimBpjsDocModel
-        {
-            KlaimBpjsId = string.Empty,
-            KlaimBpjsDocId = string.Empty,
-            NoUrut = c.NoUrut,
-            DocTypeId = c.DocTypeId,
-            DocTypeName = c.DocTypeName,
-            DocId = string.Empty,
-            DocUrl = string.Empty,
-            ListSign = new List<KlaimBpjsSigneeModel>()
-        }).ToList();
+        klaimDoc.PrintOutReffId = printReffId;
         return this;
     }
 
@@ -214,6 +199,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             DocTypeName = docType.DocTypeName,
             DocId = string.Empty,
             DocUrl = string.Empty,
+            PrintOutReffId = string.Empty,
             ListSign = new List<KlaimBpjsSigneeModel>()
         });
         return this;
@@ -258,17 +244,17 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder AddJurnal(KlaimBpjsStateEnum docStateEnum, string description)
+    public IKlaimBpjsBuilder AddEvent(KlaimBpjsStateEnum docStateEnum, string description)
     {
-        var noUrut = _agg.ListJurnal.DefaultIfEmpty(new KlaimBpjsJurnalModel{NoUrut = 1})
+        var noUrut = _agg.ListEvent.DefaultIfEmpty(new KlaimBpjsEventModel{NoUrut = 0})
             .Max(c => c.NoUrut) + 1;
         var desc = docStateEnum.ToString();
         desc += description.Length != 0 ? description : string.Empty;
-        _agg.ListJurnal.Add(new KlaimBpjsJurnalModel
+        _agg.ListEvent.Add(new KlaimBpjsEventModel
         {
             KlaimBpjsId = _agg.KlaimBpjsId,
             NoUrut = noUrut,
-            JurnalDate = _tglJamDal.Now,
+            EventDate = _tglJamDal.Now,
             Description = desc
         });
         return this;

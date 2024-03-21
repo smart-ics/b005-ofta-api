@@ -40,7 +40,7 @@ public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimB
         var klaimBpjs = _builder
             .Load(request)
             .RemoveDocType(request)
-            .AddJurnal(KlaimBpjsStateEnum.Listed, $"Remove DocType {docType.DocTypeName}")
+            .AddEvent(KlaimBpjsStateEnum.Listed, $"Remove DocType {docType.DocTypeName}")
             .Build();
         
         //  WRITE

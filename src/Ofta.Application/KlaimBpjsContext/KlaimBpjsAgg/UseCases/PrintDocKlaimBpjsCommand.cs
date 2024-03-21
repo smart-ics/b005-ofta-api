@@ -34,7 +34,7 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
             .Load(request)
             //  TODO: Add PrintDoc
             //.PrintDoc()
-            .AddJurnal(KlaimBpjsStateEnum.Sorted, "Print Doc")
+            .AddEvent(KlaimBpjsStateEnum.Sorted, "Print Doc")
             .Build();
         
         //  WRITE
