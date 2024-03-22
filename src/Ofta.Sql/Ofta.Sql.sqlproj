@@ -82,6 +82,7 @@
     <Build Include="Tables\KlaimBpjsContext\OFTA_OrderKlaimBpjs.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamNo.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamSistem.sql" />
+    <Build Include="Tables\RemoteCetakContext\ta_remote_cetak.sql" />
     <Build Include="Tables\UserContext\OFTA_Team.sql" />
     <Build Include="Tables\UserContext\OFTA_TeamUserOfta.sql" />
     <Build Include="Tables\UserContext\OFTA_User.sql" />

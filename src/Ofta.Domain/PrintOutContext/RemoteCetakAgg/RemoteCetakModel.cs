@@ -16,6 +16,7 @@ public class RemoteCetakModel : IRemoteCetakKey
     public string TglCetak {get;set;}
     public string JamCetak {get;set;}
     public string JsonData { get; set; }
+    public string CallbackDataOfta { get; set; }
 }
 
 public interface IRemoteCetakKey

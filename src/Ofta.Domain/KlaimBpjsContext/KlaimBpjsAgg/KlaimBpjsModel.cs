@@ -1,8 +1,9 @@
 ﻿using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey
+public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey, IUserOftaKey
 {
     public string KlaimBpjsId { get; set; }
     public DateTime KlaimBpjsDate { get; set; }

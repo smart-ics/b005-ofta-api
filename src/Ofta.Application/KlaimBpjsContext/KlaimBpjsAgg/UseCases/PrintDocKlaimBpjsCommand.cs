@@ -41,11 +41,12 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
         var doc = klaimBpjs.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrut);
         if (doc is null)
             throw new ArgumentException("Document not found");
+        doc.PrintState = PrintStateEnum.Queued;
         klaimBpjs = _builder
             .Attach(klaimBpjs)
             .AddEvent(KlaimBpjsStateEnum.InProgress, $"Print {doc.DocTypeName}")
             .Build();
-        
+
         //  WRITE
         _writer.Save(klaimBpjs);
         _mediator.Publish(new PrintedDocKlaimBpjsEvent(klaimBpjs, request), cancellationToken);

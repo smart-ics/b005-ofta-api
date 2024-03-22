@@ -1,9 +1,16 @@
-﻿using Ofta.Domain.UserContext.UserOftaAgg;
+﻿using System.Xml;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Domain.DocContext.DocAgg;
 
 public class DocModel : IDocKey, IUserOftaKey, IUploadedDocKey
 {
+    public DocModel()
+    {
+    }
+
+    public DocModel(string id) => DocId = id;
+    
     public string DocId { get; set; }
     public DateTime DocDate { get; set; }
     public string DocTypeId { get; set; }

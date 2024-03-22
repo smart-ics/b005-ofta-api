@@ -15,6 +15,7 @@ public interface IRemoteCetakBuilder : INunaBuilder<RemoteCetakModel>
     IRemoteCetakBuilder PrintState(int printState);
     IRemoteCetakBuilder Cetak(string tglCetak);
     IRemoteCetakBuilder JsonData(string jsonData);
+    IRemoteCetakBuilder CallbackDataOfta(string callbackDataOfta);
 }
 
 public class RemoteCetakBuilder : IRemoteCetakBuilder
@@ -84,6 +85,12 @@ public class RemoteCetakBuilder : IRemoteCetakBuilder
     public IRemoteCetakBuilder JsonData(string jsonData)
     {
         _agg.JsonData = jsonData;
+        return this;
+    }
+
+    public IRemoteCetakBuilder CallbackDataOfta(string callbackDataOfta)
+    {
+        _agg.CallbackDataOfta = callbackDataOfta;
         return this;
     }
 }

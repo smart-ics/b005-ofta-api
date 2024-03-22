@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Text.Json;
+using MediatR;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocTypeAgg.Workers;
 using Ofta.Application.Helpers;
@@ -33,10 +34,17 @@ public class AddQueueRemoteCetakOnPrintedDocKlaimBpjsEventHandler : INotificatio
             throw new ArgumentException("Document to be printed not found");
         var docType = _docTypeBuilder.Load(doc).Build();
 
+        var callbackDataOfta = new
+        {
+            KlaimBpjsId = notification.Aggregate.KlaimBpjsId,
+            PrintOutReffId = doc.PrintOutReffId,
+            Base64Content = string.Empty
+        };
         var agg = _remoteCetakBuilder
             .LoadOrCreate(new RemoteCetakModel(doc.PrintOutReffId))
             .RemoteAddr(remoteAddr)
             .JenisDoc(docType.JenisDokRemoteCetak)
+            .CallbackDataOfta(JsonSerializer.Serialize(callbackDataOfta))
             .Build();
 
         _remoteCetakWriter.Save(agg);

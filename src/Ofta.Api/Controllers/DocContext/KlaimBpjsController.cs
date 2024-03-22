@@ -65,4 +65,12 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpPatch("finishPrint")]
+    public async Task<IActionResult> FinishPrint(FinishPrintDocKlaimBpjsCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
 }

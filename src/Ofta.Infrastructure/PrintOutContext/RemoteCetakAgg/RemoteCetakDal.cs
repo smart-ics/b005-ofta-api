@@ -26,10 +26,12 @@ public class RemoteCetakDal : IRemoteCetakDal
         const string sql = @"
             INSERT INTO ta_remote_cetak(
                 fs_kd_trs, fs_jenis_dok, fd_tgl_send, fs_jam_send, 
-                fs_remote_addr, fn_cetak, fd_tgl_cetak, fs_jam_cetak, fs_json_data) 
+                fs_remote_addr, fn_cetak, fd_tgl_cetak, fs_jam_cetak, 
+                fs_json_data, CallbackDataOfta) 
             VALUES (
                 @fs_kd_trs, @fs_jenis_dok, @fd_tgl_send, @fs_jam_send, 
-                @fs_remote_addr, @fn_cetak, @fd_tgl_cetak, @fs_jam_cetak, @fs_json_data)";
+                @fs_remote_addr, @fn_cetak, @fd_tgl_cetak, @fs_jam_cetak, 
+                @fs_json_data, @CallbackDataOfta)";
         
         //  PARAM
         var dp = new DynamicParameters();
@@ -42,6 +44,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@fd_tgl_cetak", model.TglCetak, SqlDbType.VarChar);
         dp.AddParam("@fs_jam_cetak", model.JamCetak, SqlDbType.VarChar);
         dp.AddParam("@fs_json_data", model.JsonData, SqlDbType.VarChar);
+        dp.AddParam("@CallbackDataOfta", model.CallbackDataOfta, SqlDbType.VarChar);
         
         //  EXEC
         using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
@@ -61,7 +64,8 @@ public class RemoteCetakDal : IRemoteCetakDal
                 fn_cetak = @fn_cetak,
                 fd_tgl_cetak = @fd_tgl_cetak,
                 fs_jam_cetak = @fs_jam_cetak,
-                fs_json_data = @fs_json_data
+                fs_json_data = @fs_json_data,
+                CallbackDataOfta = @CallbackDataOfta
             WHERE
                 fs_kd_trs = @fs_kd_trs";
         
@@ -76,6 +80,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@fd_tgl_cetak", model.TglCetak, SqlDbType.VarChar);
         dp.AddParam("@fs_jam_cetak", model.JamCetak, SqlDbType.VarChar);
         dp.AddParam("@fs_json_data", model.JsonData, SqlDbType.VarChar);
+        dp.AddParam("@CallbackDataOfta", model.CallbackDataOfta, SqlDbType.VarChar);
         
         //  EXEC
         using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
@@ -94,7 +99,8 @@ public class RemoteCetakDal : IRemoteCetakDal
                 fn_cetak AS PrintState, 
                 fd_tgl_cetak AS TglCetak, 
                 fs_jam_cetak AS JamCetak, 
-                fs_json_data AS JsonData
+                fs_json_data AS JsonData,
+                CallbackDataOfta
             FROM
                 ta_remote_cetak
             WHERE
@@ -138,7 +144,8 @@ public class RemoteCetakDal : IRemoteCetakDal
                 fn_cetak AS PrintState, 
                 fd_tgl_cetak AS TglCetak, 
                 fs_jam_cetak AS JamCetak, 
-                fs_json_data AS JsonData
+                fs_json_data AS JsonData,
+                CallbackDataOfta
             FROM
                 ta_remote_cetak
             WHERE

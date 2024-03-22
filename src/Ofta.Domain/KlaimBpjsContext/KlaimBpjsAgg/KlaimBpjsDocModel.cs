@@ -22,7 +22,8 @@ public class KlaimBpjsDocModel : IKlaimBpjsKey, IDocTypeKey
 
 public enum PrintStateEnum
 {
-    Ordered,    //    dokumen sudah di-order cetak
+    Listed,
+    Queued,    //    dokumen sudah di-order cetak
     Printed,    //    dokumen sudah di-print
     Failed
 }
