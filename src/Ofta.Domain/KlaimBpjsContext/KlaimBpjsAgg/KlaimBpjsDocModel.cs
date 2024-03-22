@@ -1,6 +1,8 @@
-﻿namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
+﻿using Ofta.Domain.DocContext.DocTypeAgg;
 
-public class KlaimBpjsDocModel : IKlaimBpjsKey
+namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
+
+public class KlaimBpjsDocModel : IKlaimBpjsKey, IDocTypeKey
 {
     public string KlaimBpjsId { get; set; }
     public string KlaimBpjsDocId { get; set; }

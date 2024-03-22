@@ -1,4 +1,5 @@
 ﻿using Nuna.Lib.CleanArchHelper;
+using Nuna.Lib.DataTypeExtension;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
@@ -27,7 +28,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder AttachDoc(IDocTypeKey docTypeKey, IDocKey docKey);
     IKlaimBpjsBuilder DetachDoc(IDocKey docKey);
     IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey);
-    IKlaimBpjsBuilder RemoveDocType(IDocTypeKey docTypeKey);
+    IKlaimBpjsBuilder RemoveDocType(int noUrut);
 
     IKlaimBpjsBuilder AddSignee(IDocTypeKey docTypeKey, string email,
         string signTag, SignPositionEnum signPos);
@@ -115,6 +116,8 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 DocTypeName = c.DocTypeName,
                 DocId = c.DocId,
                 DocUrl = c.DocUrl,
+                PrintOutReffId = c.PrintOutReffId,
+                PrintState = c.PrintState,
                 ListSign = g.ToList()
             }).ToList();
         _agg.ListEvent = listJurnal;
@@ -205,9 +208,16 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder RemoveDocType(IDocTypeKey docTypeKey)
+    public IKlaimBpjsBuilder RemoveDocType(int noUrut)
     {
-        _agg.ListDoc.RemoveAll(x => x.DocTypeId == docTypeKey.DocTypeId);
+        _agg.ListDoc.RemoveAll(x => x.NoUrut == noUrut);
+        var i = 1;
+        _agg.ListDoc.OrderBy(y => y.NoUrut)
+            .ForEach(x =>
+            {
+                x.NoUrut = i;
+                i++;
+            });
         return this;
     }
 
@@ -249,7 +259,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         var noUrut = _agg.ListEvent.DefaultIfEmpty(new KlaimBpjsEventModel{NoUrut = 0})
             .Max(c => c.NoUrut) + 1;
         var desc = docStateEnum.ToString();
-        desc += description.Length != 0 ? description : string.Empty;
+        desc += description.Length != 0 ? $" {description}" : string.Empty;
         _agg.ListEvent.Add(new KlaimBpjsEventModel
         {
             KlaimBpjsId = _agg.KlaimBpjsId,

@@ -7,8 +7,8 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record RemoveDocTypeKlaimBpjsCommand(string KlaimBpjsId, string DocTypeId)
-    : IRequest, IKlaimBpjsKey, IDocTypeKey;
+public record RemoveDocTypeKlaimBpjsCommand(string KlaimBpjsId, int NoUrut)
+    : IRequest, IKlaimBpjsKey;
 
 public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimBpjsCommand>
 {
@@ -36,11 +36,17 @@ public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimB
             throw new ValidationException(validationResult.Errors);
         
         //  BUILD
-        var docType = _docTypeBuilder.Load(request).Build(); 
         var klaimBpjs = _builder
             .Load(request)
-            .RemoveDocType(request)
-            .AddEvent(KlaimBpjsStateEnum.Listed, $"Remove DocType {docType.DocTypeName}")
+            .Build();
+        var doc = klaimBpjs.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrut);
+        if (doc is null)
+            return Task.FromResult(Unit.Value);
+            
+        klaimBpjs = _builder
+            .Attach(klaimBpjs)
+            .RemoveDocType(request.NoUrut)
+            .AddEvent(KlaimBpjsStateEnum.InProgress, $"Remove DocType {doc.DocTypeName}")
             .Build();
         
         //  WRITE
@@ -54,6 +60,6 @@ public class RemoveDocTypeKlaimBpjsCommandValidator : AbstractValidator<RemoveDo
     public RemoveDocTypeKlaimBpjsCommandValidator()
     {
         RuleFor(x => x.KlaimBpjsId).NotEmpty();
-        RuleFor(x => x.DocTypeId).NotEmpty();
+        RuleFor(x => x.NoUrut).NotEmpty();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using JetBrains.Annotations;
 using MediatR;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Workers;
@@ -15,6 +16,8 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 public record CreateKlaimBpjsCommand(string OrderKlaimBpjsId, string UserOftaId) 
     : IRequest<CreateKlaimBpjsResponse>, IUserOftaKey, IOrderKlaimBpjsKey;
 
+
+[PublicAPI]
 public record CreateKlaimBpjsResponse(string KlaimBpjsId);
 
 public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsCommand, CreateKlaimBpjsResponse>
@@ -47,8 +50,8 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
         var validationResult = _guard.Validate(request);
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
-        if (OrderHasBeenIssued(request))
-            throw new InvalidOperationException("OrderKlaimBpjs already has KlaimBpjs");
+        if (OrderHasBeenIssued(request, out var klaimBpjsId))
+            throw new InvalidOperationException($"Order has been issued as Klaim {klaimBpjsId})");
         
         //  BUILD
         var klaimBpjs = _builder
@@ -73,18 +76,18 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
         _mediator.Publish(new CreatedKlaimBpjsEvent(klaimBpjsModel, request), cancellationToken);
         return Task.FromResult(new CreateKlaimBpjsResponse(klaimBpjsModel.KlaimBpjsId));
     }
-    private bool OrderHasBeenIssued(IOrderKlaimBpjsKey orderKey)
+    private bool OrderHasBeenIssued(IOrderKlaimBpjsKey orderKey, out string klaimBpjsId)
     {
+        OrderKlaimBpjsModel? orderKlaimBpjs = null;
         var fallbackPolicy = Policy<bool>
             .Handle<KeyNotFoundException>()
             .Fallback(() => true);
         var isExist = fallbackPolicy.Execute(() =>
         {
-            var orderKlaimBpjs = _orderKlaimBpjsBuilder.Load(orderKey).Build();
-            if (orderKlaimBpjs.KlaimBpjsId.IsEmpty())
-                return true;
-            return false;
+            orderKlaimBpjs = _orderKlaimBpjsBuilder.Load(orderKey).Build();
+            return !orderKlaimBpjs.KlaimBpjsId.IsEmpty();
         });
+        klaimBpjsId = orderKlaimBpjs?.KlaimBpjsId??string.Empty;
         return isExist;
     }
 }
@@ -98,6 +101,7 @@ public class CreateKlaimBpjsCommandGuard : AbstractValidator<CreateKlaimBpjsComm
     }
 }
 
+[PublicAPI]
 public record CreatedKlaimBpjsEvent(
     KlaimBpjsModel Aggregate,
     CreateKlaimBpjsCommand Command) : INotification;
