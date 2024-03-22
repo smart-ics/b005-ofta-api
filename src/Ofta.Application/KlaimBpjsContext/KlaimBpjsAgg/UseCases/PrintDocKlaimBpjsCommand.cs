@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
+using Ofta.Application.DocContext.DocTypeAgg.Workers;
+using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
@@ -12,14 +14,17 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
     private readonly IValidator<PrintDocKlaimBpjsCommand> _guard;
+    private readonly IMediator _mediator;
 
     public PrintDocKlaimBpjsHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
-        IValidator<PrintDocKlaimBpjsCommand> guard)
+        IValidator<PrintDocKlaimBpjsCommand> guard, 
+        IMediator mediator)
     {
         _builder = builder;
         _writer = writer;
         _guard = guard;
+        _mediator = mediator;
     }
 
     public Task<Unit> Handle(PrintDocKlaimBpjsCommand request, CancellationToken cancellationToken)
@@ -32,16 +37,25 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
         //  BUILD
         var klaimBpjs = _builder
             .Load(request)
-            //  TODO: Add PrintDoc
-            //.PrintDoc()
-            .AddEvent(KlaimBpjsStateEnum.InProgress, "Print Doc")
+            .Build();
+        var doc = klaimBpjs.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrut);
+        if (doc is null)
+            throw new ArgumentException("Document not found");
+        klaimBpjs = _builder
+            .Attach(klaimBpjs)
+            .AddEvent(KlaimBpjsStateEnum.InProgress, $"Print {doc.DocTypeName}")
             .Build();
         
         //  WRITE
         _writer.Save(klaimBpjs);
+        _mediator.Publish(new PrintedDocKlaimBpjsEvent(klaimBpjs, request), cancellationToken);
         return Task.FromResult(Unit.Value);
     }
 }
+
+public record PrintedDocKlaimBpjsEvent(
+    KlaimBpjsModel Aggregate,
+    PrintDocKlaimBpjsCommand Command) : INotification;
 
 public class PrintDocKlaimBpjsCommandValidator : AbstractValidator<PrintDocKlaimBpjsCommand>
 {

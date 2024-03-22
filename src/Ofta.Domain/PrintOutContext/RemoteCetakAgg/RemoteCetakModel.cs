@@ -2,6 +2,11 @@
 
 public class RemoteCetakModel : IRemoteCetakKey
 {
+    public RemoteCetakModel(string id) => KodeTrs = id;
+
+    public RemoteCetakModel()
+    {
+    }
     public string KodeTrs {get;set;} 
     public string JenisDoc {get;set;}
     public string TglSend {get;set;} 

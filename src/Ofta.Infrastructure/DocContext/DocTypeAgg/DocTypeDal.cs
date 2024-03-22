@@ -22,15 +22,19 @@ public class DocTypeDal : IDocTypeDal
     {
         const string sql = @"
             INSERT INTO OFTA_DocType(
-                DocTypeId, DocTypeName, IsStandard, IsActive)
+                DocTypeId, DocTypeName, IsStandard, 
+                IsActive, FileUrl, JenisDokRemoteCetak)
             VALUES (
-                @DocTypeId, @DocTypeName, @IsStandard, @IsActive)";
+                @DocTypeId, @DocTypeName, @IsStandard, 
+                @IsActive, @FileUrl, @JenisDokRemoteCetak)";
 
         var dp = new DynamicParameters();
         dp.AddParam("@DocTypeId", model.DocTypeId, SqlDbType.VarChar);
         dp.AddParam("@DocTypeName", model.DocTypeName, SqlDbType.VarChar); 
         dp.AddParam("@IsStandard", model.IsStandard, SqlDbType.Bit);
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
+        dp.AddParam("@FileUrl", model.FileUrl, SqlDbType.VarChar);
+        dp.AddParam("@JenisDokRemoteCetak", model.JenisDokRemoteCetak, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -44,7 +48,9 @@ public class DocTypeDal : IDocTypeDal
             SET
                 DocTypeName = @DocTypeName, 
                 IsStandard = @IsStandard,
-                IsActive = @IsActive
+                IsActive = @IsActive,
+                FileUrl = @FileUrl,
+                JenisDokRemoteCetak = @JenisDokRemoteCetak
             WHERE
                 DocTypeId = @DocTypeId
 ";
@@ -54,6 +60,8 @@ public class DocTypeDal : IDocTypeDal
         dp.AddParam("@DocTypeName", model.DocTypeName, SqlDbType.VarChar); 
         dp.AddParam("@IsStandard", model.IsStandard, SqlDbType.Bit);
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
+        dp.AddParam("@FileUrl", model.FileUrl, SqlDbType.VarChar);
+        dp.AddParam("@JenisDokRemoteCetak", model.JenisDokRemoteCetak, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -78,7 +86,8 @@ public class DocTypeDal : IDocTypeDal
     {
         const string sql = @"
             SELECT
-                DocTypeId, DocTypeName, IsStandard, IsActive
+                DocTypeId, DocTypeName, IsStandard, 
+                IsActive, FileUrl, JenisDokRemoteCetak
             FROM
                 OFTA_DocType
             WHERE
@@ -95,7 +104,8 @@ public class DocTypeDal : IDocTypeDal
     {
         const string sql = @"
             SELECT
-                DocTypeId, DocTypeName, IsStandard, IsActive
+                DocTypeId, DocTypeName, IsStandard, 
+                IsActive, FileUrl, JenisDokRemoteCetak
             FROM
                 OFTA_DocType ";
         

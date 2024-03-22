@@ -8,10 +8,8 @@ namespace Ofta.Application.PrintOutContext.RemoteCetakAgg.Workers;
 
 public interface IRemoteCetakBuilder : INunaBuilder<RemoteCetakModel>
 {
-    IRemoteCetakBuilder Create();
-    IRemoteCetakBuilder Load(IRemoteCetakKey remoteCetakKey);
+    IRemoteCetakBuilder LoadOrCreate(IRemoteCetakKey remoteCetakKey);
     IRemoteCetakBuilder Attach(RemoteCetakModel remoteCetak);
-    IRemoteCetakBuilder KodeTrs(IRemoteCetakKey kodeTrsKey);
     IRemoteCetakBuilder JenisDoc(string jenisDoc);
     IRemoteCetakBuilder RemoteAddr(string remoteAddr);
     IRemoteCetakBuilder PrintState(int printState);
@@ -38,33 +36,22 @@ public class RemoteCetakBuilder : IRemoteCetakBuilder
         return _agg;
     }
 
-    public IRemoteCetakBuilder Create()
+    public IRemoteCetakBuilder LoadOrCreate(IRemoteCetakKey remoteCetakKey)
     {
-        var now = _tglJamDal.Now;
-        _agg = new RemoteCetakModel
-        {
-            TglSend = now.ToString("yyyy-MM-dd"),
-            JamSend = now.ToString("HH:mm:ss"),
-        };
-        return this;
-    }
-
-    public IRemoteCetakBuilder Load(IRemoteCetakKey remoteCetakKey)
-    {
-        _agg = _remoteCetakDal.GetData(remoteCetakKey)
-            ?? throw new KeyNotFoundException("Data tidak ditemukan");
+        _agg = _remoteCetakDal.GetData(remoteCetakKey);
+        if (_agg is null)
+            _agg = new RemoteCetakModel
+                {
+                    KodeTrs = remoteCetakKey.KodeTrs,
+                    TglSend = _tglJamDal.Now.ToString("yyyy-MM-dd"),
+                    JamSend = _tglJamDal.Now.ToString("HH:mm:ss"),
+                };
         return this;
     }
 
     public IRemoteCetakBuilder Attach(RemoteCetakModel remoteCetak)
     {
         _agg = new RemoteCetakModel();
-        return this;
-    }
-
-    public IRemoteCetakBuilder KodeTrs(IRemoteCetakKey kodeTrsKey)
-    {
-        _agg.KodeTrs = kodeTrsKey.KodeTrs;
         return this;
     }
 

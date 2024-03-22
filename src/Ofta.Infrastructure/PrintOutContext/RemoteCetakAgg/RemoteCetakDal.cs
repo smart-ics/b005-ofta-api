@@ -14,9 +14,9 @@ namespace Ofta.Infrastructure.PrintOutContext.RemoteCetakAgg;
 
 public class RemoteCetakDal : IRemoteCetakDal
 {
-    private readonly DatabaseOptions _opt;
+    private readonly RemoteCetakOptions _opt;
 
-    public RemoteCetakDal(IOptions<DatabaseOptions> opt)
+    public RemoteCetakDal(IOptions<RemoteCetakOptions> opt)
     {
         _opt = opt.Value;
     }
@@ -25,14 +25,16 @@ public class RemoteCetakDal : IRemoteCetakDal
     {
         const string sql = @"
             INSERT INTO ta_remote_cetak(
-                fs_kd_trs, fs_jenis_doc, fd_tgl_send, fs_jam_send, fs_remote_addr, fn_cetak, fd_tgl_cetak, fs_jam_cetak, fs_json_data) 
+                fs_kd_trs, fs_jenis_dok, fd_tgl_send, fs_jam_send, 
+                fs_remote_addr, fn_cetak, fd_tgl_cetak, fs_jam_cetak, fs_json_data) 
             VALUES (
-                @fs_kd_trs, @fs_jenis_doc, @fd_tgl_send, @fs_jam_send, @fs_remote_addr, @fn_cetak, @fd_tgl_cetak, @fs_jam_cetak, @fs_json_data)";
+                @fs_kd_trs, @fs_jenis_dok, @fd_tgl_send, @fs_jam_send, 
+                @fs_remote_addr, @fn_cetak, @fd_tgl_cetak, @fs_jam_cetak, @fs_json_data)";
         
         //  PARAM
         var dp = new DynamicParameters();
         dp.AddParam("@fs_kd_trs", model.KodeTrs, SqlDbType.VarChar);
-        dp.AddParam("@fs_jenis_doc", model.JenisDoc, SqlDbType.VarChar);
+        dp.AddParam("@fs_jenis_dok", model.JenisDoc, SqlDbType.VarChar);
         dp.AddParam("@fd_tgl_send", model.TglSend, SqlDbType.VarChar);
         dp.AddParam("@fs_jam_send", model.JamSend, SqlDbType.VarChar);
         dp.AddParam("@fs_remote_addr", model.RemoteAddr, SqlDbType.VarChar);
@@ -42,7 +44,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@fs_json_data", model.JsonData, SqlDbType.VarChar);
         
         //  EXEC
-        using var con = new SqlConnection(ConnStringHelper.Get(_opt));
+        using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
         con.Execute(sql, dp);
     }
 
@@ -52,7 +54,7 @@ public class RemoteCetakDal : IRemoteCetakDal
             UPDATE
                 ta_remote_cetak
             SET
-                fs_jenis_doc = @fs_jenis_doc,
+                fs_jenis_dok = @fs_jenis_dok,
                 fd_tgl_send = @fd_tgl_send,
                 fs_jam_send = @fs_jam_send,
                 fs_remote_addr = @fs_remote_addr,
@@ -66,7 +68,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         //  PARAM
         var dp = new DynamicParameters();
         dp.AddParam("@fs_kd_trs", model.KodeTrs, SqlDbType.VarChar);
-        dp.AddParam("@fs_jenis_doc", model.JenisDoc, SqlDbType.VarChar);
+        dp.AddParam("@fs_jenis_dok", model.JenisDoc, SqlDbType.VarChar);
         dp.AddParam("@fd_tgl_send", model.TglSend, SqlDbType.VarChar);
         dp.AddParam("@fs_jam_send", model.JamSend, SqlDbType.VarChar);
         dp.AddParam("@fs_remote_addr", model.RemoteAddr, SqlDbType.VarChar);
@@ -76,7 +78,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@fs_json_data", model.JsonData, SqlDbType.VarChar);
         
         //  EXEC
-        using var con = new SqlConnection(ConnStringHelper.Get(_opt));
+        using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
         con.Execute(sql, dp);
     }
 
@@ -85,7 +87,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         const string sql = @"
             SELECT
                 fs_kd_trs AS KodeTrs, 
-                fs_jenis_doc AS JenisDoc, 
+                fs_jenis_dok AS JenisDoc, 
                 fd_tgl_send AS TglSend, 
                 fs_jam_send AS JamSend, 
                 fs_remote_addr AS RemoteAddr, 
@@ -103,7 +105,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@fs_kd_trs", key.KodeTrs, SqlDbType.VarChar);
         
         //  EXEC
-        using var con = new SqlConnection(ConnStringHelper.Get(_opt));
+        using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
         return con.QueryFirstOrDefault<RemoteCetakModel>(sql, dp);
     }
 
@@ -120,7 +122,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@fs_kd_trs", key.KodeTrs, SqlDbType.VarChar);
         
         //  EXEC
-        using var con = new SqlConnection(ConnStringHelper.Get(_opt));
+        using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
         con.Execute(sql, dp);
     }
 
@@ -129,7 +131,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         const string sql = @"
             SELECT
                 fs_kd_trs AS KodeTrs, 
-                fs_jenis_doc AS JenisDoc, 
+                fs_jenis_dok AS JenisDoc, 
                 fd_tgl_send AS TglSend, 
                 fs_jam_send AS JamSend, 
                 fs_remote_addr AS RemoteAddr, 
@@ -148,7 +150,7 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@tgl2", filter.Tgl2.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), SqlDbType.VarChar);
         
         //  EXEC
-        using var con = new SqlConnection(ConnStringHelper.Get(_opt));
+        using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
         return con.Query<RemoteCetakModel>(sql, dp);
     }
 }
