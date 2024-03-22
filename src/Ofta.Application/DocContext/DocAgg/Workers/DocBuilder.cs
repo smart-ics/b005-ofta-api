@@ -123,10 +123,10 @@ public class DocBuilder : IDocBuilder
 
     public IDocBuilder GenRequestedDocUrl()
     {
-        var storagePath = _paramSistemDal.GetData(Sys.LocalStoragePath)
-            ?? throw new KeyNotFoundException("Parameter StoragePath not found");
+        var storageUrl = _paramSistemDal.GetData(Sys.LocalStorageUrl)
+            ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
         var docTypeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_aggregate.DocTypeName);
-        var requestedDocUrl = $"{storagePath.ParamSistemValue}/{_aggregate.DocId}_{docTypeName}.pdf";
+        var requestedDocUrl = $"{storageUrl.ParamSistemValue}/{_aggregate.DocId}_{docTypeName}.pdf";
         _aggregate.RequestedDocUrl = requestedDocUrl;
         return this;
     }

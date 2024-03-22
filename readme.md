@@ -170,3 +170,24 @@ sequenceDiagram
   - Event-C => AddDocTypeToKlaimBpjsCommand, RemoveDocTypeFromKlaimBpjsCommand;
   - Event-D => PrintDocKlaimBpjsCommand;
 ```~~~~
+```
+
+```mermaid
+sequenceDiagram
+    title Skenario : Tidak Upload Tekenaja
+    actor PETUGAS
+    participant OFTA
+    participant REMOTE CETAK
+    participant TEKEN AJA
+    autonumber
+
+    PETUGAS ->> OFTA : Request Template Surat
+    OFTA -->> PETUGAS: Template Surat
+    loop
+    PETUGAS ->> PETUGAS : Compose Surat
+    end
+    PETUGAS ->> OFTA: Submit Surat
+    OFTA ->>REMOTE CETAK : Request Cetak Surat
+    PETUGAS ->> OFTA : Download Surat
+
+```

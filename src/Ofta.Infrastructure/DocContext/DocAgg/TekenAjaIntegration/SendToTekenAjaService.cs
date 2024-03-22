@@ -2,6 +2,8 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Ofta.Application.DocContext.DocAgg.Contracts;
+using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
+using Ofta.Domain.ParamContext.SystemAgg;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
 
@@ -10,10 +12,12 @@ namespace Ofta.Infrastructure.DocContext.DocAgg.TekenAjaIntegration;
 public class SendToTekenAjaService : ISendToSignProviderService
 {
     private readonly TekenAjaProviderOptions _opt;
+    private readonly IParamSistemDal _paramSistemDal;
 
-    public SendToTekenAjaService(IOptions<TekenAjaProviderOptions> options)
+    public SendToTekenAjaService(IOptions<TekenAjaProviderOptions> options, IParamSistemDal paramSistemDal)
     {
         _opt = options.Value;
+        _paramSistemDal = paramSistemDal;
     }
 
     public SendToSignProviderResponse Execute(SendToSignProviderRequest req)
@@ -26,7 +30,16 @@ public class SendToTekenAjaService : ISendToSignProviderService
     private async Task<SendToTekenAjaResponse?> GetDocIdTekenAja(SendToSignProviderRequest request)
     {
         //  BUILD REQUEST
-        var filePathName = request.doc.RequestedDocUrl;
+        var fileUrl = request.doc.RequestedDocUrl;
+
+        //  replace url dengan lokasi path
+        var paramStoragePath = _paramSistemDal.GetData(Sys.LocalStoragePath)
+            ?? throw new KeyNotFoundException("Parameter StoragePath not found");
+        var paramStorageUrl = _paramSistemDal.GetData(Sys.LocalStorageUrl)
+            ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
+        var filePathName = fileUrl.Replace(paramStorageUrl.ParamSistemValue, paramStoragePath.ParamSistemValue);
+
+
         var docPageCount = PdfHelper.GetPageCount(filePathName);
         var expiredDate = request.doc.DocDate.AddDays(_opt.ValidityPeriod).ToString("yyyy-MM-dd");
         var listSignee = request.doc.ListSignees
