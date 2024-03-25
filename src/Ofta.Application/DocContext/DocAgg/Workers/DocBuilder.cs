@@ -9,6 +9,7 @@ using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.ParamContext.SystemAgg;
+using Ofta.Domain.UserContext.TeamAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.Workers;
@@ -29,6 +30,11 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder RejectSign(string email);
     IDocBuilder UploadedDocUrl(string uploadedDocUrl);
     IDocBuilder AddJurnal(DocStateEnum docStateEnum, string description);
+
+    IDocBuilder AddScope<T>(T scope)
+        where T : IScope;
+    IDocBuilder RemoveScope<T>(T scope)
+        where T : IScope;
 }
 
 public class DocBuilder : IDocBuilder
@@ -37,6 +43,7 @@ public class DocBuilder : IDocBuilder
     private readonly IDocDal _docDal;
     private readonly IDocSigneeDal _docSigneeDal;
     private readonly IDocJurnalDal _docJurnalDal;
+    private readonly IDocScopeDal _docScopeDal;
     private readonly IDocTypeDal _docTypeDal;
     private readonly IUserOftaDal _userOftaDal;
     private readonly ITglJamDal _tglJamDal;
@@ -48,7 +55,8 @@ public class DocBuilder : IDocBuilder
         IDocTypeDal docTypeDal, 
         IUserOftaDal userDal, 
         ITglJamDal tglJamDal, 
-        IParamSistemDal paramSistemDal)
+        IParamSistemDal paramSistemDal, 
+        IDocScopeDal docScopeDal)
     {
         _docDal = docDal;
         _docSigneeDal = docSigneeDal;
@@ -57,6 +65,7 @@ public class DocBuilder : IDocBuilder
         _userOftaDal = userDal;
         _tglJamDal = tglJamDal;
         _paramSistemDal = paramSistemDal;
+        _docScopeDal = docScopeDal;
     }
 
     public DocModel Build()
@@ -72,7 +81,8 @@ public class DocBuilder : IDocBuilder
             DocDate = _tglJamDal.Now,
             DocState = DocStateEnum.Created,
             ListJurnal = new List<DocJurnalModel>(),
-            ListSignees = new List<DocSigneeModel>()
+            ListSignees = new List<DocSigneeModel>(),
+            ListScope = new List<AbstractDocScopeModel>()
         };
         
         var jurnal = new DocJurnalModel
@@ -94,6 +104,8 @@ public class DocBuilder : IDocBuilder
             ?? new List<DocSigneeModel>();
         _aggregate.ListJurnal = _docJurnalDal.ListData(key)?.ToList()
             ?? new List<DocJurnalModel>();
+        _aggregate.ListScope = _docScopeDal.ListData(key)?.ToList()
+            ?? new List<AbstractDocScopeModel>();
         return this;
     }
 
@@ -215,6 +227,68 @@ public class DocBuilder : IDocBuilder
         };
         _aggregate.DocState = docStateEnum;
         _aggregate.ListJurnal.Add(jurnal);
+        return this;
+    }
+
+    public IDocBuilder AddScope<T>(T scope) where T : IScope
+    {
+        switch (scope)
+        {
+            case IUserOftaKey userKey:
+                AddScopeUser(userKey);
+                break;
+            case ITeamKey teamKey:
+                AddScopeTeam(teamKey);
+                break;
+        }
+        return this;
+        
+        void AddScopeUser(IUserOftaKey userKey)
+        {
+            //  jika sudah ada, abaikan
+            if (_aggregate.ListScope.OfType<DocScopeUserModel>()
+                .Any(item => item.UserOftaId == userKey.UserOftaId))
+                return;
+                
+            //  add scope
+            var newUser = new DocScopeUserModel()
+            {
+                ScopeType = 0,
+                UserOftaId = userKey.UserOftaId
+            };
+            _aggregate.ListScope.Add(newUser);        
+        }
+        void AddScopeTeam(ITeamKey teamKey)
+        {
+            //  jika sudah ada, abaikan
+            if (_aggregate.ListScope.OfType<DocScopeTeamModel>()
+                .Any(item => item.TeamId == teamKey.TeamId))
+                return;
+            //  add scope
+            var newTeam = new DocScopeTeamModel()
+            {
+                ScopeType = 1,
+                TeamId = teamKey.TeamId
+            };
+            _aggregate.ListScope.Add(newTeam);
+        }    
+    }
+    
+    public IDocBuilder RemoveScope<T>(T scope) where T : IScope
+    {
+        switch (scope)
+        {
+            case IUserOftaKey scopeUser:
+                _aggregate.ListScope.RemoveAll(x => 
+                    x.GetType() == typeof(DocScopeUserModel) &&
+                    ((DocScopeUserModel)x).UserOftaId == scopeUser.UserOftaId);
+                break;
+            case ITeamKey scopeTeam:
+                _aggregate.ListScope.RemoveAll(x => 
+                    x.GetType() == typeof(DocScopeTeamModel) &&
+                    ((DocScopeTeamModel)x).TeamId == scopeTeam.TeamId);
+                break;
+        }
         return this;
     }
 }

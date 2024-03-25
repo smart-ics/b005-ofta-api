@@ -16,19 +16,23 @@ public class DocWriter : IDocWriter
     private readonly IDocDal _docDal;
     private readonly IDocSigneeDal _docSigneeDal;
     private readonly IDocJurnalDal _docJurnalDal;
+    private readonly IDocScopeDal _docScopeDal;
     private readonly IValidator<DocModel> _validator;
     private readonly INunaCounterBL _counter;
 
     public DocWriter(IDocDal docDal, 
         IDocSigneeDal docSigneeDal, 
         IDocJurnalDal docJurnalDal, 
-        IValidator<DocModel> validator, INunaCounterBL counter)
+        IValidator<DocModel> validator, 
+        INunaCounterBL counter, 
+        IDocScopeDal docScopeDal)
     {
         _docDal = docDal;
         _docSigneeDal = docSigneeDal;
         _docJurnalDal = docJurnalDal;
         _validator = validator;
         _counter = counter;
+        _docScopeDal = docScopeDal;
     }
 
     public DocModel Save(DocModel model)
@@ -39,6 +43,7 @@ public class DocWriter : IDocWriter
             : model.DocId;
         model.ListSignees.ForEach(x => x.DocId = model.DocId);
         model.ListJurnal.ForEach(x => x.DocId = model.DocId);
+        model.ListScope.ForEach(x => x.DocId = model.DocId);
 
         var db = _docDal.GetData((IDocKey)model);
 
@@ -50,8 +55,12 @@ public class DocWriter : IDocWriter
         
         _docSigneeDal.Delete(model);
         _docSigneeDal.Insert(model.ListSignees);
+        
         _docJurnalDal.Delete(model);
         _docJurnalDal.Insert(model.ListJurnal);
+
+        _docScopeDal.Delete(model);
+        _docScopeDal.Insert(model.ListScope);
         
         trans.Complete();
         return model;

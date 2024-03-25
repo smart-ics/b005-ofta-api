@@ -1,6 +1,8 @@
-﻿namespace Ofta.Domain.UserContext.TeamAgg;
+﻿using Ofta.Domain.UserContext.UserOftaAgg;
 
-public interface ITeamKey
+namespace Ofta.Domain.UserContext.TeamAgg;
+
+public interface ITeamKey : IScope
 {
     string TeamId { get; }
 }

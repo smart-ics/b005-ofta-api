@@ -65,4 +65,18 @@ public class DocController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpPatch("addScope")]
+    public async Task<IActionResult> AddScope(AddScopeDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
+    [HttpPatch("removeScope")]
+    public async Task<IActionResult> RemoveScope(RemoveScopeDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
 }

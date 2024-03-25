@@ -2,6 +2,12 @@
 
 public class UserOftaModel : IUserOftaKey
 {
+    public UserOftaModel()
+    {
+    }
+
+    public UserOftaModel(string id) => UserOftaId = id;
+
     public string UserOftaId { get; set; }
     public string UserOftaName { get; set; }
     public string Email { get; set; }

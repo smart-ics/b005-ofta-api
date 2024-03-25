@@ -68,6 +68,7 @@
     <Build Include="DataSeed\OFTA_DocTypeDataSeed.sql" />
     <Build Include="Tables\DocContext\OFTA_Doc.sql" />
     <Build Include="Tables\DocContext\OFTA_DocJurnal.sql" />
+    <Build Include="Tables\DocContext\OFTA_DocScope.sql" />
     <Build Include="Tables\DocContext\OFTA_DocSignee.sql" />
     <Build Include="Tables\DocContext\OFTA_DocType.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeTag.sql" />

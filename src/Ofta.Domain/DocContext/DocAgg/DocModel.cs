@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using Ofta.Domain.UserContext.TeamAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Domain.DocContext.DocAgg;
@@ -25,6 +26,7 @@ public class DocModel : IDocKey, IUserOftaKey, IUploadedDocKey
     
     public List<DocSigneeModel> ListSignees { get; set; }
     public List<DocJurnalModel> ListJurnal { get; set; }
+    public List<AbstractDocScopeModel> ListScope { get; set; }
 }
 
 public interface IUploadedDocKey
