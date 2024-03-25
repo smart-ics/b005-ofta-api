@@ -6,6 +6,7 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
 public record GetKlaimBpjsQuery(string KlaimBpjsId) : 
     IRequest<GetKlaimBpjsResponse>, IKlaimBpjsKey;
+# region RESPONSE
 
 public record GetKlaimBpjsResponse(
     string KlaimBpjsId,
@@ -17,9 +18,32 @@ public record GetKlaimBpjsResponse(
     string NoSep,
     string LayananName,
     string DokterName,
-    string RajalRanap
+    string RajalRanap,
+    List<GetKlaimBpjsDocResponse> ListDoc,
+    List<GetKlaimBpjsEventResponse> ListEvent
 );
 
+public class GetKlaimBpjsDocResponse
+{
+    public string KlaimBpjsDocId { get; set; }
+    public int NoUrut { get; set; }
+    public string DocTypeId { get; set; }
+    public string DocTypeName { get; set; }
+    public string DocId { get; set; }
+    public string DocUrl { get; set; }
+    public string PrintOutReffId { get; set; }
+}
+
+public class GetKlaimBpjsEventResponse
+{
+    public string KlaimBpjsId { get; set; }
+    public string KlaimBpjsJurnalId { get; set; }
+    public int NoUrut { get; set; }
+    public string EventDate { get; set; }
+    public string Description { get; set; }
+}
+
+#endregion
 public class GetKlaimBpjsQueryHandler : IRequestHandler<GetKlaimBpjsQuery, GetKlaimBpjsResponse>
 {
     private readonly IKlaimBpjsBuilder _builder;
@@ -42,8 +66,31 @@ public class GetKlaimBpjsQueryHandler : IRequestHandler<GetKlaimBpjsQuery, GetKl
             klaimBpjs.NoSep,
             klaimBpjs.LayananName,
             klaimBpjs.DokterName,
-            klaimBpjs.RajalRanap.ToString().ToUpper()
+            klaimBpjs.RajalRanap.ToString().ToUpper(),
+            klaimBpjs.ListDoc
+                     .Select(x => new GetKlaimBpjsDocResponse
+                     {
+                         KlaimBpjsDocId = x.KlaimBpjsDocId,
+                         NoUrut = x.NoUrut,
+                         DocTypeId = x.DocTypeId,
+                         DocTypeName = x.DocTypeName,
+                         DocId = x.DocId,
+                         DocUrl = x.DocUrl,
+                         PrintOutReffId = x.PrintOutReffId
+                     }).ToList(),
+            klaimBpjs.ListEvent
+                        .Select(x => new GetKlaimBpjsEventResponse
+                        {
+                            KlaimBpjsId = x.KlaimBpjsId,
+                            KlaimBpjsJurnalId = x.KlaimBpjsJurnalId,
+                            NoUrut = x.NoUrut,
+                            EventDate = x.EventDate.ToString("yyyy-MM-dd hh:mm:ss"),
+                            Description = x.Description
+                        }
+                        ).ToList()
         );
+
+      
         return Task.FromResult(response);
     }
 }
