@@ -163,14 +163,25 @@ sequenceDiagram
     note over OFTA, casemix: EVENT-M
     casemix ->> OFTA: Merge Document
 ```
+```mermaid
+sequenceDiagram
+    title Timeline
+    actor poster
+    participant TIMELINE
+    actor commentator
+    actor doc_creator
+    participant DOC
+    autonumber
+    
+    note over poster, TIMELINE: Event-A
+    poster ->> TIMELINE: Direct Post
+    commentator ->> TIMELINE: Comment
+    doc_creator ->> DOC: Create Document
+    DOC -->> TIMELINE: Generate Post
+    
+    
 ```
-- mapping event => use-case
-  - Event-A => CreateOrderKlaimBpjsCommand;
-  - Event-B => CreateKlaimBpjsCommand;
-  - Event-C => AddDocTypeToKlaimBpjsCommand, RemoveDocTypeFromKlaimBpjsCommand;
-  - Event-D => PrintDocKlaimBpjsCommand;
-```~~~~
-```
+
 
 ```mermaid
 sequenceDiagram
