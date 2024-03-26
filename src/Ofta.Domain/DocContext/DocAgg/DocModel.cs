@@ -12,6 +12,7 @@ public class DocModel : IDocKey, IUserOftaKey, IUploadedDocKey
 
     public DocModel(string id) => DocId = id;
     
+    #region PROPS
     public string DocId { get; set; }
     public DateTime DocDate { get; set; }
     public string DocTypeId { get; set; }
@@ -23,6 +24,7 @@ public class DocModel : IDocKey, IUserOftaKey, IUploadedDocKey
     public string UploadedDocId { get; set; }
     public string UploadedDocUrl { get; set; }
     public string PublishedDocUrl { get; set; }
+    #endregion
     
     public List<DocSigneeModel> ListSignees { get; set; }
     public List<DocJurnalModel> ListJurnal { get; set; }
