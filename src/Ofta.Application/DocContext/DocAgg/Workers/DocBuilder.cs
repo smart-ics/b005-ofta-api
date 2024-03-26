@@ -137,7 +137,9 @@ public class DocBuilder : IDocBuilder
     {
         var storageUrl = _paramSistemDal.GetData(Sys.LocalStorageUrl)
             ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
-        var docTypeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_aggregate.DocTypeName);
+        var docTypeName = CultureInfo.CurrentCulture.TextInfo
+            .ToTitleCase(_aggregate.DocTypeName)
+            .Replace(" ", "_");
         var requestedDocUrl = $"{storageUrl.ParamSistemValue}/{_aggregate.DocId}_{docTypeName}.pdf";
         _aggregate.RequestedDocUrl = requestedDocUrl;
         return this;

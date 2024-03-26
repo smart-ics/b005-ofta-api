@@ -26,10 +26,10 @@ public class DocScopeDal : IDocScopeDal
             switch (item)
             {
                 case DocScopeUserModel scopeUser:
-                    listDto.Add(new DocScopeDto(item.DocId, 0,  scopeUser.UserOftaId, string.Empty));
+                    listDto.Add(new DocScopeDto(item.DocId, 0,  scopeUser.UserOftaId));
                     break;
                 case DocScopeTeamModel scopeTeam:
-                    listDto.Add(new DocScopeDto(item.DocId, 0,  string.Empty, scopeTeam.TeamId));
+                    listDto.Add(new DocScopeDto(item.DocId, 1,  scopeTeam.TeamId));
                     break;
             }
         }
@@ -39,8 +39,7 @@ public class DocScopeDal : IDocScopeDal
         
         bcp.AddMap("DocId", "DocId");
         bcp.AddMap("ScopeType", "ScopeType");
-        bcp.AddMap("UserOftaId", "UserOftaId");
-        bcp.AddMap("TeamId", "TeamId");
+        bcp.AddMap("ScopeReffId", "ScopeReffId");
 
         bcp.BatchSize = listDto.Count;
         bcp.DestinationTableName = "OFTA_DocScope";
@@ -49,18 +48,19 @@ public class DocScopeDal : IDocScopeDal
     }
     private class DocScopeDto
     {
-        public DocScopeDto(string docId, int scopeType, string userOftaId, string teamId)
+        public DocScopeDto(string docId, int scopeType, string scopeRefId)
         {
             DocId = docId;
             ScopeType = scopeType;
-            UserOftaId = userOftaId;
-            TeamId = teamId;
+            ScopeReffId = scopeRefId;
         }
 
+        public DocScopeDto()
+        {
+        }
         public string DocId { get; set; }
         public int ScopeType { get; set; }
-        public string UserOftaId { get; set; }
-        public string TeamId { get; set; }
+        public string ScopeReffId { get; set; }
     }
 
     public void Delete(IDocKey key)
@@ -80,7 +80,7 @@ public class DocScopeDal : IDocScopeDal
     {
         const string sql = @"
             SELECT  
-                DocId, ScopeType, UserOftaId, TeamId
+                DocId, ScopeType, ScopeReffId
             FROM
                 OFTA_DocScope
             WHERE
@@ -104,7 +104,7 @@ public class DocScopeDal : IDocScopeDal
                     {
                         DocId = item.DocId,
                         ScopeType = item.ScopeType,
-                        UserOftaId = item.UserOftaId,
+                        UserOftaId = item.ScopeReffId,
                     });
                     break;
                 case 1:
@@ -112,7 +112,7 @@ public class DocScopeDal : IDocScopeDal
                     {
                         DocId = item.DocId,
                         ScopeType = item.ScopeType,
-                        TeamId = item.TeamId,
+                        TeamId = item.ScopeReffId,
                     });
                     break;
             }
