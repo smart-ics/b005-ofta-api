@@ -50,9 +50,10 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
         var validationResult = _guard.Validate(request);
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
+
         if (OrderHasBeenIssued(request, out var klaimBpjsId))
-            throw new InvalidOperationException($"Order has been issued as Klaim {klaimBpjsId})");
-        
+            return Task.FromResult(new CreateKlaimBpjsResponse(klaimBpjsId));
+
         //  BUILD
         var klaimBpjs = _builder
             .Create()
