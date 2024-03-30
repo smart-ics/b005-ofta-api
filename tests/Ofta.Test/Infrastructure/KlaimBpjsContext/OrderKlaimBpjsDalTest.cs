@@ -23,6 +23,7 @@ public class OrderKlaimBpjsDalTest
             OrderKlaimBpjsId = "A",
             OrderKlaimBpjsDate = new DateTime(2024, 4, 5),
             UserOftaId = "B",
+            KlaimBpjsId = "B1", 
             RegId = "C",
             PasienId = "D",
             PasienName = "E",
@@ -70,5 +71,4 @@ public class OrderKlaimBpjsDalTest
         var actual = _sut.ListData(new Periode(new DateTime(2024,4,5)));
         actual.Should().BeEquivalentTo(new List<OrderKlaimBpjsModel> { _faker });
     }
-
 }

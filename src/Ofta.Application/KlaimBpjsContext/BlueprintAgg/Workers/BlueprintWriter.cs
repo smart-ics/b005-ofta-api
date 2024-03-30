@@ -68,8 +68,6 @@ public class BlueprintWriter : IBlueprintWriter
 
     private void GenerateKey(ref BlueprintModel model)
     {
-        // TODO: ada bug di sini, BlueprintId tidak ter-generate
-        //  timout terus saat _counter.Generate()
         var id = model.BlueprintId;
         if (id.IsNullOrEmpty())
             id = _counter.Generate("BP", IDFormatEnum.PFnnn);

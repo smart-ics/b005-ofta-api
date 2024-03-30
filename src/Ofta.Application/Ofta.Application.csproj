@@ -29,10 +29,6 @@
   <ItemGroup>
     <Folder Include="DocContext\BundleAgg\UseCases\" />
     <Folder Include="DocContext\BundleAgg\Workers\" />
-    <Folder Include="TImelineContext\CommentAgg\UseCases\" />
-    <Folder Include="TImelineContext\CommentAgg\Workers\" />
-    <Folder Include="TImelineContext\PostAgg\UseCases\" />
-    <Folder Include="TImelineContext\PostAgg\Workers\" />
     <Folder Include="UserContext\UserOftaAgg\" />
   </ItemGroup>
 
