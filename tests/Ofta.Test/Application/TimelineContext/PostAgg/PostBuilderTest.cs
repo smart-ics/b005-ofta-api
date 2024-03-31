@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
 using Ofta.Application.Helpers;
+using Ofta.Application.TImelineContext.PostAgg.Contracts;
 using Ofta.Application.TImelineContext.PostAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.TImelineContext.PostAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Test.Application.TimelineContext.PostAgg;
@@ -12,14 +14,23 @@ public class PostBuilderTest
     private readonly PostBuilder _sut;
     private readonly Mock<ITglJamDal> _tglJamDal;
     private readonly Mock<IUserOftaDal> _userOftaDal;
+    private readonly Mock<IPostDal> _postDal;
+    private readonly Mock<IPostReactDal> _postReactDal;
+    private readonly Mock<IPostVisibilityDal> _postVisibilityDal;
 
     public PostBuilderTest()
     {
         _tglJamDal = new Mock<ITglJamDal>();
         _userOftaDal = new Mock<IUserOftaDal>();
+        _postDal = new Mock<IPostDal>();
+        _postVisibilityDal = new Mock<IPostVisibilityDal>();
+        _postReactDal = new Mock<IPostReactDal>();
         _sut = new PostBuilder(
             _tglJamDal.Object, 
-            _userOftaDal.Object);
+            _userOftaDal.Object,
+            _postDal.Object,
+            _postVisibilityDal.Object,
+            _postReactDal.Object);
     }
 
     [Fact]
@@ -84,5 +95,21 @@ public class PostBuilderTest
             .RemoveVisibility("A")
             .Build();
         actual.ListVisibility.Count.Should().Be(0);
+    }
+
+    [Fact]
+    public void Load_LoadExistedPost()
+    {
+        _postDal.Setup(x => x.GetData(It.IsAny<IPostKey>()))
+            .Returns(new PostModel("A"));
+        _postReactDal.Setup(x => x.ListData(It.IsAny<IPostKey>()))
+            .Returns(new List<PostReactModel>());
+        _postVisibilityDal.Setup(x => x.ListData(It.IsAny<IPostKey>()))
+            .Returns(new List<PostVisibilityModel>());
+
+        var actual = _sut.Load(new PostModel("A")).Build();
+        actual.PostId.Should().Be("A");
+        actual.ListVisibility.Should().NotBeNull();
+        actual.ListReact.Should().NotBeNull();
     }
 }

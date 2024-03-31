@@ -17,9 +17,24 @@ public class PostController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateDoc(CreatePostCommand cmd)
+    public async Task<IActionResult> Create(CreatePostCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpPatch("addVisibility")]
+    public async Task<IActionResult> AddVisibility(AddVisibilityPostCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpPatch("removeVisibility")]
+    public async Task<IActionResult> RemoveVisibility(RemoveVisibilityPostCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
 }
