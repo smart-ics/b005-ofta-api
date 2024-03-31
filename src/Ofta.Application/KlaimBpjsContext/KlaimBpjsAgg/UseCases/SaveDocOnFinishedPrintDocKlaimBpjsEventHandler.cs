@@ -15,19 +15,16 @@ public class SaveDocOnFinishedPrintDocKlaimBpjsEventHandler
     private readonly IDocBuilder _docBuilder;
     private readonly IDocWriter _docWriter;
     private readonly IKlaimBpjsWriter _klaimBpjsWriter;
-    private readonly ISaveFileService _saveFileService;
     private readonly IWriteFileService _writeFileService;
 
     public SaveDocOnFinishedPrintDocKlaimBpjsEventHandler(IDocBuilder docBuilder, 
         IDocWriter docWriter, 
         IKlaimBpjsWriter klaimBpjsWriter, 
-        ISaveFileService saveFileService,
         IWriteFileService writeFileService)
     {
         _docBuilder = docBuilder;
         _docWriter = docWriter;
         _klaimBpjsWriter = klaimBpjsWriter;
-        _saveFileService = saveFileService;
         _writeFileService = writeFileService;
     }
 
@@ -62,22 +59,14 @@ public class SaveDocOnFinishedPrintDocKlaimBpjsEventHandler
             .GenRequestedDocUrl()
             .Build();
         doc = _docWriter.Save(doc);
-        // write file to storage
-        var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);
-        _ = _writeFileService.Execute(writeFileRequest);
-
 
         //      klaim
         itemKlaim.DocId = doc.DocId;
         _klaimBpjsWriter.Save(klaimBpjs);
         
         //      save fisik file;
-        var saveDocFileRequest = new SaveDocFileRequest
-        {
-            FilePathName = doc.RequestedDocUrl,
-            FileContentBase64 = cmd.Base64Content
-        };
-        _saveFileService.Execute(saveDocFileRequest);
+        var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);
+        _ = _writeFileService.Execute(writeFileRequest);
         return Task.CompletedTask;        
     }
 }

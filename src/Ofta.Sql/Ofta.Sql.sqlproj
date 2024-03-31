@@ -84,6 +84,11 @@
     <Build Include="Tables\ParamContext\OFTA_ParamNo.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamSistem.sql" />
     <Build Include="Tables\RemoteCetakContext\ta_remote_cetak.sql" />
+    <Build Include="Tables\TimelineContext\OFTA_Comment.sql" />
+    <Build Include="Tables\TimelineContext\OFTA_CommentReact.sql" />
+    <Build Include="Tables\TimelineContext\OFTA_Post.sql" />
+    <Build Include="Tables\TimelineContext\OFTA_PostReact.sql" />
+    <Build Include="Tables\TimelineContext\OFTA_PostVisibility.sql" />
     <Build Include="Tables\UserContext\OFTA_Team.sql" />
     <Build Include="Tables\UserContext\OFTA_TeamUserOfta.sql" />
     <Build Include="Tables\UserContext\OFTA_User.sql" />
