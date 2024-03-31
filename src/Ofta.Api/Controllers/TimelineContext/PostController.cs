@@ -51,4 +51,11 @@ public class PostController : Controller
         return Ok(new JSendOk(result));
     }
     
+    [HttpPatch("addReact")]
+    public async Task<IActionResult> AddReact(AddReactPostCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
 }

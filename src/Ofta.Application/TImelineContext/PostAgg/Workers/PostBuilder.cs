@@ -20,6 +20,9 @@ public interface IPostBuilder : INunaBuilder<PostModel>
     IPostBuilder AddVisibility(string visibilityReff);
     IPostBuilder RemoveVisibility(string visibilityReff);
     IPostBuilder AttachDoc(IDocKey docKey);
+
+    IPostBuilder AddReact(IUserOftaKey userOftaKey);
+    IPostBuilder RemoveReact(IUserOftaKey userOftaKey);
 }
 public class PostBuilder : IPostBuilder
 {
@@ -115,5 +118,22 @@ public class PostBuilder : IPostBuilder
                   ?? throw new KeyNotFoundException($"Document not found: '{docKey.DocId}");
         _agg.DocId = doc.DocId;
         return this;
+    }
+
+    public IPostBuilder AddReact(IUserOftaKey userOftaKey)
+    {
+        if (_agg.ListReact.Any(x => x.UserOftaId == userOftaKey.UserOftaId))
+            return this;
+        _agg.ListReact.Add(new PostReactModel
+        {
+            UserOftaId = userOftaKey.UserOftaId,
+            PostReactDate = _tglJamDal.Now,
+        });
+        return this;
+    }
+
+    public IPostBuilder RemoveReact(IUserOftaKey userOftaKey)
+    {
+        throw new NotImplementedException();
     }
 }
