@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using Moq;
+using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.Helpers;
 using Ofta.Application.TImelineContext.PostAgg.Contracts;
 using Ofta.Application.TImelineContext.PostAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.TImelineContext.PostAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
@@ -17,6 +19,7 @@ public class PostBuilderTest
     private readonly Mock<IPostDal> _postDal;
     private readonly Mock<IPostReactDal> _postReactDal;
     private readonly Mock<IPostVisibilityDal> _postVisibilityDal;
+    private readonly Mock<IDocDal> _docDal;
 
     public PostBuilderTest()
     {
@@ -25,12 +28,15 @@ public class PostBuilderTest
         _postDal = new Mock<IPostDal>();
         _postVisibilityDal = new Mock<IPostVisibilityDal>();
         _postReactDal = new Mock<IPostReactDal>();
+        _docDal = new Mock<IDocDal>();
+        
         _sut = new PostBuilder(
             _tglJamDal.Object, 
             _userOftaDal.Object,
             _postDal.Object,
             _postVisibilityDal.Object,
-            _postReactDal.Object);
+            _postReactDal.Object,
+            _docDal.Object);
     }
 
     [Fact]
@@ -111,5 +117,17 @@ public class PostBuilderTest
         actual.PostId.Should().Be("A");
         actual.ListVisibility.Should().NotBeNull();
         actual.ListReact.Should().NotBeNull();
+    }
+    
+    [Fact]
+    public void AttachDoc_ValidDocAttached()
+    {
+        IDocKey docKey = new DocModel("A");
+        _docDal
+            .Setup(x => x.GetData(docKey))
+            .Returns(new DocModel("A"));
+
+        var actual = _sut.Create().AttachDoc(docKey).Build();
+        actual.DocId.Should().Be("A");
     }
 }

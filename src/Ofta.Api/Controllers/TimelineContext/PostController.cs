@@ -23,6 +23,13 @@ public class PostController : Controller
         return Ok(new JSendOk(result));
     }
     
+    [HttpPut("attachDoc")]
+    public async Task<IActionResult> AttachDoc(AttachDocPostCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
     [HttpPatch("addVisibility")]
     public async Task<IActionResult> AddVisibility(AddVisibilityPostCommand cmd)
     {

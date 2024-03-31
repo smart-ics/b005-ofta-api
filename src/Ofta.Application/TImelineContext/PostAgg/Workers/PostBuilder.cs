@@ -1,8 +1,10 @@
 ﻿using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
+using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.Helpers;
 using Ofta.Application.TImelineContext.PostAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.TImelineContext.PostAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
@@ -17,6 +19,7 @@ public interface IPostBuilder : INunaBuilder<PostModel>
     IPostBuilder Msg(string msg);
     IPostBuilder AddVisibility(string visibilityReff);
     IPostBuilder RemoveVisibility(string visibilityReff);
+    IPostBuilder AttachDoc(IDocKey docKey);
 }
 public class PostBuilder : IPostBuilder
 {
@@ -26,19 +29,22 @@ public class PostBuilder : IPostBuilder
     private readonly IPostDal _postDal;
     private readonly IPostVisibilityDal _postVisibilityDal;
     private readonly IPostReactDal _postReactDal;
+    private readonly IDocDal _docDal;
     
 
     public PostBuilder(ITglJamDal tglJamDal, 
         IUserOftaDal userOftaDal, 
         IPostDal postDal, 
         IPostVisibilityDal postVisibilityDal, 
-        IPostReactDal postReactDal)
+        IPostReactDal postReactDal, 
+        IDocDal docDal)
     {
         _tglJamDal = tglJamDal;
         _userOftaDal = userOftaDal;
         _postDal = postDal;
         _postVisibilityDal = postVisibilityDal;
         _postReactDal = postReactDal;
+        _docDal = docDal;
     }
 
     public PostModel Build()
@@ -100,6 +106,14 @@ public class PostBuilder : IPostBuilder
     public IPostBuilder RemoveVisibility(string visibilityReff)
     {
         _agg.ListVisibility.RemoveAll(x => x.VisibilityReff == visibilityReff);
+        return this;
+    }
+
+    public IPostBuilder AttachDoc(IDocKey docKey)
+    {
+        var doc = _docDal.GetData(docKey)
+                  ?? throw new KeyNotFoundException($"Document not found: '{docKey.DocId}");
+        _agg.DocId = doc.DocId;
         return this;
     }
 }
