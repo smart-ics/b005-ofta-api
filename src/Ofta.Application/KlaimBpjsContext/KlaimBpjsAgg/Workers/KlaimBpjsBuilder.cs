@@ -96,7 +96,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         _agg = _klaimBpjsDal.GetData(klaimBpjsKey)
             ?? throw new KeyNotFoundException($"KlaimBpjsKey '{klaimBpjsKey.KlaimBpjsId}' not found");
         var listDoc = _klaimBpjsDocDal.ListData(klaimBpjsKey)?.ToList()
-            ?? new List<KlaimBpjsDocModel>();
+                    ?? new List<KlaimBpjsDocModel>();
         var listSignee = _klaimBpjsSigneeDal.ListData(klaimBpjsKey)?.ToList()
                       ?? new List<KlaimBpjsSigneeModel>();
         var listJurnal = _klaimBpjJurnalDal.ListData(klaimBpjsKey)?.ToList()
@@ -121,6 +121,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 ListSign = g.ToList()
             }).ToList();
         _agg.ListEvent = listJurnal;
+
         return this;
     }
 
@@ -145,6 +146,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         _agg.RegId = order.RegId;
         _agg.PasienId = order.PasienId;
         _agg.PasienName = order.PasienName;
+        _agg.NoSep = order.NoSep;
         _agg.DokterName = order.DokterName;
         _agg.LayananName = order.LayananName;
         return this;
