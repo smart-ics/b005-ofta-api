@@ -11,6 +11,7 @@ public class PostModel : IPostKey
     public string PostId { get; set; }
     public DateTime PostDate { get; set; }
     public string UserOftaId { get; set; }
+    public string UserOftaName { get; set; }
     public string Msg { get; set; }
     public string DocId { get; set; }
     public int CommentCount { get; set; }

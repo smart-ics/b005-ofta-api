@@ -23,6 +23,7 @@ public class PostDalTest
         PostId = "A",
         PostDate = new DateTime(2024,03,29),
         UserOftaId = "B",
+        UserOftaName = string.Empty,
         Msg = "C",
         DocId = "D",
         CommentCount = 1,

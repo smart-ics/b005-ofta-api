@@ -90,10 +90,12 @@ public class PostDal : IPostDal
     {
         const string sql = @"
             SELECT
-                PostId, PostDate, UserOftaId,
-                Msg, DocId, CommentCount, LikeCount 
+                aa.PostId, aa.PostDate, aa.UserOftaId,
+                aa.Msg, aa.DocId, aa.CommentCount, aa.LikeCount,
+                ISNULL(bb.UserOftaName, '') AS UserOftaName
             FROM
-                OFTA_Post
+                OFTA_Post aa
+                LEFT JOIN OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
             WHERE
                 PostId = @PostId ";
 
@@ -108,13 +110,15 @@ public class PostDal : IPostDal
     {
         const string sql = @"
             SELECT
-                PostId, PostDate, UserOftaId,
-                Msg, DocId, CommentCount, LikeCount 
+                aa.PostId, aa.PostDate, aa.UserOftaId,
+                aa.Msg, aa.DocId, aa.CommentCount, aa.LikeCount,
+                ISNULL(bb.UserOftaName, '') AS UserOftaName
             FROM
-                OFTA_Post
+                OFTA_Post aa
+                LEFT JOIN OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
             WHERE
-                PostDate BETWEEN @tgl1 AND @tgl2
-                AND UserOftaId = @userOftaId ";
+                aa.PostDate BETWEEN @tgl1 AND @tgl2
+                AND aa.UserOftaId = @userOftaId ";
 
         var dp = new DynamicParameters();
         dp.AddParam("@tgl1", filter1.Tgl1, SqlDbType.DateTime); 
