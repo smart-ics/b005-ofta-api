@@ -130,4 +130,29 @@ public class PostBuilderTest
         var actual = _sut.Create().AttachDoc(docKey).Build();
         actual.DocId.Should().Be("A");
     }
+    
+    [Fact]
+    public void AddReact_ReactAdded()
+    {
+        _userOftaDal.Setup(x => x.GetData(It.IsAny<IUserOftaKey>()))
+            .Returns(new UserOftaModel("A"));
+        var actual = _sut.Create()
+            .AddReact(new UserOftaModel("A"))
+            .Build();
+        actual.ListReact.Count.Should().Be(1);
+        actual.ListReact.First().UserOftaId.Should().Be("A");
+    }
+
+    [Fact]
+    public void RemoveReact_ReactRemoved()
+    {
+        _userOftaDal.Setup(x => x.GetData(It.IsAny<IUserOftaKey>()))
+            .Returns(new UserOftaModel("A"));
+        var actual = _sut.Create()
+            .AddReact(new UserOftaModel("A"))
+            .RemoveReact(new UserOftaModel("A"))
+            .Build();
+        actual.ListReact.Count.Should().Be(0);
+    }
+
 }

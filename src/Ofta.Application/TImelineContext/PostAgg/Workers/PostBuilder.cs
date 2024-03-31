@@ -124,9 +124,12 @@ public class PostBuilder : IPostBuilder
     {
         if (_agg.ListReact.Any(x => x.UserOftaId == userOftaKey.UserOftaId))
             return this;
+        var userOfta = _userOftaDal.GetData(userOftaKey)
+                       ?? throw new KeyNotFoundException($"User not found: '{userOftaKey.UserOftaId}'");
+        
         _agg.ListReact.Add(new PostReactModel
         {
-            UserOftaId = userOftaKey.UserOftaId,
+            UserOftaId = userOfta.UserOftaId,
             PostReactDate = _tglJamDal.Now,
         });
         return this;
@@ -134,6 +137,7 @@ public class PostBuilder : IPostBuilder
 
     public IPostBuilder RemoveReact(IUserOftaKey userOftaKey)
     {
-        throw new NotImplementedException();
+        _agg.ListReact.RemoveAll(x => x.UserOftaId == userOftaKey.UserOftaId);
+        return this;
     }
 }
