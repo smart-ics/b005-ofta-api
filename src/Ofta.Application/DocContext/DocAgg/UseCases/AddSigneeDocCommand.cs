@@ -39,6 +39,7 @@ public class AddSigneeDocHandler : IRequestHandler<AddSigneeDocCommand>
         var aggregate = _builder
             .Load(request)
             .AddSignee(request, request.SignTag, signPosition)
+            .AddScope(request)
             .Build();
         
         //  WRITE
