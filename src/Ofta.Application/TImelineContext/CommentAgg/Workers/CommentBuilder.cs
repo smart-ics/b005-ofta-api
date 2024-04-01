@@ -18,7 +18,8 @@ public interface ICommentBuilder : INunaBuilder<CommentModel>
     ICommentBuilder Post(IPostKey postKey);
     ICommentBuilder Msg(string msg);
     ICommentBuilder User(IUserOftaKey userOftaKey);
-
+    ICommentBuilder AddReact(IUserOftaKey userOftaKey);
+    ICommentBuilder RemoveReact(IUserOftaKey userOftaKey);
 }
 public class CommentBuilder : ICommentBuilder
 {
@@ -93,6 +94,26 @@ public class CommentBuilder : ICommentBuilder
                        ?? throw new KeyNotFoundException($"User not found: '{userOftaKey.UserOftaId}");
 
         _agg.UserOftaId = userOfta.UserOftaId;
+        return this;
+    }
+
+    public ICommentBuilder AddReact(IUserOftaKey userOftaKey)
+    {
+        if (_agg.ListReact.Any(x => x.UserOftaId == userOftaKey.UserOftaId))
+            return this;
+        
+        _agg.ListReact.Add(new CommentReactModel
+        {
+            CommentReactDate = _tglJamDal.Now,
+            UserOftaId = userOftaKey.UserOftaId
+        });
+
+        return this;
+    }
+
+    public ICommentBuilder RemoveReact(IUserOftaKey userOftaKey)
+    {
+        _agg.ListReact.RemoveAll(x => x.UserOftaId == userOftaKey.UserOftaId);
         return this;
     }
 }

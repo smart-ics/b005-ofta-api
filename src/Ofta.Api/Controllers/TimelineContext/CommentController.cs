@@ -35,5 +35,19 @@ public class CommentController : Controller
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
+    }
+    
+    [HttpPatch("addReact")]
+    public async Task<IActionResult> AddReact(AddReactCommentCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }    
+
+    [HttpPatch("removeReact")]
+    public async Task<IActionResult> RemoveReact(RemoveReactCommentCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
     }    
 }

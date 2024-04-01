@@ -59,4 +59,13 @@ public class CommentBuilderTest
         var actual = _sut.Create().User(new UserOftaModel("A")).Build();
         actual.UserOftaId.Should().Be("A");
     }
+
+    [Fact]
+    public void AddReact_ReactAdded()
+    {
+        IUserOftaKey user = new UserOftaModel("A");
+        var actual = _sut.Create().AddReact(user).Build();
+        actual.ListReact.Count.Should().Be(1);
+        actual.ListReact.First().UserOftaId.Should().Be("A");
+    }
 }
