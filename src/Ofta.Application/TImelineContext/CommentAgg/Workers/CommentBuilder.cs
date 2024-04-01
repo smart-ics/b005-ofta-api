@@ -107,13 +107,14 @@ public class CommentBuilder : ICommentBuilder
             CommentReactDate = _tglJamDal.Now,
             UserOftaId = userOftaKey.UserOftaId
         });
-
+        _agg.ReactCount = _agg.ListReact.Count;
         return this;
     }
 
     public ICommentBuilder RemoveReact(IUserOftaKey userOftaKey)
     {
         _agg.ListReact.RemoveAll(x => x.UserOftaId == userOftaKey.UserOftaId);
+        _agg.ReactCount = _agg.ListReact.Count;
         return this;
     }
 }
