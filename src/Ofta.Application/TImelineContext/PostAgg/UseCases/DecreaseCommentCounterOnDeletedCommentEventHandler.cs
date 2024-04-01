@@ -7,13 +7,13 @@ using Ofta.Domain.TImelineContext.PostAgg;
 
 namespace Ofta.Application.TImelineContext.PostAgg.UseCases;
 
-public class AddCommentCounterOnCreatedCommentEventHandler : INotificationHandler<CreatedCommentEvent>
+public class DecreaseCommentCounterOnDeletedCommentEventHandler : INotificationHandler<DeletedCommentEvent>
 {
     private readonly IPostBuilder _builder;
     private readonly IPostWriter _writer;
     private readonly ICommentDal _commentDal;
 
-    public AddCommentCounterOnCreatedCommentEventHandler(IPostBuilder builder, 
+    public DecreaseCommentCounterOnDeletedCommentEventHandler(IPostBuilder builder, 
         IPostWriter writer, 
         ICommentDal commentDal)
     {
@@ -22,7 +22,7 @@ public class AddCommentCounterOnCreatedCommentEventHandler : INotificationHandle
         _commentDal = commentDal;
     }
 
-    public Task Handle(CreatedCommentEvent notification, CancellationToken cancellationToken)
+    public Task Handle(DeletedCommentEvent notification, CancellationToken cancellationToken)
     {
         IPostKey postKey = new PostModel(notification.Aggregate.PostId);
         var listComment = _commentDal.ListData(postKey)?.ToList() 

@@ -29,4 +29,11 @@ public class CommentController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }    
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(DeleteCommentCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }    
 }

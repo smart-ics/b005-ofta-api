@@ -9,8 +9,10 @@ using Ofta.Domain.TImelineContext.CommentAgg;
 
 namespace Ofta.Application.TImelineContext.CommentAgg.Workers;
 
-public interface ICommentWriter : INunaWriterWithReturn<CommentModel>
+public interface ICommentWriter : 
+    INunaWriterWithReturn<CommentModel>
 {
+    void Delete(CommentModel model);
 }
 public class CommentWriter : ICommentWriter
 {
@@ -54,5 +56,13 @@ public class CommentWriter : ICommentWriter
         _commentReactDal.Insert(model.ListReact);
         trans.Complete();
         return model;
+    }
+
+    public void Delete(CommentModel model)
+    {
+        using var trans = TransHelper.NewScope();
+        _commentDal.Delete(model);
+        _commentReactDal.Delete(model);
+        trans.Complete();
     }
 }
