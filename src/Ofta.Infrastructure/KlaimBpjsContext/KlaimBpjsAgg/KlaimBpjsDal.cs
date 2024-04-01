@@ -97,6 +97,9 @@ public class KlaimBpjsDal : IKlaimBpjsDal
         
         var dp = new DynamicParameters();
         dp.AddParam("@KlaimBpjsId", key.KlaimBpjsId, SqlDbType.VarChar);
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        conn.Execute(sql, dp);
     }
 
     public KlaimBpjsModel GetData(IKlaimBpjsKey key)

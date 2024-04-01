@@ -57,5 +57,11 @@ public class PostController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    [HttpPatch("removeReact")]
+    public async Task<IActionResult> RemoveReact(RemoveReactPostCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
     
 }

@@ -13,4 +13,6 @@ public class CommentModel : ICommentKey
     public string UserOftaId { get; set; }
     public string Msg { get; set; }
     public int ReactCount { get; set; }
+    
+    public List<CommentReactModel> ListReact { get; set; }
 }

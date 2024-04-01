@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
 using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.UseCases;
 
-namespace Ofta.Api.Controllers.DocContext;
+namespace Ofta.Api.Controllers.KlaimBpjsContext;
 
 [Route("api/[controller]")]
 [ApiController]

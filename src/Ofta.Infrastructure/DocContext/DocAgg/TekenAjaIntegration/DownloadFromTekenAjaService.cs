@@ -11,12 +11,12 @@ public class DownloadFromTekenAjaService : IDownloadPublishedDocFromProviderServ
     //      Lalu simpan dokumen tersebut ke folder yang ditentukan
     public void Execute(DownloadPublishedDocFromProviderRequest req)
     {
-        string url = req.DownloadUrl;
-        string outputPath = req.DestinationPathFileName;
-
-        using (WebClient client = new WebClient())
-        {
-            client.DownloadFile(url, outputPath);
-        }
+        // string url = req.DownloadUrl;
+        // string outputPath = req.DestinationPathFileName;
+        //
+        // using (WebClient client = new WebClient())
+        // {
+        //     client.DownloadFile(url, outputPath);
+        // }
     }
 }
