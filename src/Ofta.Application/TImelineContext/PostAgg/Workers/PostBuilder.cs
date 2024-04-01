@@ -23,6 +23,7 @@ public interface IPostBuilder : INunaBuilder<PostModel>
 
     IPostBuilder AddReact(IUserOftaKey userOftaKey);
     IPostBuilder RemoveReact(IUserOftaKey userOftaKey);
+    IPostBuilder CommentCount(int counter);
 }
 public class PostBuilder : IPostBuilder
 {
@@ -138,6 +139,12 @@ public class PostBuilder : IPostBuilder
     public IPostBuilder RemoveReact(IUserOftaKey userOftaKey)
     {
         _agg.ListReact.RemoveAll(x => x.UserOftaId == userOftaKey.UserOftaId);
+        return this;
+    }
+
+    public IPostBuilder CommentCount(int counter)
+    {
+        _agg.CommentCount = counter;
         return this;
     }
 }
