@@ -163,4 +163,33 @@ public class DocDal : IDocDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.ReadSingle<DocModel>(sql, dp);
     }
+
+    public IEnumerable<DocModel> ListData(IEnumerable<string> filter1, int pageNo)
+    {
+        const int PAGE_SIZE = 50;
+        const string sql = @"
+            SELECT DISTINCT
+                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
+                aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.UploadedDocUrl, aa.PublishedDocUrl,
+                ISNULL(bb.DocTypeName, '') AS DocTypeName
+            FROM    
+                OFTA_Doc aa
+                LEFT JOIN OFTA_DocType bb ON aa.DocTypeId = bb.DocTypeId
+                LEFT JOIN OFTA_DocScope cc ON aa.DocId = cc.DocId
+            WHERE
+                cc.ScopeReffId IN @ScopeReffIds
+            ORDER BY
+                aa.DocId DESC
+            OFFSET 
+                (@pageNumber - 1) * 50 ROWS
+                FETCH NEXT 50 ROWS ONLY";
+
+        var dp = new DynamicParameters();
+        dp.Add("@ScopeReffIds", filter1.Select(x => x).ToArray());
+        dp.AddParam("@pageNumber", pageNo, SqlDbType.Int);
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Read<DocModel>(sql, dp);
+    }
 }

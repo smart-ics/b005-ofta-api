@@ -46,3 +46,7 @@ public class CreateDocHandler : IRequestHandler<CreateDocCommand, CreateDocRespo
         return Task.FromResult(response);
     }
 }
+
+public record CreatedDocEvent(
+    DocModel Aggregate,
+    CreateDocCommand Command):INotification;
