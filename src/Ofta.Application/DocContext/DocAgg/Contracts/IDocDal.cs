@@ -11,6 +11,7 @@ public interface  IDocDal :
     IDelete<IDocKey>,
     IGetData<DocModel, IDocKey>,
     IGetData<DocModel, IUploadedDocKey>, 
-    IListData<DocModel, Periode, IUserOftaKey>
+    IListData<DocModel, Periode, IUserOftaKey>,
+    IListData<DocModel, IEnumerable<string>, int>
 {
 }

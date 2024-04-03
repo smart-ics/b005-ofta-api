@@ -200,5 +200,4 @@ sequenceDiagram
     PETUGAS ->> OFTA: Submit Surat
     OFTA ->>REMOTE CETAK : Request Cetak Surat
     PETUGAS ->> OFTA : Download Surat
-
 ```

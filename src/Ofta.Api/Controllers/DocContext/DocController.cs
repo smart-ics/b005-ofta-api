@@ -66,6 +66,14 @@ public class DocController : Controller
         return Ok(new JSendOk(result));
     }
     
+    [HttpGet("{userOftaId}/{pageNo}")]
+    public async Task<IActionResult> ListMyDoc(string userOftaId, int pageNo)
+    {
+        var query = new ListMyDocQuery(userOftaId, pageNo);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
+
     [HttpPatch("addScope")]
     public async Task<IActionResult> AddScope(AddScopeDocCommand cmd)
     {

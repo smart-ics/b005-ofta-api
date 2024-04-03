@@ -65,4 +65,21 @@ public class TeamUserOftaDal : ITeamUserOftaDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Query<TeamUserOftaModel>(sql, dp);
     }
+
+    public IEnumerable<TeamUserOftaModel> ListData(string filter)
+    {
+        const string sql = @"
+            SELECT
+                aa.TeamId, aa.UserOftaId
+            FROM
+                OFTA_TeamUserOfta aa
+            WHERE
+                aa.UserOftaId = @UserOftaId";
+        
+        var dp = new DynamicParameters();
+        dp.AddParam("@UserOftaId", filter, SqlDbType.VarChar);
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Query<TeamUserOftaModel>(sql, dp);
+    }
 }
