@@ -1,5 +1,4 @@
 ﻿using Nuna.Lib.DataAccessHelper;
-using Nuna.Lib.ValidationHelper;
 using Ofta.Domain.TImelineContext.PostAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
@@ -10,6 +9,6 @@ public interface IPostDal :
     IUpdate<PostModel>,
     IDelete<IPostKey>,
     IGetData<PostModel, IPostKey>,
-    IListData<PostModel, Periode, IUserOftaKey>
+    IListData<PostModel, IUserOftaKey,int>
 {
 }
