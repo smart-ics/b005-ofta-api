@@ -104,10 +104,12 @@ public class CommentDal : ICommentDal
     {
         const string sql = @"
             SELECT
-                CommentId, CommentDate, PostId, 
-                UserOftaId, Msg, ReactCount 
+                aa.CommentId, aa.CommentDate, aa.PostId, 
+                aa.UserOftaId, aa.Msg, aa.ReactCount,
+                isnull(bb.UserOftaName,' ') UserOftaName
             FROM
-                OFTA_Comment
+                OFTA_Comment aa
+                LEFT JOIN OFTA_UserOfta bb on aa.UserOftaId = bb.UserOftaId
             WHERE
                 PostId = @PostId";
 

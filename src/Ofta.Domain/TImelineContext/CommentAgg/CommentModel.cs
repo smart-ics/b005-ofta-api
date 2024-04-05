@@ -11,6 +11,7 @@ public class CommentModel : ICommentKey
     public DateTime CommentDate { get; set; }
     public string PostId { get; set; }
     public string UserOftaId { get; set; }
+    public string UserOftaName { get; set; }
     public string Msg { get; set; }
     public int ReactCount { get; set; }
     

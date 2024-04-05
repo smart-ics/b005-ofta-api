@@ -49,5 +49,13 @@ public class CommentController : Controller
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
-    }    
+    }
+
+    [HttpGet("{PostId}")]
+    public async Task<IActionResult> ListComment(string PostId)
+    {
+        var query = new ListCommentQuery(PostId);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 }
