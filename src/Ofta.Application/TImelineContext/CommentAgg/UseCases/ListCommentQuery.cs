@@ -1,10 +1,9 @@
-using MediatR;
+﻿using MediatR;
 using Ofta.Application.TImelineContext.CommentAgg.Contracts;
 using Ofta.Application.TImelineContext.PostAgg.Contracts;
 using Ofta.Domain.TImelineContext.CommentAgg;
 using Ofta.Domain.TImelineContext.PostAgg;
-using Ofta.Domain.UserContext.UserOftaAgg;
-using System.ComponentModel.Design;
+
 
 namespace Ofta.Application.TImelineContext.CommentAgg.UseCases;
 
@@ -19,18 +18,29 @@ public record ListCommentResponse(
     string UserOftaId,
     string UserOftaName, 
     string Msg, 
-    int ReactCount
+    int ReactCount,
+    List<GetCommentReactResponse> ListReact
     );
+
+public class GetCommentReactResponse
+{
+    public string CommentId { get; set; }
+    public string PostReactDate { get; set; }
+    public string UserOftaId { get; set; }
+    public string UserOftaName { get; set; }
+}
 
 public class ListCommentHandler : IRequestHandler<ListCommentQuery, IEnumerable<ListCommentResponse>>
 {
     private readonly IPostDal _postDal;
     private readonly ICommentDal _commentDal;
+    private readonly ICommentReactDal _commentReactDal;
 
-    public ListCommentHandler(IPostDal postDal, ICommentDal commentDal)
+    public ListCommentHandler(IPostDal postDal, ICommentDal commentDal,ICommentReactDal commentReactDal)
     {
         _postDal = postDal;
         _commentDal = commentDal;
+        _commentReactDal = commentReactDal;
     }
 
     public Task<IEnumerable<ListCommentResponse>> Handle(ListCommentQuery request, CancellationToken cancellationToken)
@@ -42,18 +52,33 @@ public class ListCommentHandler : IRequestHandler<ListCommentQuery, IEnumerable<
         //  QUERY
         var listComment = _commentDal.ListData(request)?.ToList()
             ?? new List<CommentModel>();
+        var listCommentReact = _commentReactDal.ListData()?.ToList()
+            ?? new List<CommentReactModel>();
 
         //  RETURN
-        var response = listComment.Select(x => new ListCommentResponse
+        var response =
+            from c in listComment
+            select new ListCommentResponse
             (
-                x.CommentId,
-                $"{x.CommentDate:yyyy-MM-dd HH:mm:ss}",
-                x.PostId,
-                x.UserOftaId,
-                x.UserOftaName,
-                x.Msg,
-                x.ReactCount
-            ));
+                CommentId: c.CommentId,
+                CommentDate: $"{c.CommentDate:yyyy-MM-dd HH:mm:ss}",
+                PostId: c.PostId,
+                UserOftaId: c.UserOftaId,
+                UserOftaName: c.UserOftaName,
+                Msg: c.Msg,
+                ReactCount: c.ReactCount,
+                ListReact: listCommentReact
+                    .Where(x => x.CommentId == c.CommentId)
+                    .Select(x => new GetCommentReactResponse
+                    {
+                        CommentId = x.CommentId,
+                        PostReactDate = x.CommentReactDate.ToString("yyyy-MM-dd hh:mm:ss"),
+                        UserOftaId = x.UserOftaId,
+                        UserOftaName = x.UserOftaName
+                    }).ToList()
+            );
+
+
         return Task.FromResult(response);
     }
 }

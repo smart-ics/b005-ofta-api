@@ -5,4 +5,5 @@ public class CommentReactModel : ICommentKey
     public string CommentId { get; set; }
     public DateTime CommentReactDate { get; set; }
     public string UserOftaId { get; set; }
+    public string UserOftaName { get; set; }
 }
