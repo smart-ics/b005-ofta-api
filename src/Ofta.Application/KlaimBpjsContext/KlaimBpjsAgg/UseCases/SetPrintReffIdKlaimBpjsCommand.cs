@@ -37,7 +37,7 @@ public class SetPrintReffIdKlaimBpjsHandler : IRequestHandler<SetPrintReffIdKlai
         var agg = _builder
             .Load(request)
             .Build();
-        var doc = agg.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrut);
+        var doc = agg.ListDocType.FirstOrDefault(x => x.NoUrut == request.NoUrut);
         if (doc is null)
             throw new ArgumentException("Document not found");
         

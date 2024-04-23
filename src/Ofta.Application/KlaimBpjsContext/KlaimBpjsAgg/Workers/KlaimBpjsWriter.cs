@@ -14,21 +14,24 @@ public interface IKlaimBpjsWriter : INunaWriterWithReturn<KlaimBpjsModel>
 public class KlaimBpjsWriter : IKlaimBpjsWriter
 {
     private readonly IKlaimBpjsDal _klaimBpjsDal;
-    private readonly IKlaimBpjsDocDal _klaimBpjsDocDal;
+    private readonly IKlaimBpjsDocTypeDal _klaimBpjsDocTypeDal;
+    private readonly IKlaimBpjsPrintDal _klaimBpjsPrintDal;
     private readonly IKlaimBpjsSigneeDal _klaimBpjsSigneeDal;
     private readonly IKlaimBpjsEventDal _klaimBpjsJurnalDal;
     private readonly INunaCounterBL _counter;
     private readonly IValidator<KlaimBpjsModel> _validator;
 
     public KlaimBpjsWriter(IKlaimBpjsDal klaimBpjsDal,
-        IKlaimBpjsDocDal klaimBpjsDocDal,
+        IKlaimBpjsDocTypeDal klaimBpjsDocTypeDal,
+        IKlaimBpjsPrintDal klaimBpjsPrintDal,
         IKlaimBpjsSigneeDal klaimBpjsSigneeDal,
-        IKlaimBpjsEventDal klaimBpjsJurnalDal,
+        IKlaimBpjsEventDal klaimBpjsJurnalDal, 
         INunaCounterBL counter, 
         IValidator<KlaimBpjsModel> validator)
     {
         _klaimBpjsDal = klaimBpjsDal;
-        _klaimBpjsDocDal = klaimBpjsDocDal;
+        _klaimBpjsDocTypeDal = klaimBpjsDocTypeDal;
+        _klaimBpjsPrintDal = klaimBpjsPrintDal;
         _klaimBpjsSigneeDal = klaimBpjsSigneeDal;
         _klaimBpjsJurnalDal = klaimBpjsJurnalDal;
         _counter = counter;
@@ -45,15 +48,22 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
         //  GENERATE-ID
         if (model.KlaimBpjsId.IsNullOrEmpty())
             model.KlaimBpjsId = _counter.Generate("KLBP", IDFormatEnum.PREFYYMnnnnnC);
-        model.ListDoc.ForEach(x =>
+        model.ListDocType.ForEach(x =>
         {
             x.KlaimBpjsId = model.KlaimBpjsId;
-            x.KlaimBpjsDocId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}";
-            x.ListSign.ForEach(y =>
+            x.KlaimBpjsDocTypeId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}";
+            x.ListPrint.ForEach(y =>
             {
                 y.KlaimBpjsId = model.KlaimBpjsId;
-                y.KlaimBpjsDocId = x.KlaimBpjsDocId;
-                y.KlaimBpjsSigneeId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}";
+                y.KlaimBpjsDocTypeId = x.KlaimBpjsDocTypeId;
+                y.KlaimBpjsPrintId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}";
+                y.ListSign.ForEach(z =>
+                {
+                    z.KlaimBpjsId = model.KlaimBpjsId;
+                    z.KlaimBpjsDocTypeId = x.KlaimBpjsDocTypeId;
+                    z.KlaimBpjsPrintId = y.KlaimBpjsPrintId;
+                    z.KlaimBpjsSigneeId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}-{z.NoUrut:D2}";
+                });
             });
         });
         model.ListEvent.ForEach(x =>
@@ -62,7 +72,8 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
             x.KlaimBpjsJurnalId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}";
         });
         
-        var allSignee = model.ListDoc.SelectMany(x => x.ListSign).ToList();
+        var allPrint = model.ListDocType.SelectMany(x => x.ListPrint).ToList();
+        var allSignee = allPrint.SelectMany(x => x.ListSign).ToList();
         
         //  WRITE
         using var trans = TransHelper.NewScope();
@@ -73,9 +84,12 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
         else
             _klaimBpjsDal.Update(model);
 
-        _klaimBpjsDocDal.Delete(model);
-        _klaimBpjsDocDal.Insert(model.ListDoc);
+        _klaimBpjsDocTypeDal.Delete(model);
+        _klaimBpjsDocTypeDal.Insert(model.ListDocType);
         
+        _klaimBpjsPrintDal.Delete(model);
+        _klaimBpjsPrintDal.Insert(allPrint);
+
         _klaimBpjsSigneeDal.Delete(model);
         _klaimBpjsSigneeDal.Insert(allSignee);
 

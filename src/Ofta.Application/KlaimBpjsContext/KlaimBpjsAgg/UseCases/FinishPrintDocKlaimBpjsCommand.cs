@@ -36,7 +36,7 @@ public class FinishPrintOutKlaimBpjsHandler : IRequestHandler<FinishPrintDocKlai
         
         //  BUILD
         var agg = _builder.Load(request).Build();
-        var itemKlaim = agg.ListDoc.FirstOrDefault(x => x.PrintOutReffId == request.PrintOutReffId);
+        var itemKlaim = agg.ListDocType.FirstOrDefault(x => x.PrintOutReffId == request.PrintOutReffId);
         if (itemKlaim is null)
             throw new ArgumentException("Document not found");
         itemKlaim.PrintState = PrintStateEnum.Printed;

@@ -29,7 +29,7 @@ public class AddQueueRemoteCetakOnPrintedDocKlaimBpjsEventHandler : INotificatio
     public Task Handle(PrintedDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
         var remoteAddr = _appSettingService.RemoteCetakAddress;
-        var doc = notification.Aggregate.ListDoc.FirstOrDefault(x => x.NoUrut == notification.Command.NoUrut);
+        var doc = notification.Aggregate.ListDocType.FirstOrDefault(x => x.NoUrut == notification.Command.NoUrut);
         if (doc is null)
             throw new ArgumentException("Document to be printed not found");
         var docType = _docTypeBuilder.Load(doc).Build();

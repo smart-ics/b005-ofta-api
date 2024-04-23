@@ -33,7 +33,7 @@ public class SaveDocOnFinishedPrintDocKlaimBpjsEventHandler
         //  create Document atas file yg sudah di-print
         var klaimBpjs = notification.Agg;
         var cmd = notification.Command;
-        var itemKlaim = klaimBpjs.ListDoc.FirstOrDefault(x => x.PrintOutReffId == cmd.PrintOutReffId);
+        var itemKlaim = klaimBpjs.ListDocType.FirstOrDefault(x => x.PrintOutReffId == cmd.PrintOutReffId);
         if (itemKlaim is null)
             throw new ArgumentException("Document not found");
 

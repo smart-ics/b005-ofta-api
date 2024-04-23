@@ -104,7 +104,12 @@
             HiDok
             Heejenic
             Ofta
-            
+```
 
-
+```mermaid
+    sequenceDiagram
+        actor pasien
+        actor admisi
+        participant KTP_SCANNER
+        participant FO
 ```

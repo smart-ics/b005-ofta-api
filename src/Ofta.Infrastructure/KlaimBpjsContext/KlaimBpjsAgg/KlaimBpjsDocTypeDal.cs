@@ -9,17 +9,17 @@ using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class KlaimBpjsDocDal : IKlaimBpjsDocDal
+public class KlaimBpjsDocTypeDal : IKlaimBpjsDocTypeDal
 {
     private readonly DatabaseOptions _opt;
 
-    public KlaimBpjsDocDal(IOptions<DatabaseOptions> opt)
+    public KlaimBpjsDocTypeDal(IOptions<DatabaseOptions> opt)
     {
         _opt = opt.Value;
     }
 
 
-    public void Insert(IEnumerable<KlaimBpjsDocModel> listModel)
+    public void Insert(IEnumerable<KlaimBpjsDocTypeModel> listModel)
     {
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         using var bcp = new SqlBulkCopy(conn);
@@ -56,7 +56,7 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
         conn.Execute(sql, dp);
     }
 
-    public IEnumerable<KlaimBpjsDocModel> ListData(IKlaimBpjsKey filter)
+    public IEnumerable<KlaimBpjsDocTypeModel> ListData(IKlaimBpjsKey filter)
     {
         const string sql = @"
             SELECT
@@ -72,6 +72,6 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
         dp.AddParam("@KlaimBpjsId", filter.KlaimBpjsId, SqlDbType.VarChar);
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
-        return conn.Query<KlaimBpjsDocModel>(sql, dp);
+        return conn.Query<KlaimBpjsDocTypeModel>(sql, dp);
     }
 }

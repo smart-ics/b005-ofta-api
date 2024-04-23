@@ -48,7 +48,7 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
 
     private bool RecordEvent(ReOrderDocKlaimBpjsCommand request)
     {
-        var doc = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrutAsal);
+        var doc = _agg.ListDocType.FirstOrDefault(x => x.NoUrut == request.NoUrutAsal);
         if (doc is null)
             return false;
         _agg = _builder
@@ -81,10 +81,10 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
     
     private void MoveRight(int noUrut)
     {
-        var current = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == noUrut);
+        var current = _agg.ListDocType.FirstOrDefault(x => x.NoUrut == noUrut);
         if (current is null)
             return;
-        var next = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == noUrut + 1);
+        var next = _agg.ListDocType.FirstOrDefault(x => x.NoUrut == noUrut + 1);
         if (next is null)
             return;
 
@@ -94,10 +94,10 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
     
     private void MoveLeft(int noUrut)
     {
-        var current = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == noUrut);
+        var current = _agg.ListDocType.FirstOrDefault(x => x.NoUrut == noUrut);
         if (current is null)
             return;
-        var next = _agg.ListDoc.FirstOrDefault(x => x.NoUrut == noUrut - 1);
+        var next = _agg.ListDocType.FirstOrDefault(x => x.NoUrut == noUrut - 1);
         if (next is null)
             return;
 

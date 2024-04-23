@@ -38,7 +38,7 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
         var klaimBpjs = _builder
             .Load(request)
             .Build();
-        var doc = klaimBpjs.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrut);
+        var doc = klaimBpjs.ListDocType.FirstOrDefault(x => x.NoUrut == request.NoUrut);
         if (doc is null)
             throw new ArgumentException("Document not found");
         doc.PrintState = PrintStateEnum.Queued;
