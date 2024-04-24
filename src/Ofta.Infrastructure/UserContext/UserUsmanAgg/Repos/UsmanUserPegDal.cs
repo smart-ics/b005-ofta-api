@@ -7,20 +7,20 @@ using Ofta.Infrastructure.Helpers;
 using Usman.Lib.NetStandard.Interfaces;
 using Usman.Lib.NetStandard.Models;
 
-namespace Ofta.Infrastructure.UserContext.UserUsmanAgg.Repos
+namespace Ofta.Infrastructure.UserContext.UserUsmanAgg.Repos;
+
+public class UsmanPegDal : IUsmanPegDal
 {
-    public class UsmanPegDal : IUsmanPegDal
+    private readonly DatabaseOptions _opt;
+
+    public UsmanPegDal(IOptions<DatabaseOptions> opt)
     {
-        private readonly DatabaseOptions _opt;
+        _opt = opt.Value;
+    }
 
-        public UsmanPegDal(IOptions<DatabaseOptions> opt)
-        {
-            _opt = opt.Value;
-        }
-
-        public UsmanPegModel GetData(IEmail email)
-        {
-            const string sql = @"
+    public UsmanPegModel GetData(IEmail email)
+    {
+        const string sql = @"
                 SELECT
                     aa.fs_kd_peg AS Nik, aa.fs_nm_peg AS PegName, aa.fd_tgl_lahir AS BirtDate,
                     aa.fs_kd_bagian AS BagianId, aa.fs_kd_departemen AS DepartementId,
@@ -38,11 +38,10 @@ namespace Ofta.Infrastructure.UserContext.UserUsmanAgg.Repos
                 WHERE
                     aa.fs_email = @fs_email ";
 
-            var dp = new DynamicParameters();
-            dp.AddParam("@fs_email", email, SqlDbType.VarChar);
+        var dp = new DynamicParameters();
+        dp.AddParam("@fs_email", email, SqlDbType.VarChar);
 
-            using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
-            return conn.ReadSingle<UsmanPegModel>(sql, dp);
-        }
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.ReadSingle<UsmanPegModel>(sql, dp);
     }
 }

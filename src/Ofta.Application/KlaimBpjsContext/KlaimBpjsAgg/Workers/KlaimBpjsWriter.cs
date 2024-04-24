@@ -15,7 +15,7 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
 {
     private readonly IKlaimBpjsDal _klaimBpjsDal;
     private readonly IKlaimBpjsDocTypeDal _klaimBpjsDocTypeDal;
-    private readonly IKlaimBpjsPrintDal _klaimBpjsPrintDal;
+    private readonly IKlaimBpjsPrintOutDal _klaimBpjsPrintDal;
     private readonly IKlaimBpjsSigneeDal _klaimBpjsSigneeDal;
     private readonly IKlaimBpjsEventDal _klaimBpjsJurnalDal;
     private readonly INunaCounterBL _counter;
@@ -23,7 +23,7 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
 
     public KlaimBpjsWriter(IKlaimBpjsDal klaimBpjsDal,
         IKlaimBpjsDocTypeDal klaimBpjsDocTypeDal,
-        IKlaimBpjsPrintDal klaimBpjsPrintDal,
+        IKlaimBpjsPrintOutDal klaimBpjsPrintDal,
         IKlaimBpjsSigneeDal klaimBpjsSigneeDal,
         IKlaimBpjsEventDal klaimBpjsJurnalDal, 
         INunaCounterBL counter, 
@@ -61,7 +61,7 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
                 {
                     z.KlaimBpjsId = model.KlaimBpjsId;
                     z.KlaimBpjsDocTypeId = x.KlaimBpjsDocTypeId;
-                    z.KlaimBpjsPrintId = y.KlaimBpjsPrintOutId;
+                    z.KlaimBpjsPrintOutId = y.KlaimBpjsPrintOutId;
                     z.KlaimBpjsSigneeId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}-{z.NoUrut:D2}";
                 });
             });

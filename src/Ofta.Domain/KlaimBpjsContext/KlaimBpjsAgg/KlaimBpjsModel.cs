@@ -27,5 +27,5 @@ public enum KlaimBpjsStateEnum
     InProgress, //    add-remove or sign or print
     Completed,  //    siap di-merge
     Merged,     //    sudah di-merge 
-    Downloaded, //    dokumen sudah di-merge  
+    Downloaded //    dokumen sudah di-merge  
 }

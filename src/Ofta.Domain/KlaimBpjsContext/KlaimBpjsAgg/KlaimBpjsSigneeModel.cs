@@ -6,7 +6,7 @@ public class KlaimBpjsSigneeModel : IKlaimBpjsKey
 {
     public string KlaimBpjsId { get; set; }
     public string KlaimBpjsDocTypeId { get; set; }
-    public string KlaimBpjsPrintId { get; set; }
+    public string KlaimBpjsPrintOutId { get; set; }
     public string KlaimBpjsSigneeId { get; set; }
     public int NoUrut { get; set; }
     public string UserOftaId { get; set; }

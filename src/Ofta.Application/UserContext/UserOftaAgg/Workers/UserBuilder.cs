@@ -36,7 +36,7 @@ public class UserBuilder : IUserBuilder
         {
             ExpiredDate = new DateTime(3000,1,1),
             VerifiedDate = new DateTime(3000,1,1),
-            IsVerified = false,
+            IsVerified = false
         };
         return this;
     }

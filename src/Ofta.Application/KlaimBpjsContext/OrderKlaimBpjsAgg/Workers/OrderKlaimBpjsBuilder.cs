@@ -49,7 +49,7 @@ public class OrderKlaimBpjsBuilder : IOrderKlaimBpjsBuilder
     {
         _agg = new OrderKlaimBpjsModel
         {
-            OrderKlaimBpjsDate = _tglJamDal.Now,
+            OrderKlaimBpjsDate = _tglJamDal.Now
         };
         return this;
     }

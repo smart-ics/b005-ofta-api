@@ -74,9 +74,9 @@ public class GetKlaimBpjsQueryHandler : IRequestHandler<GetKlaimBpjsQuery, GetKl
                          NoUrut = x.NoUrut,
                          DocTypeId = x.DocTypeId,
                          DocTypeName = x.DocTypeName,
-                         DocId = x.DocId,
-                         DocUrl = x.DocUrl,
-                         PrintOutReffId = x.PrintOutReffId
+                         DocId = string.Empty,//x.DocId,
+                         DocUrl = string.Empty,//x.DocUrl,
+                         PrintOutReffId = string.Empty //x.PrintOutReffId
                      }).ToList(),
             klaimBpjs.ListEvent
                         .Select(x => new GetKlaimBpjsEventResponse

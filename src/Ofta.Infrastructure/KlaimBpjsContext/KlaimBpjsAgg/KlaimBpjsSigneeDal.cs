@@ -25,7 +25,8 @@ public class KlaimBpjsSigneeDal : IKlaimBpjsSigneeDal
         conn.Open();
         
         bcp.AddMap("KlaimBpjsId", "KlaimBpjsId");
-        bcp.AddMap("KlaimBpjsDocId", "KlaimBpjsDocId");
+        bcp.AddMap("KlaimBpjsDocTypeId", "KlaimBpjsDocTypeId");
+        bcp.AddMap("KlaimBpjsPrintOutId", "KlaimBpjsPrintOutId");
         bcp.AddMap("KlaimBpjsSigneeId", "KlaimBpjsSigneeId");
         bcp.AddMap("NoUrut", "NoUrut");
         bcp.AddMap("UserOftaId", "UserOftaId");

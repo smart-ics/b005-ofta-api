@@ -131,7 +131,7 @@ public class PostBuilder : IPostBuilder
         _agg.ListReact.Add(new PostReactModel
         {
             UserOftaId = userOfta.UserOftaId,
-            PostReactDate = _tglJamDal.Now,
+            PostReactDate = _tglJamDal.Now
         });
         return this;
     }

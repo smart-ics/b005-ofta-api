@@ -4,10 +4,9 @@ using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
-using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Polly;
 
-namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
+namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 
 public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler 
     : INotificationHandler<FinishedPrintDocKlaimBpjsEvent>
@@ -31,22 +30,27 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
         //  create Document atas file yg sudah di-print
-        var klaimBpjs = notification.Agg;
+        var agg = notification.Agg;
         var cmd = notification.Command;
-        var itemKlaim = klaimBpjs.ListDocType.FirstOrDefault(x => x.PrintOutReffId == cmd.PrintOutReffId);
-        if (itemKlaim is null)
-            throw new ArgumentException("Document not found");
+
+        var printOut = agg.ListDocType
+            .SelectMany(x => x.ListPrintOut)
+            .FirstOrDefault(x => x.PrintOutReffId == cmd.PrintOutReffId)
+            ?? throw new ArgumentException("Document not found");
+
+        var docType = agg.ListDocType
+            .First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == cmd.PrintOutReffId));
 
         var fallback = Policy<DocModel>
             .Handle<KeyNotFoundException>()
             .Fallback(() => _docBuilder
                 .Create()
-                .DocType(new DocTypeModel(itemKlaim.DocTypeId))
-                .User(klaimBpjs)
+                .DocType(new DocTypeModel(docType.DocTypeId))
+                .User(agg)
                 .AddJurnal(DocStateEnum.Created, string.Empty)
                 .Build());
         var doc = fallback.Execute(() => 
-            _docBuilder.Load(new DocModel(itemKlaim.DocId)).Build());
+            _docBuilder.Load(new DocModel(printOut.DocId)).Build());
 
         //  WRITE
         //      doc
@@ -61,8 +65,8 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         doc = _docWriter.Save(doc);
 
         //      klaim
-        itemKlaim.DocId = doc.DocId;
-        _klaimBpjsWriter.Save(klaimBpjs);
+        printOut.DocId = doc.DocId;
+        _klaimBpjsWriter.Save(agg);
         
         //      save fisik file;
         var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);

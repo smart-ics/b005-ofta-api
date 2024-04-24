@@ -14,7 +14,7 @@ public class CommentDalTest
     private readonly ICommentDal _sut = new CommentDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
 
     private readonly CommentModel _faker = new()
@@ -24,7 +24,7 @@ public class CommentDalTest
         PostId = "B",
         UserOftaId = "C",
         Msg = "D",
-        ReactCount = 2,
+        ReactCount = 2
     };
     
     [Fact]

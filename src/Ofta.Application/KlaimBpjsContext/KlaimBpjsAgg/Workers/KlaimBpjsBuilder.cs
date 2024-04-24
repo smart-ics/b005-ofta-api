@@ -117,7 +117,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 KlaimBpjsDocTypeId = c.KlaimBpjsDocTypeId,
                 NoUrut = c.NoUrut,
                 DocTypeId = c.DocTypeId,
-                DocTypeName = c.DocTypeName,
+                DocTypeName = c.DocTypeName
             }).ToList();
         _agg.ListEvent = listJurnal;
 

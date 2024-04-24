@@ -13,14 +13,14 @@ public class PostReactDalTest
     private readonly IPostReactDal _sut = new PostReactDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
     
     private readonly PostReactModel _faker = new()
     {
         PostId = "A",
         PostReactDate = new DateTime(2024,3,29), 
-        UserOftaId = "B",
+        UserOftaId = "B"
     };
     
     [Fact]

@@ -1,7 +1,6 @@
-﻿namespace Ofta.Domain.DocContext.DocTypeAgg
+﻿namespace Ofta.Domain.DocContext.DocTypeAgg;
+
+public interface ITag
 {
-    public interface ITag
-    {
-        string Tag { get; }
-    }
+    string Tag { get; }
 }

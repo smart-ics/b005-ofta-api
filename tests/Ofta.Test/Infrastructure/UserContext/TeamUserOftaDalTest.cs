@@ -12,7 +12,7 @@ public class TeamUserOftaDalTest
     private readonly TeamUserOftaDal _sut = new TeamUserOftaDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
     
     private readonly TeamUserOftaModel _faker = new()

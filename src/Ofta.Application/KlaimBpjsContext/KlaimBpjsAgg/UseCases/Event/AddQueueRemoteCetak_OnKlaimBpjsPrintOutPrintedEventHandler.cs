@@ -1,13 +1,12 @@
 ﻿using System.Text.Json;
 using MediatR;
-using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocTypeAgg.Workers;
 using Ofta.Application.Helpers;
 using Ofta.Application.PrintOutContext.RemoteCetakAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.PrintOutContext.RemoteCetakAgg;
 
-namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
+namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 
 public class AddQueueRemoteCetak_OnKlaimBpjsPrintOutPrintedEventHandler : INotificationHandler<PrintedDocKlaimBpjsEvent>
 {

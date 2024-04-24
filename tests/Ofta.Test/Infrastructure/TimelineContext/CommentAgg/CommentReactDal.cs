@@ -13,14 +13,14 @@ public class CommentReactDalTest
     private readonly ICommentReactDal _sut = new CommentReactDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
     
     private readonly CommentReactModel _faker = new()
     {
         CommentId = "A",
         CommentReactDate = new DateTime(2024,3,29), 
-        UserOftaId = "B",
+        UserOftaId = "B"
     };
     
     [Fact]

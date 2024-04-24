@@ -13,7 +13,7 @@ public class BlueprintDocTypeDalTest
     private readonly IBlueprintDocTypeDal _sut = new BlueprintDocTypeDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
     
     private readonly BlueprintDocTypeModel _faker = new()
@@ -22,7 +22,7 @@ public class BlueprintDocTypeDalTest
         BlueprintDocTypeId = "B", 
         DocTypeId = "C",
         DocTypeName = string.Empty,
-        NoUrut = 3,
+        NoUrut = 3
     };
     
     [Fact]

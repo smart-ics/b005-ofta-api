@@ -52,13 +52,6 @@ public class KlaimBpjsController : Controller
         return Ok(new JSendOk(result));
     }
     
-    [HttpPatch("printOutReffId")]
-    public async Task<IActionResult> SetPrintReffId(SetPrintOutReffIdKlaimBpjsCommand cmd)
-    {
-        var result = await _mediator.Send(cmd);
-        return Ok(new JSendOk(result));
-    }
-    
     [HttpPatch("printDoc")]
     public async Task<IActionResult> PrintRemoteCetak(KlaimBpjsPrintOutPrintCommand cmd)
     {

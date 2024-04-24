@@ -13,7 +13,7 @@ public class BlueprintDalTest
     private readonly IBlueprintDal _sut = new BlueprintDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
 
     private readonly BlueprintModel _faker = new()
