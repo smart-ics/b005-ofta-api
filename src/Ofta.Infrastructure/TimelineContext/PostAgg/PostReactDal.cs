@@ -56,9 +56,11 @@ public class PostReactDal : IPostReactDal
     {
         const string sql = @"
             SELECT
-                aa.PostId, aa.PostReactDate, aa.UserOftaId
+                aa.PostId, aa.PostReactDate, aa.UserOftaId, isnull(bb.UserOftaName,'??') UserOftaName
             FROM
                 OFTA_PostReact aa
+            LEFT JOIN 
+                OFTA_UserOfta bb on aa.UserOftaId = bb.UserOftaId
             WHERE
                 aa.PostId = @PostId";
         
@@ -68,4 +70,5 @@ public class PostReactDal : IPostReactDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Query<PostReactModel>(sql, dp);
     }
+
 }

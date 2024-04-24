@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
-using Ofta.Application.DocContext.DocAgg.UseCases;
 using Ofta.Application.TImelineContext.PostAgg.UseCases;
 
 namespace Ofta.Api.Controllers.TimelineContext;
@@ -73,4 +72,11 @@ public class PostController : Controller
         return Ok(new JSendOk(result));
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPost(string id)
+    {
+        var query = new GetPostQuery(id);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 }

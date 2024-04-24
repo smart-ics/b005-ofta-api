@@ -55,9 +55,12 @@ public class CommentReactDal : ICommentReactDal
     {
         const string sql = @"
             SELECT
-                aa.CommentId, aa.CommentReactDate, aa.UserOftaId
+                aa.CommentId, aa.CommentReactDate, aa.UserOftaId, 
+                ISNULL(bb.UserOftaName,'??') UserOftaName
             FROM
                 OFTA_CommentReact aa
+            LEFT JOIN 
+                OFTA_UserOfta bb on aa.UserOftaId = bb.UserOftaId
             WHERE
                 aa.CommentId = @CommentId";
         
@@ -67,4 +70,5 @@ public class CommentReactDal : ICommentReactDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Query<CommentReactModel>(sql, dp);
     }
+
 }
