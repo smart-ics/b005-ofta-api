@@ -7,19 +7,19 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record AddDocTypeKlaimBpjsCommand(string KlaimBpjsId, string DocTypeId)
+public record KlaimBpjsDocTypeAddCommand(string KlaimBpjsId, string DocTypeId)
     : IRequest, IKlaimBpjsKey, IDocTypeKey;
 
-public class AddDocTypeKlaimBpjsHandler : IRequestHandler<AddDocTypeKlaimBpjsCommand>
+public class KlaimBpjsDocTypeAddHandler : IRequestHandler<KlaimBpjsDocTypeAddCommand>
 {
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
-    private readonly IValidator<AddDocTypeKlaimBpjsCommand> _guard;
+    private readonly IValidator<KlaimBpjsDocTypeAddCommand> _guard;
     private readonly IDocTypeBuilder _docTypeBuilder;
 
-    public AddDocTypeKlaimBpjsHandler(IKlaimBpjsBuilder builder,
+    public KlaimBpjsDocTypeAddHandler(IKlaimBpjsBuilder builder,
         IKlaimBpjsWriter writer,
-        IValidator<AddDocTypeKlaimBpjsCommand> guard, 
+        IValidator<KlaimBpjsDocTypeAddCommand> guard, 
         IDocTypeBuilder docTypeBuilder)
     {
         _builder = builder;
@@ -28,7 +28,7 @@ public class AddDocTypeKlaimBpjsHandler : IRequestHandler<AddDocTypeKlaimBpjsCom
         _docTypeBuilder = docTypeBuilder;
     }
 
-    public Task<Unit> Handle(AddDocTypeKlaimBpjsCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(KlaimBpjsDocTypeAddCommand request, CancellationToken cancellationToken)
     {
         //  GUARD
         var validationResult = _guard.Validate(request);
@@ -51,7 +51,7 @@ public class AddDocTypeKlaimBpjsHandler : IRequestHandler<AddDocTypeKlaimBpjsCom
     }
 }
 
-public class AddDocTypeKlaimBpjsCommandValidator : AbstractValidator<AddDocTypeKlaimBpjsCommand>
+public class AddDocTypeKlaimBpjsCommandValidator : AbstractValidator<KlaimBpjsDocTypeAddCommand>
 {
     public AddDocTypeKlaimBpjsCommandValidator()
     {

@@ -12,7 +12,7 @@ public class TeamDalTest
     private readonly TeamDal _sut = new TeamDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
     
     private readonly TeamModel _faker = new()

@@ -1,7 +1,8 @@
 ﻿CREATE TABLE OFTA_KlaimBpjsSignee(
     KlaimBpjsId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_KlaimBpjsId DEFAULT(''), 
-    KlaimBpjsDocId VARCHAR(16) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_KlaimBpjsDocId DEFAULT(''), 
-    KlaimBpjsSigneeId VARCHAR(19) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_KlaimBpjsSigneeId DEFAULT(''), 
+    KlaimBpjsDocTypeId VARCHAR(16) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_KlaimBpjsDocTypeId DEFAULT(''),
+    KlaimBpjsPrintOutId VARCHAR(19) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_KlaimBpjsPrintOutId DEFAULT(''),
+    KlaimBpjsSigneeId VARCHAR(22) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_KlaimBpjsSigneeId DEFAULT(''), 
     NoUrut INT NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_NoUrut DEFAULT(0), 
     UserOftaId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_UserOftaId DEFAULT(''), 
     Email VARCHAR(50) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsSignee_Email DEFAULT(''), 

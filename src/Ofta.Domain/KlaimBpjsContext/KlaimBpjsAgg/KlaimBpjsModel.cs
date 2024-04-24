@@ -17,7 +17,7 @@ public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey, IUserOftaKey
     public string LayananName { get; set; }
     public string DokterName { get; set; }
     public RajalRanapEnum RajalRanap { get; set; }
-    public List<KlaimBpjsDocModel> ListDoc { get; set; }
+    public List<KlaimBpjsDocTypeModel> ListDocType { get; set; }
     public List<KlaimBpjsEventModel> ListEvent { get; set; }
 }
 
@@ -27,5 +27,5 @@ public enum KlaimBpjsStateEnum
     InProgress, //    add-remove or sign or print
     Completed,  //    siap di-merge
     Merged,     //    sudah di-merge 
-    Downloaded, //    dokumen sudah di-merge  
+    Downloaded //    dokumen sudah di-merge  
 }

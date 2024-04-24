@@ -24,22 +24,26 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder Attach(KlaimBpjsModel klaimBpjs);
     IKlaimBpjsBuilder UserOfta(IUserOftaKey userOftaKey);
     IKlaimBpjsBuilder OrderKlaimBpjs(IOrderKlaimBpjsKey orderKlaimBpjsKey);
-    IKlaimBpjsBuilder PrintReffId(int noUrut, string printReffId);
-    IKlaimBpjsBuilder AttachDoc(IDocTypeKey docTypeKey, IDocKey docKey);
-    IKlaimBpjsBuilder DetachDoc(IDocKey docKey);
+    
     IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey);
     IKlaimBpjsBuilder RemoveDocType(int noUrut);
+    
+    IKlaimBpjsBuilder AddPrintOut(IDocTypeKey docTypeKey, string printReffId);
+    IKlaimBpjsBuilder RemovePrintOut(string printOutReffId);
+    IKlaimBpjsBuilder FinishPrintOut(string printOutReffId);
 
-    IKlaimBpjsBuilder AddSignee(IDocTypeKey docTypeKey, string email,
+    IKlaimBpjsBuilder PrintDoc(IDocTypeKey docTypeKey, string reffId);
+    
+    IKlaimBpjsBuilder AddSignee(IDocKey docKey, string email,
         string signTag, SignPositionEnum signPos);
-    IKlaimBpjsBuilder RemoveSignee(IDocTypeKey docTypeKey, string email);
+    IKlaimBpjsBuilder RemoveSignee(IDocKey docKey, string email);
     IKlaimBpjsBuilder AddEvent(KlaimBpjsStateEnum docStateEnum, string description);
 }
 
 public class KlaimBpjsBuilder : IKlaimBpjsBuilder
 {
     private readonly IKlaimBpjsDal _klaimBpjsDal;
-    private readonly IKlaimBpjsDocDal _klaimBpjsDocDal;
+    private readonly IKlaimBpjsDocTypeDal _klaimBpjsDocTypeDal;
     private readonly IKlaimBpjsSigneeDal _klaimBpjsSigneeDal;
     private readonly IUserOftaDal _userOftaDal;
     private readonly IBlueprintBuilder _blueprintBuilder;
@@ -52,7 +56,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
     private KlaimBpjsModel _agg = new KlaimBpjsModel();
 
     public KlaimBpjsBuilder(IKlaimBpjsDal klaimBpjsDal, 
-        IKlaimBpjsDocDal klaimBpjsDocDal, 
+        IKlaimBpjsDocTypeDal klaimBpjsDocTypeDal, 
         IKlaimBpjsSigneeDal klaimBpjsSigneeDal, 
         ITglJamDal tglJamDal, 
         IUserOftaDal userOftaDal, 
@@ -63,7 +67,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         IKlaimBpjsEventDal klaimBpjJurnalDal)
     {
         _klaimBpjsDal = klaimBpjsDal;
-        _klaimBpjsDocDal = klaimBpjsDocDal;
+        _klaimBpjsDocTypeDal = klaimBpjsDocTypeDal;
         _klaimBpjsSigneeDal = klaimBpjsSigneeDal;
         _tglJamDal = tglJamDal;
         _userOftaDal = userOftaDal;
@@ -85,7 +89,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         _agg = new KlaimBpjsModel
         {
             KlaimBpjsDate = _tglJamDal.Now,
-            ListDoc = new List<KlaimBpjsDocModel>(),
+            ListDocType = new List<KlaimBpjsDocTypeModel>(),
             ListEvent = new List<KlaimBpjsEventModel>()
         };
         return this;
@@ -95,8 +99,8 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
     {
         _agg = _klaimBpjsDal.GetData(klaimBpjsKey)
             ?? throw new KeyNotFoundException($"KlaimBpjsKey '{klaimBpjsKey.KlaimBpjsId}' not found");
-        var listDoc = _klaimBpjsDocDal.ListData(klaimBpjsKey)?.ToList()
-                    ?? new List<KlaimBpjsDocModel>();
+        var listDoc = _klaimBpjsDocTypeDal.ListData(klaimBpjsKey)?.ToList()
+                    ?? new List<KlaimBpjsDocTypeModel>();
         var listSignee = _klaimBpjsSigneeDal.ListData(klaimBpjsKey)?.ToList()
                       ?? new List<KlaimBpjsSigneeModel>();
         var listJurnal = _klaimBpjJurnalDal.ListData(klaimBpjsKey)?.ToList()
@@ -104,21 +108,16 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
 
         
         // assign listDoc to _agg and listSignee to _agg using LINQ
-        _agg.ListDoc = ( 
+        _agg.ListDocType = ( 
             from c in listDoc
-            join s in listSignee on c.KlaimBpjsDocId equals s.KlaimBpjsDocId into g
-            select new KlaimBpjsDocModel
+            join s in listSignee on c.KlaimBpjsDocTypeId equals s.KlaimBpjsDocTypeId into g
+            select new KlaimBpjsDocTypeModel
             {
                 KlaimBpjsId = c.KlaimBpjsId,
-                KlaimBpjsDocId = c.KlaimBpjsDocId,
+                KlaimBpjsDocTypeId = c.KlaimBpjsDocTypeId,
                 NoUrut = c.NoUrut,
                 DocTypeId = c.DocTypeId,
-                DocTypeName = c.DocTypeName,
-                DocId = c.DocId,
-                DocUrl = c.DocUrl,
-                PrintOutReffId = c.PrintOutReffId,
-                PrintState = c.PrintState,
-                ListSign = g.ToList()
+                DocTypeName = c.DocTypeName
             }).ToList();
         _agg.ListEvent = listJurnal;
 
@@ -152,69 +151,35 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder PrintReffId(int noUrut, string printReffId)
-    {
-        var klaimDoc = _agg.ListDoc.FirstOrDefault(c => c.NoUrut == noUrut);
-        if (klaimDoc is null)
-            throw new KeyNotFoundException($"NoUrut '{noUrut}' not found");
-        
-        klaimDoc.PrintOutReffId = printReffId;
-        return this;
-    }
-
-    public IKlaimBpjsBuilder AttachDoc(IDocTypeKey docTypeKey, IDocKey docKey)
-    {
-        var klaimDoc = _agg.ListDoc.FirstOrDefault(c => c.DocTypeId == docTypeKey.DocTypeId)
-            ?? throw new KeyNotFoundException($"DocTypeKey '{docTypeKey.DocTypeId}' not found");
-        var doc = _docBuilder.Load(docKey).Build();
-        klaimDoc.DocId = doc.DocId;
-        klaimDoc.DocUrl = doc.PublishedDocUrl;
-        return this;
-    }
-
-    public IKlaimBpjsBuilder DetachDoc(IDocKey docKey)
-    {
-        var klaimDoc = _agg.ListDoc.FirstOrDefault(c => c.DocId == docKey.DocId);
-        if (klaimDoc is null)
-            return this;
-        
-        klaimDoc.DocId = string.Empty;
-        klaimDoc.DocUrl = string.Empty;
-        return this;
-    }
-
     public IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey)
     {
-        var klaimDoc = _agg.ListDoc.FirstOrDefault(c => c.DocTypeId == docTypeKey.DocTypeId);
+        var klaimDoc = _agg.ListDocType.FirstOrDefault(c => c.DocTypeId == docTypeKey.DocTypeId);
         if (klaimDoc is not null)
             throw new ArgumentException($"DocTypeKey '{docTypeKey.DocTypeId}' already exists");
         
         var docType = _docTypeDal.GetData(docTypeKey)
             ?? throw new KeyNotFoundException($"DocTypeKey '{docTypeKey.DocTypeId}' not found");
-        var noUrut = _agg.ListDoc
-            .DefaultIfEmpty(new KlaimBpjsDocModel{NoUrut = 0})
+        var noUrut = _agg.ListDocType
+            .DefaultIfEmpty(new KlaimBpjsDocTypeModel{NoUrut = 0})
             .Max(c => c.NoUrut) + 1;
 
-        _agg.ListDoc.Add(new KlaimBpjsDocModel
+        _agg.ListDocType.Add(new KlaimBpjsDocTypeModel
         {
             KlaimBpjsId = string.Empty,
-            KlaimBpjsDocId = string.Empty,
+            KlaimBpjsDocTypeId = string.Empty,
             NoUrut = noUrut,
             DocTypeId = docType.DocTypeId,
             DocTypeName = docType.DocTypeName,
-            DocId = string.Empty,
-            DocUrl = string.Empty,
-            PrintOutReffId = string.Empty,
-            ListSign = new List<KlaimBpjsSigneeModel>()
+            ListPrintOut = new List<KlaimBpjsPrintOutModel>()
         });
         return this;
     }
 
     public IKlaimBpjsBuilder RemoveDocType(int noUrut)
     {
-        _agg.ListDoc.RemoveAll(x => x.NoUrut == noUrut);
+        _agg.ListDocType.RemoveAll(x => x.NoUrut == noUrut);
         var i = 1;
-        _agg.ListDoc.OrderBy(y => y.NoUrut)
+        _agg.ListDocType.OrderBy(y => y.NoUrut)
             .ForEach(x =>
             {
                 x.NoUrut = i;
@@ -223,22 +188,79 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder AddSignee(IDocTypeKey docTypeKey, string email, 
-        string signTag, SignPositionEnum signPos)
+    public IKlaimBpjsBuilder AddPrintOut(IDocTypeKey docTypeKey, string printOutReffId)
     {
-        var klaimDoc = _agg.ListDoc.FirstOrDefault(c => c.DocTypeId == docTypeKey.DocTypeId);
-        if (klaimDoc is null)
-            throw new KeyNotFoundException($"DocTypeKey '{docTypeKey.DocTypeId}' not found");
-        var noUrut = klaimDoc.ListSign
-            .DefaultIfEmpty(new KlaimBpjsSigneeModel{NoUrut = 0})
-            .Max(c => c.NoUrut) + 1;
+        var errMsg1 = $"Document Type not found in Klaim BPJS: '{docTypeKey.DocTypeId}'";
+        var thisDocType = _agg.ListDocType.FirstOrDefault(x => x.DocTypeId == docTypeKey.DocTypeId)
+            ?? throw new KeyNotFoundException(errMsg1);
+
+        var errMsg2 = $"PrintOut already exist: '{printOutReffId}'";
+        if (thisDocType.ListPrintOut.Any(x => x.PrintOutReffId == printOutReffId))
+            throw new ArgumentException(errMsg2);
         
-        klaimDoc.ListSign.Add(new KlaimBpjsSigneeModel
+        var noUrut = thisDocType.ListPrintOut
+            .DefaultIfEmpty(new KlaimBpjsPrintOutModel { NoUrut = 0 })
+            .Max(x => x.NoUrut);
+        noUrut++;
+
+        var newPrintOut = new KlaimBpjsPrintOutModel
         {
-            KlaimBpjsId = _agg.KlaimBpjsId,
-            KlaimBpjsDocId = string.Empty,
             NoUrut = noUrut,
-            UserOftaId = _agg.UserOftaId,
+            PrintOutReffId = printOutReffId,
+            ListSign = new List<KlaimBpjsSigneeModel>()
+        };
+        newPrintOut.RemoveNull();
+        thisDocType.ListPrintOut.Add(newPrintOut);
+        
+        return this;
+    }
+
+    public IKlaimBpjsBuilder RemovePrintOut(string printOutReffId)
+    {
+        foreach (var docType in _agg.ListDocType)
+            docType.ListPrintOut.RemoveAll(x => x.PrintOutReffId == printOutReffId);
+        return this;
+    }
+
+    public IKlaimBpjsBuilder FinishPrintOut(string printOutReffId)
+    {
+        var thisPrintOut = 
+            _agg.ListDocType
+                .SelectMany(x => x.ListPrintOut)
+                .FirstOrDefault(y => y.PrintOutReffId == printOutReffId)
+            ?? throw new KeyNotFoundException($"Reff ID not found: '{printOutReffId}'");
+        
+        thisPrintOut.PrintState = PrintStateEnum.Printed;
+        return this;
+    }
+
+    public IKlaimBpjsBuilder PrintDoc(IDocTypeKey docTypeKey, string reffId)
+    {
+        
+        var thisDocType = _agg.ListDocType.FirstOrDefault(x => x.DocTypeId == docTypeKey.DocTypeId);
+        if (thisDocType is null)
+            throw new ArgumentException("Document Type not found");
+
+        var thisPrintOut = thisDocType.ListPrintOut.FirstOrDefault(x => x.PrintOutReffId == reffId);
+        if (thisPrintOut is null)
+            throw new ArgumentException("PrintOut ReffID not found");
+
+        thisPrintOut.PrintState = PrintStateEnum.Queued;
+        _ = AddEvent(KlaimBpjsStateEnum.InProgress, $"Print {thisDocType.DocTypeName}: {thisPrintOut.PrintOutReffId}");
+        
+        return this;
+    }
+
+    public IKlaimBpjsBuilder AddSignee(IDocKey docKey, string email, string signTag, SignPositionEnum signPos)
+    {
+        var doc = _agg.ListDocType.SelectMany(x => x.ListPrintOut)
+            .FirstOrDefault(x => x.DocId == docKey.DocId);
+        if (doc is null)
+            throw new KeyNotFoundException($"DocID not found: '{docKey.DocId}");
+
+        doc.ListSign.RemoveAll(x => x.Email == email);
+        doc.ListSign.Add(new KlaimBpjsSigneeModel
+        {
             Email = email,
             SignTag = signTag,
             SignPosition = signPos
@@ -246,13 +268,15 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder RemoveSignee(IDocTypeKey docTypeKey, string email)
+    public IKlaimBpjsBuilder RemoveSignee(IDocKey docKey, string email)
     {
-        var klaimDoc = _agg.ListDoc.FirstOrDefault(c => c.DocTypeId == docTypeKey.DocTypeId);
-        if (klaimDoc is null)
-            return this;
-        
-        klaimDoc.ListSign.RemoveAll(x => x.Email == email);
+        var doc = _agg.ListDocType.SelectMany(x => x.ListPrintOut)
+            .FirstOrDefault(x => x.DocId == docKey.DocId);
+        if (doc is null)
+            throw new KeyNotFoundException($"DocID not found: '{docKey.DocId}");
+
+        doc.ListSign.RemoveAll(x => x.Email == email);
+
         return this;
     }
 

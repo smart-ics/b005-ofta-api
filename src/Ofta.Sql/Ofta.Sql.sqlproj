@@ -82,8 +82,9 @@
     <Build Include="Tables\KlaimBpjsContext\OFTA_BlueprintDocType.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_BlueprintSignee.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjs.sql" />
-    <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsDoc.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsDocType.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsEvent.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsPrintOut.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsSignee.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_OrderKlaimBpjs.sql" />
     <Build Include="Tables\ParamContext\OFTA_ParamNo.sql" />

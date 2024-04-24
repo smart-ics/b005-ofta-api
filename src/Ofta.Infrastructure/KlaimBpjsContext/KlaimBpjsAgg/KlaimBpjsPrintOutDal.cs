@@ -9,35 +9,35 @@ using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class KlaimBpjsDocDal : IKlaimBpjsDocDal
+public class KlaimBpjsPrintOutDal : IKlaimBpjsPrintOutDal
 {
     private readonly DatabaseOptions _opt;
 
-    public KlaimBpjsDocDal(IOptions<DatabaseOptions> opt)
+    public KlaimBpjsPrintOutDal(IOptions<DatabaseOptions> opt)
     {
         _opt = opt.Value;
     }
 
 
-    public void Insert(IEnumerable<KlaimBpjsDocModel> listModel)
+    public void Insert(IEnumerable<KlaimBpjsPrintOutModel> listModel)
     {
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         using var bcp = new SqlBulkCopy(conn);
         conn.Open();
         
         bcp.AddMap("KlaimBpjsId", "KlaimBpjsId");
-        bcp.AddMap("KlaimBpjsDocId", "KlaimBpjsDocId");
+        bcp.AddMap("KlaimBpjsDocTypeId", "KlaimBpjsDocTypeId");
+        bcp.AddMap("KlaimBpjsPrintOutId", "KlaimBpjsPrintOutId");
         bcp.AddMap("NoUrut", "NoUrut");
-        bcp.AddMap("DocTypeId", "DocTypeId");
-        bcp.AddMap("DocTypeName", "DocTypeName");
-        bcp.AddMap("DocId", "DocId");
-        bcp.AddMap("DocUrl", "DocUrl");
         bcp.AddMap("PrintOutReffId", "PrintOutReffId");
         bcp.AddMap("PrintState", "PrintState");
+        bcp.AddMap("DocId", "DocId");
+        bcp.AddMap("DocUrl", "DocUrl");
+        
  
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
-        bcp.DestinationTableName = "OFTA_KlaimBpjsDoc";
+        bcp.DestinationTableName = "OFTA_KlaimBpjsPrintOut";
         bcp.WriteToServer(fetched.AsDataTable());
     }
     
@@ -45,7 +45,7 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
     {
         const string sql = @"
             DELETE FROM
-                OFTA_KlaimBpjsDoc
+                OFTA_KlaimBpjsPrintOut
             WHERE
                 KlaimBpjsId = @KlaimBpjsId";
         
@@ -56,15 +56,14 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
         conn.Execute(sql, dp);
     }
 
-    public IEnumerable<KlaimBpjsDocModel> ListData(IKlaimBpjsKey filter)
+    public IEnumerable<KlaimBpjsPrintOutModel> ListData(IKlaimBpjsKey filter)
     {
         const string sql = @"
             SELECT
-                KlaimBpjsId, KlaimBpjsDocId, NoUrut, 
-                DocTypeId, DocTypeName, 
-                DocId, DocUrl, PrintOutReffId, PrintState
+                KlaimBpjsId, KlaimBpjsDocTypeId, KlaimBpjsPrintOutId, 
+                NoUrut, PrintOutReffId, DocId, DocUrl
             FROM
-                OFTA_KlaimBpjsDoc
+                OFTA_KlaimBpjsPrintOut
             WHERE 
                 KlaimBpjsId = @KlaimBpjsId";
 
@@ -72,6 +71,7 @@ public class KlaimBpjsDocDal : IKlaimBpjsDocDal
         dp.AddParam("@KlaimBpjsId", filter.KlaimBpjsId, SqlDbType.VarChar);
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
-        return conn.Query<KlaimBpjsDocModel>(sql, dp);
+        return conn.Query<KlaimBpjsPrintOutModel>(sql, dp);
     }
+
 }

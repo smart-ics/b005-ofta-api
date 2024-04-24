@@ -67,16 +67,16 @@ public class GetKlaimBpjsQueryHandler : IRequestHandler<GetKlaimBpjsQuery, GetKl
             klaimBpjs.LayananName,
             klaimBpjs.DokterName,
             klaimBpjs.RajalRanap.ToString().ToUpper(),
-            klaimBpjs.ListDoc
+            klaimBpjs.ListDocType
                      .Select(x => new GetKlaimBpjsDocResponse
                      {
-                         KlaimBpjsDocId = x.KlaimBpjsDocId,
+                         KlaimBpjsDocId = x.KlaimBpjsDocTypeId,
                          NoUrut = x.NoUrut,
                          DocTypeId = x.DocTypeId,
                          DocTypeName = x.DocTypeName,
-                         DocId = x.DocId,
-                         DocUrl = x.DocUrl,
-                         PrintOutReffId = x.PrintOutReffId
+                         DocId = string.Empty,//x.DocId,
+                         DocUrl = string.Empty,//x.DocUrl,
+                         PrintOutReffId = string.Empty //x.PrintOutReffId
                      }).ToList(),
             klaimBpjs.ListEvent
                         .Select(x => new GetKlaimBpjsEventResponse

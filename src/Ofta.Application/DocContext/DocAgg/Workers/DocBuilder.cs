@@ -90,7 +90,7 @@ public class DocBuilder : IDocBuilder
             NoUrut = 1,
             JurnalDate = _tglJamDal.Now,
             DocState = DocStateEnum.Created,
-            JurnalDesc = "Doc Created",
+            JurnalDesc = "Doc Created"
         };
         _aggregate.ListJurnal.Add(jurnal);
         return this;
@@ -169,7 +169,7 @@ public class DocBuilder : IDocBuilder
             SignPosition = signPosition,
             SignedDate = new DateTime(3000,1,1),
             SignState = SignStateEnum.NotSigned,
-            Level = 1,
+            Level = 1
         });
         return this;
     }
@@ -225,7 +225,7 @@ public class DocBuilder : IDocBuilder
             NoUrut = noUrut,
             JurnalDate = _tglJamDal.Now,
             DocState = docStateEnum,
-            JurnalDesc = desc, 
+            JurnalDesc = desc
         };
         _aggregate.DocState = docStateEnum;
         _aggregate.ListJurnal.Add(jurnal);

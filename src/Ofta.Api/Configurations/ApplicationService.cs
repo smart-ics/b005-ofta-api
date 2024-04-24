@@ -5,6 +5,7 @@ using Ofta.Application;
 using Nuna.Lib.AutoNumberHelper;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
+using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Scrutor;
 
 namespace Ofta.Api.Configurations;
@@ -44,6 +45,18 @@ public static class ApplicationService
                     .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                     .AsSelfWithInterfaces()
                     .WithScopedLifetime()
+                .FromAssemblyOf<ApplicationAssemblyAnchor>()
+                    .AddClasses(c => c.AssignableTo(typeof(IReffIdFinderAction)))
+                    .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                    .AsSelfWithInterfaces()
+                    .WithScopedLifetime()
+                .FromAssemblyOf<ApplicationAssemblyAnchor>()
+                    .AddClasses(c => c.AssignableTo(typeof(IFactoryPattern<,,>)))
+                    .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                    .AsSelfWithInterfaces()
+                    .WithScopedLifetime()
+            
+        
             );
         return services;
     }

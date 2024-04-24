@@ -1,24 +1,24 @@
 ﻿using FluentValidation;
 using MediatR;
-using Ofta.Application.DocContext.DocTypeAgg.Workers;
-using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
+using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record PrintDocKlaimBpjsCommand(string KlaimBpjsId, int NoUrut) : IRequest, IKlaimBpjsKey;
+public record KlaimBpjsPrintOutPrintCommand(string KlaimBpjsId, string DocTypeId, string ReffId) 
+    : IRequest, IKlaimBpjsKey, IDocTypeKey;
 
-public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand>
+public class KlaimBpjsPrintOutPrintHandler : IRequestHandler<KlaimBpjsPrintOutPrintCommand>
 {
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
-    private readonly IValidator<PrintDocKlaimBpjsCommand> _guard;
+    private readonly IValidator<KlaimBpjsPrintOutPrintCommand> _guard;
     private readonly IMediator _mediator;
 
-    public PrintDocKlaimBpjsHandler(IKlaimBpjsBuilder builder, 
+    public KlaimBpjsPrintOutPrintHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
-        IValidator<PrintDocKlaimBpjsCommand> guard, 
+        IValidator<KlaimBpjsPrintOutPrintCommand> guard, 
         IMediator mediator)
     {
         _builder = builder;
@@ -27,7 +27,7 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
         _mediator = mediator;
     }
 
-    public Task<Unit> Handle(PrintDocKlaimBpjsCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(KlaimBpjsPrintOutPrintCommand request, CancellationToken cancellationToken)
     {
         //  GUARD
         var validationResult = _guard.Validate(request);
@@ -37,16 +37,9 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
         //  BUILD
         var klaimBpjs = _builder
             .Load(request)
+            .PrintDoc(request, request.ReffId)
             .Build();
-        var doc = klaimBpjs.ListDoc.FirstOrDefault(x => x.NoUrut == request.NoUrut);
-        if (doc is null)
-            throw new ArgumentException("Document not found");
-        doc.PrintState = PrintStateEnum.Queued;
-        klaimBpjs = _builder
-            .Attach(klaimBpjs)
-            .AddEvent(KlaimBpjsStateEnum.InProgress, $"Print {doc.DocTypeName}")
-            .Build();
-
+        
         //  WRITE
         _writer.Save(klaimBpjs);
         _mediator.Publish(new PrintedDocKlaimBpjsEvent(klaimBpjs, request), cancellationToken);
@@ -56,13 +49,14 @@ public class PrintDocKlaimBpjsHandler : IRequestHandler<PrintDocKlaimBpjsCommand
 
 public record PrintedDocKlaimBpjsEvent(
     KlaimBpjsModel Aggregate,
-    PrintDocKlaimBpjsCommand Command) : INotification;
+    KlaimBpjsPrintOutPrintCommand Command) : INotification;
 
-public class PrintDocKlaimBpjsCommandValidator : AbstractValidator<PrintDocKlaimBpjsCommand>
+public class KlaimBpjsPrintOutPrintCommandValidator : AbstractValidator<KlaimBpjsPrintOutPrintCommand>
 {
-    public PrintDocKlaimBpjsCommandValidator()
+    public KlaimBpjsPrintOutPrintCommandValidator()
     {
         RuleFor(x => x.KlaimBpjsId).NotEmpty();
-        RuleFor(x => x.NoUrut).GreaterThan(0);
+        RuleFor(x => x.DocTypeId).NotEmpty();
+        RuleFor(x => x.ReffId).NotEmpty();
     }
 }

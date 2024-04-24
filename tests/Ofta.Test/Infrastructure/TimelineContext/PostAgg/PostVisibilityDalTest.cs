@@ -13,13 +13,13 @@ public class PostVisibilityDalTest
     private readonly IPostVisibilityDal _sut = new PostVisibilityDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
     
     private readonly PostVisibilityModel _faker = new()
     {
         PostId = "A",
-        VisibilityReff = "B",
+        VisibilityReff = "B"
     };
     
     [Fact]

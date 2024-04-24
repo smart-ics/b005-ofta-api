@@ -15,7 +15,7 @@ public class BlueprintSigneeDalTest
     private readonly IBlueprintSigneeDal _sut = new BlueprintSigneeDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
 
     private readonly BlueprintSigneeModel _faker = new()
@@ -27,7 +27,7 @@ public class BlueprintSigneeDalTest
         Email = "D",
         SignPosition = SignPositionEnum.SignLeft,
         SignTag = "E",
-        UserOftaId = "F",
+        UserOftaId = "F"
     };
 
     [Fact]

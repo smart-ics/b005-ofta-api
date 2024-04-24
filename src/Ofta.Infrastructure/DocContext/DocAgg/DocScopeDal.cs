@@ -104,7 +104,7 @@ public class DocScopeDal : IDocScopeDal
                     {
                         DocId = item.DocId,
                         ScopeType = item.ScopeType,
-                        UserOftaId = item.ScopeReffId,
+                        UserOftaId = item.ScopeReffId
                     });
                     break;
                 case 1:
@@ -112,7 +112,7 @@ public class DocScopeDal : IDocScopeDal
                     {
                         DocId = item.DocId,
                         ScopeType = item.ScopeType,
-                        TeamId = item.ScopeReffId,
+                        TeamId = item.ScopeReffId
                     });
                     break;
             }

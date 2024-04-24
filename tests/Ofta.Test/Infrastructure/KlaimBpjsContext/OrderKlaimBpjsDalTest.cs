@@ -14,7 +14,7 @@ public class OrderKlaimBpjsDalTest
     private readonly IOrderKlaimBpjsDal _sut = new OrderKlaimBpjsDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
 
     private readonly OrderKlaimBpjsModel _faker =
@@ -30,7 +30,7 @@ public class OrderKlaimBpjsDalTest
             NoSep = "F",
             LayananName = "G",
             DokterName = "H",
-            RajalRanap = RajalRanapEnum.Rajal,
+            RajalRanap = RajalRanapEnum.Rajal
         };
 
     [Fact]

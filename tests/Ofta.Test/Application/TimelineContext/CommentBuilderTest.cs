@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using Ofta.Application.Helpers;
+using Ofta.Application.TImelineContext.CommentAgg.Contracts;
 using Ofta.Application.TImelineContext.CommentAgg.Workers;
 using Ofta.Application.TImelineContext.PostAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
@@ -15,16 +16,22 @@ public class CommentBuilderTest
     private readonly Mock<ITglJamDal> _tglJamDal;
     private readonly Mock<IPostDal> _postDal;
     private readonly Mock<IUserOftaDal> _userOftaDal;
+    private readonly Mock<ICommentDal> _commentDal;
+    private readonly Mock<ICommentReactDal> _commentReactDal;
 
     public CommentBuilderTest()
     {
         _tglJamDal = new Mock<ITglJamDal>();
         _postDal = new Mock<IPostDal>();
         _userOftaDal = new Mock<IUserOftaDal>();
+        _commentDal = new Mock<ICommentDal>();
+        _commentReactDal = new Mock<ICommentReactDal>();
         _sut = new CommentBuilder(
             _tglJamDal.Object, 
             _postDal.Object, 
-            _userOftaDal.Object);
+            _userOftaDal.Object,
+            _commentDal.Object,
+            _commentReactDal.Object);
     }
 
     [Fact]

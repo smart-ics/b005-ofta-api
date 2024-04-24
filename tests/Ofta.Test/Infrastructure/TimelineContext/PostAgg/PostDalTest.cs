@@ -15,7 +15,7 @@ public class PostDalTest
     private readonly IPostDal _sut = new PostDal(Options.Create(new DatabaseOptions
     {
         ServerName = "(Local)",
-        DbName = "dev",
+        DbName = "dev"
     }));
 
     private readonly PostModel _faker = new()
@@ -27,7 +27,7 @@ public class PostDalTest
         Msg = "C",
         DocId = "D",
         CommentCount = 1,
-        LikeCount = 9,
+        LikeCount = 9
     };
     
     [Fact]

@@ -13,25 +13,25 @@ using Polly;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record CreateKlaimBpjsCommand(string OrderKlaimBpjsId, string UserOftaId) 
-    : IRequest<CreateKlaimBpjsResponse>, IUserOftaKey, IOrderKlaimBpjsKey;
+public record KlaimBpjsCreateCommand(string OrderKlaimBpjsId, string UserOftaId) 
+    : IRequest<KlaimBpjsCreateResponse>, IUserOftaKey, IOrderKlaimBpjsKey;
 
 
 [PublicAPI]
-public record CreateKlaimBpjsResponse(string KlaimBpjsId);
+public record KlaimBpjsCreateResponse(string KlaimBpjsId);
 
-public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsCommand, CreateKlaimBpjsResponse>
+public class KlaimBpjsCreateHandler : IRequestHandler<KlaimBpjsCreateCommand, KlaimBpjsCreateResponse>
 {
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
     private readonly IOrderKlaimBpjsBuilder _orderKlaimBpjsBuilder;
     private readonly IBlueprintBuilder _blueprintBuilder;
-    private readonly IValidator<CreateKlaimBpjsCommand> _guard;
+    private readonly IValidator<KlaimBpjsCreateCommand> _guard;
     private readonly IMediator _mediator;
 
-    public CreateKlaimBpjsCommandHandler(IKlaimBpjsBuilder builder, 
+    public KlaimBpjsCreateHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
-        IValidator<CreateKlaimBpjsCommand> guard, 
+        IValidator<KlaimBpjsCreateCommand> guard, 
         IOrderKlaimBpjsBuilder orderKlaimBpjsBuilder, 
         IBlueprintBuilder blueprintBuilder, 
         IMediator mediator)
@@ -44,7 +44,7 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
         _blueprintBuilder = blueprintBuilder;
     }
 
-    public Task<CreateKlaimBpjsResponse> Handle(CreateKlaimBpjsCommand request, CancellationToken cancellationToken)
+    public Task<KlaimBpjsCreateResponse> Handle(KlaimBpjsCreateCommand request, CancellationToken cancellationToken)
     {
         //  GUARD
         var validationResult = _guard.Validate(request);
@@ -52,7 +52,7 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
             throw new ValidationException(validationResult.Errors);
 
         if (OrderHasBeenIssued(request, out var klaimBpjsId))
-            return Task.FromResult(new CreateKlaimBpjsResponse(klaimBpjsId));
+            return Task.FromResult(new KlaimBpjsCreateResponse(klaimBpjsId));
 
         //  BUILD
         var klaimBpjs = _builder
@@ -71,12 +71,12 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
                 .Build();
         });
         
-        
         //  WRITE
         var klaimBpjsModel = _writer.Save(klaimBpjs);
         _mediator.Publish(new CreatedKlaimBpjsEvent(klaimBpjsModel, request), cancellationToken);
-        return Task.FromResult(new CreateKlaimBpjsResponse(klaimBpjsModel.KlaimBpjsId));
+        return Task.FromResult(new KlaimBpjsCreateResponse(klaimBpjsModel.KlaimBpjsId));
     }
+
     private bool OrderHasBeenIssued(IOrderKlaimBpjsKey orderKey, out string klaimBpjsId)
     {
         OrderKlaimBpjsModel? orderKlaimBpjs = null;
@@ -93,7 +93,8 @@ public class CreateKlaimBpjsCommandHandler : IRequestHandler<CreateKlaimBpjsComm
     }
 }
 
-public class CreateKlaimBpjsCommandGuard : AbstractValidator<CreateKlaimBpjsCommand>
+[UsedImplicitly]
+public class CreateKlaimBpjsCommandGuard : AbstractValidator<KlaimBpjsCreateCommand>
 {
     public CreateKlaimBpjsCommandGuard()
     {
@@ -105,4 +106,4 @@ public class CreateKlaimBpjsCommandGuard : AbstractValidator<CreateKlaimBpjsComm
 [PublicAPI]
 public record CreatedKlaimBpjsEvent(
     KlaimBpjsModel Aggregate,
-    CreateKlaimBpjsCommand Command) : INotification;
+    KlaimBpjsCreateCommand Command) : INotification;
