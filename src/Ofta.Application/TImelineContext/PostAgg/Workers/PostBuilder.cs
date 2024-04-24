@@ -133,6 +133,7 @@ public class PostBuilder : IPostBuilder
             UserOftaId = userOfta.UserOftaId,
             PostReactDate = _tglJamDal.Now,
         });
+        _agg.LikeCount = _agg.ListReact.Count;
         return this;
     }
 

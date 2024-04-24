@@ -71,18 +71,4 @@ public class CommentReactDal : ICommentReactDal
         return conn.Query<CommentReactModel>(sql, dp);
     }
 
-    public IEnumerable<CommentReactModel> ListData()
-    {
-        const string sql = @"
-            SELECT
-                aa.CommentId, aa.CommentReactDate, aa.UserOftaId,
-                ISNULL(bb.UserOftaName,'??') UserOftaName
-            FROM
-                OFTA_CommentReact aa
-            LEFT JOIN 
-                OFTA_UserOfta bb on aa.UserOftaId = bb.UserOftaId";
-
-        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
-        return conn.Query<CommentReactModel>(sql);
-    }
 }
