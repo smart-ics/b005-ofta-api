@@ -127,7 +127,7 @@ public class PostDal : IPostDal
                 FETCH NEXT 50 ROWS ONLY";
 
         var dp = new DynamicParameters();
-        dp.Add("@userOftaId", filter1.UserOftaId);
+        dp.AddParam("@userOftaId", filter1.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@pageNumber", pageNo, SqlDbType.Int);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
