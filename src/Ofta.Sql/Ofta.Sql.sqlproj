@@ -60,6 +60,11 @@
     <Folder Include="Tables\ParamContext\" />
     <Folder Include="Tables\UserContext\" />
     <Folder Include="DataSeed\" />
+    <Folder Include="Tables\" />
+    <Folder Include="Tables\DocContext\" />
+    <Folder Include="Tables\KlaimBpjsContext\" />
+    <Folder Include="Tables\RemoteCetakContext\" />
+    <Folder Include="Tables\TimelineContext\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Database\CreateUserLogin.sql" />

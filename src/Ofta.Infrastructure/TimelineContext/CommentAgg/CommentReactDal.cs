@@ -55,7 +55,8 @@ public class CommentReactDal : ICommentReactDal
     {
         const string sql = @"
             SELECT
-                aa.CommentId, aa.CommentReactDate, aa.UserOftaId, isnull(bb.UserOftaName,'??') UserOftaName
+                aa.CommentId, aa.CommentReactDate, aa.UserOftaId, 
+                ISNULL(bb.UserOftaName,'??') UserOftaName
             FROM
                 OFTA_CommentReact aa
             LEFT JOIN 
@@ -74,7 +75,8 @@ public class CommentReactDal : ICommentReactDal
     {
         const string sql = @"
             SELECT
-                aa.CommentId, aa.CommentReactDate, aa.UserOftaId,isnull(bb.UserOftaName,'??') UserOftaName
+                aa.CommentId, aa.CommentReactDate, aa.UserOftaId,
+                ISNULL(bb.UserOftaName,'??') UserOftaName
             FROM
                 OFTA_CommentReact aa
             LEFT JOIN 
