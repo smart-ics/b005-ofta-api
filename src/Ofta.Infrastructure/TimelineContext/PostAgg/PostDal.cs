@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Nuna.Lib.DataAccessHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.TImelineContext.PostAgg.Contracts;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.TImelineContext.PostAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 using Ofta.Infrastructure.Helpers;
@@ -106,26 +107,33 @@ public class PostDal : IPostDal
         return conn.ReadSingle<PostModel>(sql, dp);
     }
 
-    public IEnumerable<PostModel> ListData(Periode filter1, IUserOftaKey filter2)
+    public IEnumerable<PostModel> ListData(IUserOftaKey filter1, int pageNo)
     {
         const string sql = @"
             SELECT
                 aa.PostId, aa.PostDate, aa.UserOftaId,
                 aa.Msg, aa.DocId, aa.CommentCount, aa.LikeCount,
-                ISNULL(bb.UserOftaName, '') AS UserOftaName
+                ISNULL(cc.UserOftaName, '') AS UserOftaName
             FROM
                 OFTA_Post aa
-                LEFT JOIN OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
+                LEFT JOIN OFTA_PostVisibility bb ON aa.PostId = bb.PostId
+                LEFT JOIN OFTA_UserOfta cc on bb.VisibilityReff = cc.UserOftaId
             WHERE
-                aa.PostDate BETWEEN @tgl1 AND @tgl2
-                AND aa.UserOftaId = @userOftaId ";
+                bb.VisibilityReff = @userOftaId
+            ORDER BY
+                aa.PostId DESC
+            OFFSET 
+                (@pageNumber - 1) * 50 ROWS
+                FETCH NEXT 50 ROWS ONLY";
 
         var dp = new DynamicParameters();
-        dp.AddParam("@tgl1", filter1.Tgl1, SqlDbType.DateTime); 
-        dp.AddParam("@tgl2", filter1.Tgl2, SqlDbType.DateTime); 
-        dp.AddParam("@userOftaId", filter2.UserOftaId, SqlDbType.VarChar); 
+        dp.AddParam("@userOftaId", filter1.UserOftaId, SqlDbType.VarChar);
+        dp.AddParam("@pageNumber", pageNo, SqlDbType.Int);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<PostModel>(sql, dp);
     }
+
+
+
 }
