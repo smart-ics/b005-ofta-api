@@ -4,8 +4,8 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 
 public interface IKlaimBpjsPrintDal :
-    IInsertBulk<KlaimBpjsPrintModel>,
+    IInsertBulk<KlaimBpjsPrintOutModel>,
     IDelete<IKlaimBpjsKey>,
-    IListData<KlaimBpjsPrintModel>
+    IListData<KlaimBpjsPrintOutModel>
 {
 }

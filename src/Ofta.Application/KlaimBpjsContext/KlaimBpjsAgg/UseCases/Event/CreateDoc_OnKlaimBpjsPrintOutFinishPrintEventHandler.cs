@@ -9,7 +9,7 @@ using Polly;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public class SaveDocOnFinishedPrintDocKlaimBpjsEventHandler 
+public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler 
     : INotificationHandler<FinishedPrintDocKlaimBpjsEvent>
 {
     private readonly IDocBuilder _docBuilder;
@@ -17,7 +17,7 @@ public class SaveDocOnFinishedPrintDocKlaimBpjsEventHandler
     private readonly IKlaimBpjsWriter _klaimBpjsWriter;
     private readonly IWriteFileService _writeFileService;
 
-    public SaveDocOnFinishedPrintDocKlaimBpjsEventHandler(IDocBuilder docBuilder, 
+    public CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler(IDocBuilder docBuilder, 
         IDocWriter docWriter, 
         IKlaimBpjsWriter klaimBpjsWriter, 
         IWriteFileService writeFileService)

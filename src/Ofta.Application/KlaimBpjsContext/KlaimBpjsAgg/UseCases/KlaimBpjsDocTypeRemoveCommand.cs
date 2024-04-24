@@ -7,19 +7,19 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record RemoveDocTypeKlaimBpjsCommand(string KlaimBpjsId, int NoUrut)
+public record KlaimBpjsDocTypeRemoveCommand(string KlaimBpjsId, int NoUrut)
     : IRequest, IKlaimBpjsKey;
 
-public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimBpjsCommand>
+public class KlaimBpjsDocTypeRemoveHandler : IRequestHandler<KlaimBpjsDocTypeRemoveCommand>
 {
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
-    private readonly IValidator<RemoveDocTypeKlaimBpjsCommand> _guard;
+    private readonly IValidator<KlaimBpjsDocTypeRemoveCommand> _guard;
     private readonly IDocTypeBuilder _docTypeBuilder;
 
-    public RemoveDocTypeKlaimBpjsHandler(IKlaimBpjsBuilder builder, 
+    public KlaimBpjsDocTypeRemoveHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
-        IValidator<RemoveDocTypeKlaimBpjsCommand> guard, 
+        IValidator<KlaimBpjsDocTypeRemoveCommand> guard, 
         IDocTypeBuilder docTypeBuilder)
     {
         _builder = builder;
@@ -28,7 +28,7 @@ public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimB
         _docTypeBuilder = docTypeBuilder;
     }
 
-    public Task<Unit> Handle(RemoveDocTypeKlaimBpjsCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(KlaimBpjsDocTypeRemoveCommand request, CancellationToken cancellationToken)
     {
         //  GUARD
         var validationResult = _guard.Validate(request);
@@ -55,7 +55,7 @@ public class RemoveDocTypeKlaimBpjsHandler : IRequestHandler<RemoveDocTypeKlaimB
     }
 }
 
-public class RemoveDocTypeKlaimBpjsCommandValidator : AbstractValidator<RemoveDocTypeKlaimBpjsCommand>
+public class RemoveDocTypeKlaimBpjsCommandValidator : AbstractValidator<KlaimBpjsDocTypeRemoveCommand>
 {
     public RemoveDocTypeKlaimBpjsCommandValidator()
     {

@@ -17,7 +17,7 @@ public class KlaimBpjsController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateDoc(CreateKlaimBpjsCommand cmd)
+    public async Task<IActionResult> CreateDoc(KlaimBpjsCreateCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
@@ -32,42 +32,42 @@ public class KlaimBpjsController : Controller
     }
     
     [HttpPatch("addDocType")]
-    public async Task<IActionResult> AddDocType(AddDocTypeKlaimBpjsCommand cmd)
+    public async Task<IActionResult> AddDocType(KlaimBpjsDocTypeAddCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
     
     [HttpPatch("removeDocType")]
-    public async Task<IActionResult> RemoveDocType(RemoveDocTypeKlaimBpjsCommand cmd)
+    public async Task<IActionResult> RemoveDocType(KlaimBpjsDocTypeRemoveCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
 
     [HttpPatch("reOrderDoc")]
-    public async Task<IActionResult> ReOrderDoc(ReOrderDocKlaimBpjsCommand cmd)
+    public async Task<IActionResult> ReOrderDoc(KlaimBpjsDocTypeReOrderCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
     
     [HttpPatch("printOutReffId")]
-    public async Task<IActionResult> SetPrintReffId(SetPrintReffIdKlaimBpjsCommand cmd)
+    public async Task<IActionResult> SetPrintReffId(SetPrintOutReffIdKlaimBpjsCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
     
     [HttpPatch("printDoc")]
-    public async Task<IActionResult> PrintRemoteCetak(PrintDocKlaimBpjsCommand cmd)
+    public async Task<IActionResult> PrintRemoteCetak(KlaimBpjsPrintOutPrintCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
     
     [HttpPatch("finishPrint")]
-    public async Task<IActionResult> FinishPrint(FinishPrintDocKlaimBpjsCommand cmd)
+    public async Task<IActionResult> FinishPrint(KlaimBpjsPrintOutFinishPrintCallback cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));

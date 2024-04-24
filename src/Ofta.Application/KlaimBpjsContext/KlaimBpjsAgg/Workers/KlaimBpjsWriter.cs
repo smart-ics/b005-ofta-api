@@ -52,16 +52,16 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
         {
             x.KlaimBpjsId = model.KlaimBpjsId;
             x.KlaimBpjsDocTypeId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}";
-            x.ListPrint.ForEach(y =>
+            x.ListPrintOut.ForEach(y =>
             {
                 y.KlaimBpjsId = model.KlaimBpjsId;
                 y.KlaimBpjsDocTypeId = x.KlaimBpjsDocTypeId;
-                y.KlaimBpjsPrintId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}";
+                y.KlaimBpjsPrintOutId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}";
                 y.ListSign.ForEach(z =>
                 {
                     z.KlaimBpjsId = model.KlaimBpjsId;
                     z.KlaimBpjsDocTypeId = x.KlaimBpjsDocTypeId;
-                    z.KlaimBpjsPrintId = y.KlaimBpjsPrintId;
+                    z.KlaimBpjsPrintId = y.KlaimBpjsPrintOutId;
                     z.KlaimBpjsSigneeId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}-{y.NoUrut:D2}-{z.NoUrut:D2}";
                 });
             });
@@ -72,7 +72,7 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
             x.KlaimBpjsJurnalId = $"{model.KlaimBpjsId}-{x.NoUrut:D2}";
         });
         
-        var allPrint = model.ListDocType.SelectMany(x => x.ListPrint).ToList();
+        var allPrint = model.ListDocType.SelectMany(x => x.ListPrintOut).ToList();
         var allSignee = allPrint.SelectMany(x => x.ListSign).ToList();
         
         //  WRITE

@@ -11,5 +11,5 @@ public class KlaimBpjsDocTypeModel : IKlaimBpjsKey, IDocTypeKey
     public string DocTypeId { get; set; }
     public string DocTypeName { get; set; }
     
-    public List<KlaimBpjsPrintModel> ListPrint { get; set; }    
+    public List<KlaimBpjsPrintOutModel> ListPrintOut { get; set; }    
 }

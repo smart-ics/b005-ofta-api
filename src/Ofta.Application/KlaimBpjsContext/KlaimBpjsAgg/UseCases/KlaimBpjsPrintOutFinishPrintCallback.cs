@@ -6,19 +6,19 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record FinishPrintDocKlaimBpjsCommand(string KlaimBpjsId, string PrintOutReffId, string Base64Content)
+public record KlaimBpjsPrintOutFinishPrintCallback(string KlaimBpjsId, string PrintOutReffId, string Base64Content)
     : IRequest, IKlaimBpjsKey;
 
-public class FinishPrintOutKlaimBpjsHandler : IRequestHandler<FinishPrintDocKlaimBpjsCommand>
+public class KlaimBpjsPrintOutFinishPrintHandler : IRequestHandler<KlaimBpjsPrintOutFinishPrintCallback>
 {
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
-    private readonly IValidator<FinishPrintDocKlaimBpjsCommand> _guard;
+    private readonly IValidator<KlaimBpjsPrintOutFinishPrintCallback> _guard;
     private readonly IMediator _mediator;
 
-    public FinishPrintOutKlaimBpjsHandler(IKlaimBpjsBuilder builder, 
+    public KlaimBpjsPrintOutFinishPrintHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
-        IValidator<FinishPrintDocKlaimBpjsCommand> guard, 
+        IValidator<KlaimBpjsPrintOutFinishPrintCallback> guard, 
         IMediator mediator)
     {
         _builder = builder;
@@ -27,7 +27,7 @@ public class FinishPrintOutKlaimBpjsHandler : IRequestHandler<FinishPrintDocKlai
         _mediator = mediator;
     }
 
-    public Task<Unit> Handle(FinishPrintDocKlaimBpjsCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(KlaimBpjsPrintOutFinishPrintCallback request, CancellationToken cancellationToken)
     {
         //  GUARD
         var guardResult = _guard.Validate(request);
@@ -35,11 +35,10 @@ public class FinishPrintOutKlaimBpjsHandler : IRequestHandler<FinishPrintDocKlai
             throw new ValidationException(guardResult.Errors);
         
         //  BUILD
-        var agg = _builder.Load(request).Build();
-        var itemKlaim = agg.ListDocType.FirstOrDefault(x => x.PrintOutReffId == request.PrintOutReffId);
-        if (itemKlaim is null)
-            throw new ArgumentException("Document not found");
-        itemKlaim.PrintState = PrintStateEnum.Printed;
+        var agg = _builder
+            .Load(request)
+            .FinishPrintOut(request.PrintOutReffId)
+            .Build();
         
         //  WRITE
         _writer.Save(agg);
@@ -50,9 +49,9 @@ public class FinishPrintOutKlaimBpjsHandler : IRequestHandler<FinishPrintDocKlai
 
 public record FinishedPrintDocKlaimBpjsEvent(
     KlaimBpjsModel Agg,
-    FinishPrintDocKlaimBpjsCommand Command) : INotification;
+    KlaimBpjsPrintOutFinishPrintCallback Command) : INotification;
 
-public class FinishPrintDocKlaimBpjsGuard : AbstractValidator<FinishPrintDocKlaimBpjsCommand>
+public class FinishPrintDocKlaimBpjsGuard : AbstractValidator<KlaimBpjsPrintOutFinishPrintCallback>
 {
     public FinishPrintDocKlaimBpjsGuard()
     {

@@ -5,26 +5,26 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record ReOrderDocKlaimBpjsCommand(string KlaimBpjsId, int NoUrutAsal, int NoUrutTujuan) :
+public record KlaimBpjsDocTypeReOrderCommand(string KlaimBpjsId, int NoUrutAsal, int NoUrutTujuan) :
     IRequest, IKlaimBpjsKey;
 
-public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCommand>
+public class KlaimBpjsDocTypeReOrderHandler : IRequestHandler<KlaimBpjsDocTypeReOrderCommand>
 {
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
-    private readonly IValidator<ReOrderDocKlaimBpjsCommand> _guard;
+    private readonly IValidator<KlaimBpjsDocTypeReOrderCommand> _guard;
     private KlaimBpjsModel _agg = new();
 
-    public ReOrderDocKlaimBpjsHandler(IKlaimBpjsBuilder builder, 
+    public KlaimBpjsDocTypeReOrderHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
-        IValidator<ReOrderDocKlaimBpjsCommand> guard)
+        IValidator<KlaimBpjsDocTypeReOrderCommand> guard)
     {
         _builder = builder;
         _writer = writer;
         _guard = guard;
     }
 
-    public Task<Unit> Handle(ReOrderDocKlaimBpjsCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(KlaimBpjsDocTypeReOrderCommand request, CancellationToken cancellationToken)
     {
         //  GUARD
         var guardResult = _guard.Validate(request);
@@ -46,7 +46,7 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
         return Task.FromResult(Unit.Value);
     }
 
-    private bool RecordEvent(ReOrderDocKlaimBpjsCommand request)
+    private bool RecordEvent(KlaimBpjsDocTypeReOrderCommand request)
     {
         var doc = _agg.ListDocType.FirstOrDefault(x => x.NoUrut == request.NoUrutAsal);
         if (doc is null)
@@ -60,7 +60,7 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
         return true;
     }
 
-    private void ProsesGeser(ReOrderDocKlaimBpjsCommand request)
+    private void ProsesGeser(KlaimBpjsDocTypeReOrderCommand request)
     {
         var selisih = Math.Abs(request.NoUrutTujuan - request.NoUrutAsal) + 1;
         var pointer = request.NoUrutAsal;
@@ -106,7 +106,7 @@ public class ReOrderDocKlaimBpjsHandler : IRequestHandler<ReOrderDocKlaimBpjsCom
     }
 }
 
-public class ReOrderKlaimBpjsGuard : AbstractValidator<ReOrderDocKlaimBpjsCommand>
+public class ReOrderKlaimBpjsGuard : AbstractValidator<KlaimBpjsDocTypeReOrderCommand>
 {
     public ReOrderKlaimBpjsGuard()
     {

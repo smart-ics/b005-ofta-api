@@ -1,10 +1,10 @@
 ﻿namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class KlaimBpjsPrintModel
+public class KlaimBpjsPrintOutModel
 {
     public string KlaimBpjsId { get; set; }
     public string KlaimBpjsDocTypeId { get; set; }
-    public string KlaimBpjsPrintId { get; set; }
+    public string KlaimBpjsPrintOutId { get; set; }
     public int NoUrut { get; set; }
     public string DocId { get; set; }
     public string DocUrl { get; set; }
