@@ -8,14 +8,14 @@ using Ofta.Domain.PrintOutContext.RemoteCetakAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 
-public class AddQueueRemoteCetak_OnKlaimBpjsPrintOutPrintedEventHandler : INotificationHandler<PrintedDocKlaimBpjsEvent>
+public class AddQueueRemoteCetakOnKlaimBpjsPrintOutPrintedEventHandler : INotificationHandler<PrintedDocKlaimBpjsEvent>
 {
     private readonly IRemoteCetakBuilder _remoteCetakBuilder;
     private readonly IRemoteCetakWriter _remoteCetakWriter;
     private readonly IAppSettingService _appSettingService;
     private readonly IDocTypeBuilder _docTypeBuilder;
 
-    public AddQueueRemoteCetak_OnKlaimBpjsPrintOutPrintedEventHandler(IRemoteCetakBuilder remoteCetakBuilder, 
+    public AddQueueRemoteCetakOnKlaimBpjsPrintOutPrintedEventHandler(IRemoteCetakBuilder remoteCetakBuilder, 
         IRemoteCetakWriter remoteCetakWriter, 
         IAppSettingService appSettingService, 
         IDocTypeBuilder docTypeBuilder)
