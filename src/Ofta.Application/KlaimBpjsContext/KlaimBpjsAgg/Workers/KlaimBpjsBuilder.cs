@@ -44,6 +44,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
 {
     private readonly IKlaimBpjsDal _klaimBpjsDal;
     private readonly IKlaimBpjsDocTypeDal _klaimBpjsDocTypeDal;
+    private readonly IKlaimBpjsPrintOutDal _klaimBpjsPrintOutDal;
     private readonly IKlaimBpjsSigneeDal _klaimBpjsSigneeDal;
     private readonly IUserOftaDal _userOftaDal;
     private readonly IBlueprintBuilder _blueprintBuilder;
@@ -57,17 +58,18 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
 
     public KlaimBpjsBuilder(IKlaimBpjsDal klaimBpjsDal, 
         IKlaimBpjsDocTypeDal klaimBpjsDocTypeDal, 
+        IKlaimBpjsPrintOutDal klaimBpjsPrintOutDal, 
         IKlaimBpjsSigneeDal klaimBpjsSigneeDal, 
         ITglJamDal tglJamDal, 
         IUserOftaDal userOftaDal, 
         IBlueprintBuilder blueprintBuilder, 
         IDocBuilder docBuilder, 
         IDocTypeDal docTypeDal, 
-        IOrderKlaimBpjsBuilder orderKlaimBpjsBuilder, 
-        IKlaimBpjsEventDal klaimBpjJurnalDal)
+        IOrderKlaimBpjsBuilder orderKlaimBpjsBuilder, IKlaimBpjsEventDal klaimBpjJurnalDal)
     {
         _klaimBpjsDal = klaimBpjsDal;
         _klaimBpjsDocTypeDal = klaimBpjsDocTypeDal;
+        _klaimBpjsPrintOutDal = klaimBpjsPrintOutDal;
         _klaimBpjsSigneeDal = klaimBpjsSigneeDal;
         _tglJamDal = tglJamDal;
         _userOftaDal = userOftaDal;
@@ -99,8 +101,10 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
     {
         _agg = _klaimBpjsDal.GetData(klaimBpjsKey)
             ?? throw new KeyNotFoundException($"KlaimBpjsKey '{klaimBpjsKey.KlaimBpjsId}' not found");
-        var listDoc = _klaimBpjsDocTypeDal.ListData(klaimBpjsKey)?.ToList()
+        var listDocType = _klaimBpjsDocTypeDal.ListData(klaimBpjsKey)?.ToList()
                     ?? new List<KlaimBpjsDocTypeModel>();
+        var listPrintOut = _klaimBpjsPrintOutDal.ListData(klaimBpjsKey)?.ToList()
+                           ?? new List<KlaimBpjsPrintOutModel>();
         var listSignee = _klaimBpjsSigneeDal.ListData(klaimBpjsKey)?.ToList()
                       ?? new List<KlaimBpjsSigneeModel>();
         var listJurnal = _klaimBpjJurnalDal.ListData(klaimBpjsKey)?.ToList()
@@ -109,7 +113,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         
         // assign listDoc to _agg and listSignee to _agg using LINQ
         _agg.ListDocType = ( 
-            from c in listDoc
+            from c in listDocType
             join s in listSignee on c.KlaimBpjsDocTypeId equals s.KlaimBpjsDocTypeId into g
             select new KlaimBpjsDocTypeModel
             {
@@ -117,7 +121,10 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 KlaimBpjsDocTypeId = c.KlaimBpjsDocTypeId,
                 NoUrut = c.NoUrut,
                 DocTypeId = c.DocTypeId,
-                DocTypeName = c.DocTypeName
+                DocTypeName = c.DocTypeName,
+                ListPrintOut = listPrintOut
+                    .Where(x => x.KlaimBpjsDocTypeId == c.KlaimBpjsDocTypeId)
+                    .ToList()
             }).ToList();
         _agg.ListEvent = listJurnal;
 

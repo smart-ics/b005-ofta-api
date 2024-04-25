@@ -20,31 +20,45 @@ public interface IReffIdFinderFactory : IFactoryPattern<IReffIdFinderAction, IKl
 
 public class ReffIdFinderFactory : IReffIdFinderFactory
 {
-    private readonly IReffIdFinderTextEklaim _reffIdFinderTextEklaim;
+    private readonly IReffIdFinderTextEklaim _textEklaimFinder;
+    private readonly IReffIdFinderNotaBill _notaBillFinder;
+    private readonly IReffIdFinderResep _resepFinder;
 
-    public ReffIdFinderFactory(IReffIdFinderTextEklaim reffIdFinderTextEklaim)
+    public ReffIdFinderFactory(IReffIdFinderTextEklaim textEklaim, 
+        IReffIdFinderNotaBill notaBill, 
+        IReffIdFinderResep resepFinder)
     {
-        _reffIdFinderTextEklaim = reffIdFinderTextEklaim;
+        _notaBillFinder = notaBill;
+        _resepFinder = resepFinder;
+        _textEklaimFinder = textEklaim;
     }
 
     public IReffIdFinderAction Factory(IKlaimBpjsKey klaimBpjsKey, IDocTypeKey docTypeKey)
         => docTypeKey.DocTypeId switch
         {
-            "DTX01" => _reffIdFinderTextEklaim,
-            // "DTX02" => new ReffIdFinderSep(),
-            // "DTX03" => new ReffIdFinderSkdp(),
-            // "DTX04" => new ReffIdFinderSpri(),
-            // "DTX05" => new ReffIdFinderResumeMedis(),
-            // "DTX06" => new ReffIdFinderSuratRujukan(),
-            "DTX07" => new ReffIdFinderNotaBill(),
-            // "DTX08" => new ReffIdFinderHasilRadiologi(),
-            // "DTX09" => new ReffIdFinderHasilLaborat(),
-            // "DTX0A" => new ReffIdFinderLaporanOperasi(),
-            // "DTX0B" => new ReffIdFinderObservasiHd(),
-            // "DTX0C" => new ReffIdFinderResep(),
-            // "DTX0D" => new ReffIdFinderNotaObat(),
-            // "DTX0E" => new ReffIdFinderCppt(),
-            _ => throw new ArgumentOutOfRangeException()
+            "DTX01" => _textEklaimFinder,
+            "DTX02" => new ReffIdFinderDefault(),
+            "DTX03" => new ReffIdFinderDefault(),
+            "DTX04" => new ReffIdFinderDefault(),
+            "DTX05" => new ReffIdFinderDefault(),
+            "DTX06" => new ReffIdFinderDefault(),
+            "DTX07" => _notaBillFinder,
+            "DTX08" => new ReffIdFinderDefault(),
+            "DTX09" => new ReffIdFinderDefault(),
+            "DTX0A" => new ReffIdFinderDefault(),
+            "DTX0B" => new ReffIdFinderDefault(),
+            "DTX0C" => _resepFinder,
+            "DTX0D" => new ReffIdFinderDefault(),
+            "DTX0E" => new ReffIdFinderDefault(),
+            _ => new ReffIdFinderDefault()
         };
+}
+
+public class ReffIdFinderDefault : IReffIdFinderAction
+{
+    public IEnumerable<string> Find(string regId)
+    {
+        return new List<string>();
+    }
 }
 

@@ -2,6 +2,14 @@
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 
-public interface IReffIdFinderResepService : INunaService<IEnumerable<string>, string>
+
+public class ResepDto
+{
+    public string ResepId {get; set;} 
+    public DateTime ResepDate {get; set;} 
+    public string Layanan {get; set;} 
+    public string Dokter {get; set;}    
+};
+public interface IListResepService : INunaService<IEnumerable<ResepDto>, string>
 {
 }

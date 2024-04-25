@@ -56,7 +56,7 @@ public class KlaimBpjsDocTypeDal : IKlaimBpjsDocTypeDal
     {
         const string sql = @"
             SELECT
-                KlaimBpjsId, KlaimBpjsDocId, NoUrut, 
+                KlaimBpjsId, KlaimBpjsDocTypeId, NoUrut, 
                 DocTypeId, DocTypeName
             FROM
                 OFTA_KlaimBpjsDocType
