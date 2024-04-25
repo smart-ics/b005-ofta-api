@@ -7,6 +7,6 @@ public class ReffIdFinderTextEklaim : IReffIdFinderTextEklaim
 {
     public IEnumerable<string> Find(string regId)
     {
-        throw new NotImplementedException();
+        return new[] { "text-eklaim-test" }.ToList();
     }
 }

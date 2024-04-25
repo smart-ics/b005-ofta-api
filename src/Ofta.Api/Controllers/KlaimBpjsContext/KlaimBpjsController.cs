@@ -23,6 +23,14 @@ public class KlaimBpjsController : Controller
         return Ok(new JSendOk(result));
     }
     
+    [HttpPost("scanReffId")]
+    public async Task<IActionResult> ScanReffId(KlaimBpjsPrintOutScanCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetKlaimBpjs(string id)
     {

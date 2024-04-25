@@ -58,7 +58,8 @@ public class KlaimBpjsSigneeDal : IKlaimBpjsSigneeDal
     {
         const string sql = @"
             SELECT
-                KlaimBpjsId, KlaimBpjsDocId, KlaimBpjsSigneeId, NoUrut, UserOftaId, Email, SignTag
+                KlaimBpjsId, KlaimBpjsDocTypeId, KlaimBpjsSigneeId, 
+                NoUrut, UserOftaId, Email, SignTag
             FROM
                 OFTA_KlaimBpjsSignee
             WHERE

@@ -42,7 +42,7 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
         _agg = listReffIdPrintOut
             .Aggregate(_agg, (current, item) => _builder
                 .Attach(current)
-                .AddPrintOut(new DocTypeModel(item.Key), item.Value)
+                .AddPrintOut(new DocTypeModel(item.DocTypeId), item.ReffId)
                 .Build());
 
         //  WRITE
@@ -50,9 +50,9 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
         return Task.FromResult(Unit.Value);
     }
 
-    private Dictionary<string, string> GetListReffIdPrintOut(KlaimBpjsModel klaimBpjs)
+    private List<DocTypePrintOutDto> GetListReffIdPrintOut(KlaimBpjsModel klaimBpjs)
     {
-        var result = new Dictionary<string, string>();
+        List<DocTypePrintOutDto> result = new();
         klaimBpjs.ListDocType.ForEach(docType =>
         {
             var listReffId = _finderFactory
@@ -61,10 +61,17 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
                 .ToList();
             listReffId.ForEach(reffId =>
             {
-                result.Add(docType.DocTypeId, reffId);
+                result.Add(new DocTypePrintOutDto(docType.DocTypeId, reffId));
             });
         });
         return result;
+    }
+
+    private class DocTypePrintOutDto
+    {
+        public DocTypePrintOutDto(string docTYpe, string reffId) => (DocTypeId, ReffId) = (docTYpe, reffId);
+        public string DocTypeId { get; set; }
+        public string ReffId { get; set; }
     }
 }
 
