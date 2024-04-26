@@ -23,32 +23,55 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
     private readonly IReffIdFinderTextEklaim _textEklaimFinder;
     private readonly IReffIdFinderNotaBill _notaBillFinder;
     private readonly IReffIdFinderResep _resepFinder;
-
-    public ReffIdFinderFactory(IReffIdFinderTextEklaim textEklaim, 
-        IReffIdFinderNotaBill notaBill, 
-        IReffIdFinderResep resepFinder)
+    private readonly IReffIdFinderResume _resumeFinder;
+    private readonly IReffIdFinderNotaObat _notaObatFinder;
+    private readonly IReffIdFinderHasilRadiologi _hasilRadiologiFinder;
+    private readonly IReffIdFinderHasilLab _hasilLabFinder;
+    private readonly IReffIdFinderSuratRujukan _suratRujukanFinder;
+    private readonly IReffIdFinderSkdp _skdpFinder;
+    private readonly IReffIdFinderSpri _spriFinder;
+    private readonly IReffIdFinderSep _sepFinder;
+    public ReffIdFinderFactory(IReffIdFinderTextEklaim textEklaim,
+        IReffIdFinderNotaBill notaBill,
+        IReffIdFinderResep resepFinder,
+        IReffIdFinderResume resumeFinder,
+        IReffIdFinderNotaObat notaObatFinder,
+        IReffIdFinderHasilRadiologi hasilRadiologiFinder,
+        IReffIdFinderHasilLab hasilLabFinder,
+        IReffIdFinderSuratRujukan suratRujukanFinder,
+        IReffIdFinderSkdp skdpFinder,
+        IReffIdFinderSpri spriFinder,
+        IReffIdFinderSep sepFinder)
     {
         _notaBillFinder = notaBill;
         _resepFinder = resepFinder;
         _textEklaimFinder = textEklaim;
+        _resumeFinder = resumeFinder;
+        _notaObatFinder = notaObatFinder;
+        _hasilRadiologiFinder = hasilRadiologiFinder;
+        _hasilLabFinder = hasilLabFinder;
+        _suratRujukanFinder = suratRujukanFinder;
+        _skdpFinder = skdpFinder;
+        _spriFinder = spriFinder;
+        _sepFinder = sepFinder;
     }
 
     public IReffIdFinderAction Factory(IKlaimBpjsKey klaimBpjsKey, IDocTypeKey docTypeKey)
         => docTypeKey.DocTypeId switch
         {
             "DTX01" => _textEklaimFinder,
-            "DTX02" => new ReffIdFinderDefault(),
-            "DTX03" => new ReffIdFinderDefault(),
-            "DTX04" => new ReffIdFinderDefault(),
-            "DTX05" => new ReffIdFinderDefault(),
-            "DTX06" => new ReffIdFinderDefault(),
+            "DTX02" => _sepFinder,
+            "DTX03" => _skdpFinder,
+            "DTX04" => _spriFinder,
+            "DTX05" => _resumeFinder,
+            "DTX06" => _suratRujukanFinder,
             "DTX07" => _notaBillFinder,
-            "DTX08" => new ReffIdFinderDefault(),
-            "DTX09" => new ReffIdFinderDefault(),
+            "DTX08" => _hasilRadiologiFinder,
+            "DTX09" => _hasilLabFinder,
             "DTX0A" => new ReffIdFinderDefault(),
             "DTX0B" => new ReffIdFinderDefault(),
             "DTX0C" => _resepFinder,
-            "DTX0D" => new ReffIdFinderDefault(),
+            "DTX0D" => _notaObatFinder,
             "DTX0E" => new ReffIdFinderDefault(),
             _ => new ReffIdFinderDefault()
         };
