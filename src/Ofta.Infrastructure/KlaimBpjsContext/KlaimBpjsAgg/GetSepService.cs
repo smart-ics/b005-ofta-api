@@ -20,10 +20,10 @@ public class GetSepService : IGetSepService
     {
         const string sql = @"
             SELECT 
-	            aa.fs_kd_trs as TrsSepId, aa.fs_no_sep as SepId, 
+	            aa.fs_kd_trs as TrsSepId, aa.fs_no_sep as NoSep, 
                 aa.fs_kd_reg as RegId
             FROM
-	            vclaim_sep aa
+	            VCLAIM_sep aa
             WHERE
                 aa.fs_kd_reg = @regId
                 AND aa.fd_tgl_void = '3000-01-01'";
