@@ -124,6 +124,15 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 DocTypeName = c.DocTypeName,
                 ListPrintOut = listPrintOut
                     .Where(x => x.KlaimBpjsDocTypeId == c.KlaimBpjsDocTypeId)
+                    .Select(y => new KlaimBpjsPrintOutModel
+                    {
+                        NoUrut = y.NoUrut,
+                        PrintOutReffId = y.PrintOutReffId,
+                        PrintState = y.PrintState,
+                        DocId = y.DocId,
+                        DocUrl = y.DocUrl,
+                        ListSign = listSignee.Where(x => x.KlaimBpjsPrintOutId == y.KlaimBpjsPrintOutId).ToList()
+                    })
                     .ToList()
             }).ToList();
         _agg.ListEvent = listJurnal;

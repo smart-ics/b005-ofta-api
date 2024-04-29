@@ -35,14 +35,15 @@ public class KlaimBpjsPrintOutPrintHandler : IRequestHandler<KlaimBpjsPrintOutPr
             throw new ValidationException(validationResult.Errors);
         
         //  BUILD
-        var klaimBpjs = _builder
+        var agg = _builder
             .Load(request)
             .PrintDoc(request, request.ReffId)
             .Build();
         
+        
         //  WRITE
-        _writer.Save(klaimBpjs);
-        _mediator.Publish(new PrintedDocKlaimBpjsEvent(klaimBpjs, request), cancellationToken);
+        _writer.Save(agg);
+        _mediator.Publish(new PrintedDocKlaimBpjsEvent(agg, request), cancellationToken);
         return Task.FromResult(Unit.Value);
     }
 }
