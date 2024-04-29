@@ -21,6 +21,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder Attach(DocModel model);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
+    IDocBuilder DocName(string name);
     IDocBuilder GenRequestedDocUrl();
     IDocBuilder GenPublishedDocUrl();
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum);
@@ -133,6 +134,11 @@ public class DocBuilder : IDocBuilder
         return this;
     }
 
+    public IDocBuilder DocName(string name)
+    {
+        _aggregate.DocName = name;
+        return this;
+    }
     public IDocBuilder GenRequestedDocUrl()
     {
         var storageUrl = _paramSistemDal.GetData(Sys.LocalStorageUrl)

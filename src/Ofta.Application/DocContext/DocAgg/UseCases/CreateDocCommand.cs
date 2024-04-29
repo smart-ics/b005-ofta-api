@@ -38,6 +38,7 @@ public class CreateDocHandler : IRequestHandler<CreateDocCommand, CreateDocRespo
             .DocType(request)
             .User(request)
             .AddJurnal(DocStateEnum.Created, string.Empty)
+            .AddScope(request)
             .Build();
         
         //  WRITE

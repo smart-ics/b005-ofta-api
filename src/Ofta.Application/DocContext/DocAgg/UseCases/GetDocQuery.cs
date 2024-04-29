@@ -17,6 +17,7 @@ public record GetDocResponse(
     string DocOwnerEmail,
     
     string DocState,
+    string DocName,
     string RequestedDocUrl,
     string UploadedDocId,
     string UploadedDocUrl,
@@ -70,6 +71,7 @@ public class GetDocQueryHandler : IRequestHandler<GetDocQuery, GetDocResponse>
             doc.UserOftaId,
             doc.Email,
             doc.DocState.ToString(),
+            doc.DocName,
             doc.RequestedDocUrl,
             doc.UploadedDocId,
             doc.UploadedDocUrl,

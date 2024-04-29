@@ -6,7 +6,7 @@ using Ofta.Domain.DocContext.DocTypeAgg;
 
 namespace Ofta.Application.DocContext.DocTypeAgg.UseCases;
 
-public record CreateDocTypeCommand(string DocTypeName)
+public record CreateDocTypeCommand(string DocTypeName, string DocTypeCode)
     : IRequest<CreateDocTypeResponse>;
 
 public class CreateDocTypeResponse
@@ -37,6 +37,7 @@ public class CreateDocTypeHandler : IRequestHandler<CreateDocTypeCommand, Create
         _aggregate = _builder
             .Create()
             .Name(request.DocTypeName)
+            .DocTypeCode(request.DocTypeCode)
             .IsActive(true)
             .Build();
         

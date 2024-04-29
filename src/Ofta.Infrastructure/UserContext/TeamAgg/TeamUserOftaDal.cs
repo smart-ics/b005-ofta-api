@@ -53,9 +53,12 @@ public class TeamUserOftaDal : ITeamUserOftaDal
     {
         const string sql = @"
             SELECT
-                aa.TeamId, aa.UserOftaId
+                aa.TeamId, aa.UserOftaId, 
+                ISNULL(bb.UserOftaName,'') UserOftaName
             FROM
                 OFTA_TeamUserOfta aa
+            LEFT JOIN
+                OFTA_UserOfta bb on aa.UserOftaId = bb.UserOftaId
             WHERE
                 aa.TeamId = @TeamId";
         
@@ -70,9 +73,12 @@ public class TeamUserOftaDal : ITeamUserOftaDal
     {
         const string sql = @"
             SELECT
-                aa.TeamId, aa.UserOftaId
+                aa.TeamId, aa.UserOftaId, 
+                ISNULL(bb.UserOftaName,'') UserOftaName
             FROM
                 OFTA_TeamUserOfta aa
+            LEFT JOIN
+                OFTA_UserOfta bb on aa.UserOftaId = bb.UserOftaId
             WHERE
                 aa.UserOftaId = @UserOftaId";
         

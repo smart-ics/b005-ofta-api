@@ -66,6 +66,7 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
 
         //      klaim
         printOut.DocId = doc.DocId;
+        printOut.DocUrl = doc.RequestedDocUrl;
         _klaimBpjsWriter.Save(agg);
         
         //      save fisik file;

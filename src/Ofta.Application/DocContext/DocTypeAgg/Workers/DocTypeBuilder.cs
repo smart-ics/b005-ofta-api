@@ -10,6 +10,7 @@ public interface IDocTypeBuilder : INunaBuilder<DocTypeModel>
     IDocTypeBuilder Create();
     IDocTypeBuilder Load(IDocTypeKey key);
     IDocTypeBuilder Name(string name);
+    IDocTypeBuilder DocTypeCode(string code);
     IDocTypeBuilder IsActive(bool isActive);
     IDocTypeBuilder AddTag(string tag);
     IDocTypeBuilder RemoveTag(string tag);
@@ -65,6 +66,12 @@ public class DocTypeBuilder : IDocTypeBuilder
     public IDocTypeBuilder Name(string name)
     {
         _aggregate.DocTypeName = name;
+        return this;
+    }
+
+    public IDocTypeBuilder DocTypeCode(string code)
+    {
+        _aggregate.DocTypeCode = code;
         return this;
     }
 

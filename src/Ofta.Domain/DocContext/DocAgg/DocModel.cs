@@ -20,6 +20,7 @@ public class DocModel : IDocKey, IUserOftaKey, IUploadedDocKey
     public string UserOftaId { get; set; }
     public string Email { get; set; }
     public DocStateEnum DocState { get; set; }
+    public string DocName { get; set; }
     public string RequestedDocUrl { get; set; }
     public string UploadedDocId { get; set; }
     public string UploadedDocUrl { get; set; }

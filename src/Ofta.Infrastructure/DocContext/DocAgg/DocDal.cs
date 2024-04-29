@@ -25,11 +25,11 @@ public class DocDal : IDocDal
         const string sql = @"
             INSERT INTO OFTA_Doc (
                 DocId, DocDate, DocTypeId, UserOftaId, Email,
-                DocState, RequestedDocUrl, UploadedDocId,
+                DocState, DocName, RequestedDocUrl, UploadedDocId,
                 UploadedDocUrl, PublishedDocUrl)
             VALUES (
                 @DocId, @DocDate, @DocTypeId, @UserOftaId, @Email,
-                @DocState, @RequestedDocUrl, @UploadedDocId,
+                @DocState,@DocName, @RequestedDocUrl, @UploadedDocId,
                 @UploadedDocUrl, @PublishedDocUrl)";
 
         var dp = new DynamicParameters();
@@ -39,6 +39,7 @@ public class DocDal : IDocDal
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@Email", model.Email, SqlDbType.VarChar);
         dp.AddParam("@DocState", model.DocState, SqlDbType.Int);
+        dp.AddParam("@DocName", model.DocName, SqlDbType.VarChar);
         dp.AddParam("@RequestedDocUrl", model.RequestedDocUrl, SqlDbType.VarChar);
         dp.AddParam("@UploadedDocId", model.UploadedDocId, SqlDbType.VarChar);
         dp.AddParam("@UploadedDocUrl", model.UploadedDocUrl, SqlDbType.VarChar);
@@ -60,6 +61,7 @@ public class DocDal : IDocDal
                 UserOftaId = @UserOftaId, 
                 Email = @Email,
                 DocState = @DocState, 
+                DocName = @DocName,
                 RequestedDocUrl = @RequestedDocUrl, 
                 UploadedDocId = @UploadedDocId,
                 UploadedDocUrl = @UploadedDocUrl, 
@@ -74,6 +76,7 @@ public class DocDal : IDocDal
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@Email", model.Email, SqlDbType.VarChar);
         dp.AddParam("@DocState", model.DocState, SqlDbType.Int);
+        dp.AddParam("@DocName", model.DocName, SqlDbType.VarChar);
         dp.AddParam("@RequestedDocUrl", model.RequestedDocUrl, SqlDbType.VarChar);
         dp.AddParam("@UploadedDocId", model.UploadedDocId, SqlDbType.VarChar);
         dp.AddParam("@UploadedDocUrl", model.UploadedDocUrl, SqlDbType.VarChar);
@@ -103,7 +106,7 @@ public class DocDal : IDocDal
         const string sql = @"
             SELECT
                 aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
-                aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.DocState,aa.DocName, aa.RequestedDocUrl, aa.UploadedDocId,
                 aa.UploadedDocUrl, aa.PublishedDocUrl,
                 ISNULL(bb.DocTypeName, '') AS DocTypeName
             FROM    
@@ -124,7 +127,7 @@ public class DocDal : IDocDal
         const string sql = @"
             SELECT
                 aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
-                aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.DocState,aa.DocName, aa.RequestedDocUrl, aa.UploadedDocId,
                 aa.UploadedDocUrl, aa.PublishedDocUrl,
                 ISNULL(bb.DocTypeName, '') AS DocTypeName
             FROM    
@@ -148,7 +151,7 @@ public class DocDal : IDocDal
         const string sql = @"
             SELECT
                 aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
-                aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.DocState,aa.DocName, aa.RequestedDocUrl, aa.UploadedDocId,
                 aa.UploadedDocUrl, aa.PublishedDocUrl,
                 ISNULL(bb.DocTypeName, '') AS DocTypeName
             FROM    
@@ -170,7 +173,7 @@ public class DocDal : IDocDal
         const string sql = @"
             SELECT DISTINCT
                 aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
-                aa.DocState, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.DocState,aa.DocName, aa.RequestedDocUrl, aa.UploadedDocId,
                 aa.UploadedDocUrl, aa.PublishedDocUrl,
                 ISNULL(bb.DocTypeName, '') AS DocTypeName
             FROM    

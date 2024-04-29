@@ -16,6 +16,7 @@ public record ListMyDocResponse(
     string DocDate,
     string DocTypeId,
     string DocTypeName,
+    string DocName,
     string RequestedDocUrl);
 
 public class ListMyDocHandler : IRequestHandler<ListMyDocQuery, IEnumerable<ListMyDocResponse>>
@@ -60,6 +61,7 @@ public class ListMyDocHandler : IRequestHandler<ListMyDocQuery, IEnumerable<List
                 $"{x.DocDate:yyyy-MM-dd HH:mm:ss}",
                 x.DocTypeId,
                 x.DocTypeName,
+                x.DocName,
                 x.RequestedDocUrl
             ));
         return Task.FromResult(response);

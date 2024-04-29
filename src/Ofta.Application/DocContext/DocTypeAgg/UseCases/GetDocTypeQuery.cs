@@ -11,6 +11,7 @@ public record GetDocTypeQuery(string DocTypeId) : IRequest<GetDocTypeResponse>, 
 public record GetDocTypeResponse(
     string DocTypeId,
     string DocTypeName,
+    string DocTypeCode,
     bool IsStandard,
     bool IsActive,
     string FileUrl,
@@ -35,6 +36,7 @@ public class GetDocTypeQueryHandler : IRequestHandler<GetDocTypeQuery, GetDocTyp
         var response = new GetDocTypeResponse(
             docType.DocTypeId,
             docType.DocTypeName,
+            docType.DocTypeCode,
             docType.IsStandard,
             docType.IsActive,
             docType.FileUrl,
