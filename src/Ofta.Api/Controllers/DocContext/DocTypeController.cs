@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
 using Ofta.Application.DocContext.DocTypeAgg.UseCases;
+using Ofta.Application.UserContext.UserOftaAgg.UseCases;
 
 namespace Ofta.Api.Controllers.DocContext;
 
@@ -69,4 +70,12 @@ public class DocTypeController : Controller
         var result = await _mediator.Send(new GetDocTypeQuery(id));
         return Ok(new JSendOk(result));
     }
+
+    [HttpGet("listTag")]
+    public async Task<IActionResult> ListTag()
+    {
+        var result = await _mediator.Send(new ListTagQuery());
+        return Ok(new JSendOk(result));
+    }
+
 }
