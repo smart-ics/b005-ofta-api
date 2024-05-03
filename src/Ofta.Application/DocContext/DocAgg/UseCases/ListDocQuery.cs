@@ -14,6 +14,7 @@ public record ListDocResponse(
     string DocDate,
     string DocTypeId,
     string DocTypeName,
+    string DocName,
     string UserOftaId,
     string Email,
     string DocState);
@@ -49,6 +50,7 @@ public class ListDocQueryHandler : IRequestHandler<ListDocQuery, IEnumerable<Lis
             x.DocDate.ToString("yyyy-MM-dd"),
             x.DocTypeId,
             x.DocTypeName,
+            x.DocName,
             x.UserOftaId,
             x.Email,
             x.DocState.ToString()));

@@ -6,7 +6,7 @@ using Ofta.Domain.DocContext.DocAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-public record SubmitDocCommand(string DocId, string ContentBase64) : IRequest<SubmitDocResponse>, IDocKey;
+public record SubmitDocCommand(string DocId,string DocName, string ContentBase64) : IRequest<SubmitDocResponse>, IDocKey;
 
 public record SubmitDocResponse(string RequestedDocUrl);
 
@@ -41,6 +41,7 @@ public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocRespo
         //  BUILD
         aggregate = _builder
             .Attach(aggregate)
+            .DocName(request.DocName)
             .GenRequestedDocUrl()
             .AddJurnal(DocStateEnum.Submited, string.Empty)
             .Build();

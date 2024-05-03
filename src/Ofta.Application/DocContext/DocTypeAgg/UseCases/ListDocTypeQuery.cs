@@ -6,7 +6,7 @@ namespace Ofta.Application.DocContext.DocTypeAgg.UseCases;
 
 public record ListDocTypeQuery(string Tag) : IRequest<IEnumerable<ListDocTypeResponse>>;
 
-public record ListDocTypeResponse(string DocTypeId, string DocTypeName);
+public record ListDocTypeResponse(string DocTypeId, string DocTypeName, string DocTypeCode);
 
 public class ListDocTypeHandler : IRequestHandler<ListDocTypeQuery, IEnumerable<ListDocTypeResponse>>
 {
@@ -31,7 +31,7 @@ public class ListDocTypeHandler : IRequestHandler<ListDocTypeQuery, IEnumerable<
             join docTypeTag in listTag on docType.DocTypeId equals docTypeTag.DocTypeId
             select docType).ToList();
         
-        var response = filteredDocType.Select(x => new ListDocTypeResponse(x.DocTypeId, x.DocTypeName));
+        var response = filteredDocType.Select(x => new ListDocTypeResponse(x.DocTypeId, x.DocTypeName, x.DocTypeCode));
         return Task.FromResult(response);
     }
 }

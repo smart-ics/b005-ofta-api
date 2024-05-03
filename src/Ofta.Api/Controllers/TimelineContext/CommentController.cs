@@ -66,4 +66,12 @@ public class CommentController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+
+    [HttpGet("{id}/ListCommentReact")]
+    public async Task<IActionResult> ListCommentReact(string id)
+    {
+        var query = new ListCommentReactQuery(id);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 }

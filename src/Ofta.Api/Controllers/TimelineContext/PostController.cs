@@ -79,4 +79,12 @@ public class PostController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+
+    [HttpGet("{id}/ListPostReact")]
+    public async Task<IActionResult> ListPostReact(string id)
+    {
+        var query = new ListPostReactQuery(id);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 }
