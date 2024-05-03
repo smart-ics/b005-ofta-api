@@ -83,4 +83,18 @@ public class DocTypeTagDal : IDocTypeTagDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<DocTypeTagModel>(sql, dp);
     }
+
+    public IEnumerable<DocTypeTagModel> ListData()
+    {
+        const string sql = @"
+            SELECT
+                Tag
+            FROM 
+                OFTA_DocTypeTag
+            Group By Tag ";
+
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Read<DocTypeTagModel>(sql);
+    }
 }
