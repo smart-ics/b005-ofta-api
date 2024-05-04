@@ -67,7 +67,7 @@ public class DocTypeTagDal : IDocTypeTagDal
         return conn.Read<DocTypeTagModel>(sql, dp);
     }
 
-    public IEnumerable<DocTypeTagModel> ListData(ITag filter)
+    public IEnumerable<DocTypeTagModel> ListData(List<ITag> filter1)
     {
         const string sql = @"
             SELECT
@@ -75,10 +75,10 @@ public class DocTypeTagDal : IDocTypeTagDal
             FROM 
                 OFTA_DocTypeTag
             WHERE
-                Tag = @Tag ";
+                Tag in @Tags ";
 
         var dp = new DynamicParameters();
-        dp.AddParam("@Tag", filter.Tag, SqlDbType.VarChar);
+        dp.Add("@Tags", filter1.Select(x => x.Tag).ToArray());
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<DocTypeTagModel>(sql, dp);

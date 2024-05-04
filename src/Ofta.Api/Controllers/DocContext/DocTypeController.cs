@@ -58,12 +58,15 @@ public class DocTypeController : Controller
         await _mediator.Send(cmd);
         return Ok();
     }
-    [HttpGet("{tag}/list")]
-    public async Task<IActionResult> ListDocType(string tag)
+    
+    [HttpGet("list")]
+    public async Task<IActionResult> ListDocType( [FromQuery] List<string> listTag)
     {
-        var result = await _mediator.Send(new ListDocTypeQuery(tag));
+        var query = new ListDocTypeQuery(listTag);
+        var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDocType(string id)
     {

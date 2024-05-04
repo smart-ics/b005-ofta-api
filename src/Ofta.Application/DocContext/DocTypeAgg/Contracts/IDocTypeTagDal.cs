@@ -7,8 +7,10 @@ public interface IDocTypeTagDal :
     IInsertBulk<DocTypeTagModel>,
     IDelete<IDocTypeKey>,
     IListData<DocTypeTagModel, IDocTypeKey>,
-    IListData<DocTypeTagModel, ITag>,
+    IListData<DocTypeTagModel, List<ITag>>,
     IListData<DocTypeTagModel>
+
+    
 {
     
 }
