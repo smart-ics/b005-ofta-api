@@ -21,16 +21,13 @@ public class DocTypeBuilder : IDocTypeBuilder
 {
     private DocTypeModel _aggregate = new();
     private readonly IDocTypeDal _docTypeDal;
-    private readonly IDocTypeFileUrlDal _docTypeFileUrlDal;
     private readonly IDocTypeTagDal _docTypeTagDal;
 
     public DocTypeBuilder(IDocTypeDal docTypeDal, 
-        IDocTypeTagDal docTypeTagDal, 
-        IDocTypeFileUrlDal docTypeFileUrlDal)
+        IDocTypeTagDal docTypeTagDal)
     {
         _docTypeDal = docTypeDal;
         _docTypeTagDal = docTypeTagDal;
-        _docTypeFileUrlDal = docTypeFileUrlDal;
     }
 
     public DocTypeModel Build()
@@ -55,11 +52,6 @@ public class DocTypeBuilder : IDocTypeBuilder
         _aggregate.ListTag = _docTypeTagDal.ListData(key)?.ToList()
                              ?? new List<DocTypeTagModel>();
 
-        _aggregate.FileUrl = string.Empty;
-        var docFileUrs = _docTypeFileUrlDal.GetData(key);
-        if (docFileUrs != null)
-            _aggregate.FileUrl = docFileUrs.FileUrl;
-        
         return this;
     }
 
