@@ -20,12 +20,3 @@ public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey, IUserOftaKey
     public List<KlaimBpjsDocTypeModel> ListDocType { get; set; }
     public List<KlaimBpjsEventModel> ListEvent { get; set; }
 }
-
-public enum KlaimBpjsStateEnum
-{
-    Created,    //    pertama kali dibuat
-    InProgress, //    add-remove or sign or print
-    Completed,  //    siap di-merge
-    Merged,     //    sudah di-merge 
-    Downloaded //    dokumen sudah di-merge  
-}

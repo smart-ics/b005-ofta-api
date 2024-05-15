@@ -1,7 +1,10 @@
 ﻿using FluentValidation;
 using MediatR;
+using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Workers;
+using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
+using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.UseCases;
@@ -15,17 +18,21 @@ public record CreateOrderKlaimBpjsResponse(string OrderKlaimBpjsId);
 
 public class CreateOrderKlaimBpjsHandler : IRequestHandler<CreateOrderKlaimBpjsCommand, CreateOrderKlaimBpjsResponse>
 {
+    private OrderKlaimBpjsModel _agg = new();
     private readonly IOrderKlaimBpjsBuilder _builder;
     private readonly IOrderKlaimBpjsWriter _writer;
     private readonly IValidator<CreateOrderKlaimBpjsCommand> _guard;
+    private readonly IMediator _mediator;
 
     public CreateOrderKlaimBpjsHandler(IOrderKlaimBpjsBuilder builder, 
         IOrderKlaimBpjsWriter writer, 
-        IValidator<CreateOrderKlaimBpjsCommand> guard)
+        IValidator<CreateOrderKlaimBpjsCommand> guard,
+        IMediator mediator)
     {
         _builder = builder;
         _writer = writer;
         _guard = guard;
+        _mediator = mediator;
     }
 
     public Task<CreateOrderKlaimBpjsResponse> Handle(CreateOrderKlaimBpjsCommand request, CancellationToken cancellationToken)
@@ -34,9 +41,9 @@ public class CreateOrderKlaimBpjsHandler : IRequestHandler<CreateOrderKlaimBpjsC
         var guardResult = _guard.Validate(request);
         if (!guardResult.IsValid)
             throw new ValidationException(guardResult.Errors);
-        
+
         //  BUILDER
-        var order = _builder
+        _agg = _builder
             .Create()
             .Reg(request)
             .Layanan(request.LayananName)
@@ -46,10 +53,16 @@ public class CreateOrderKlaimBpjsHandler : IRequestHandler<CreateOrderKlaimBpjsC
             .Build();
 
         //  WRITE
-        _writer.Save(order);
-        return Task.FromResult(new CreateOrderKlaimBpjsResponse(order.OrderKlaimBpjsId));
+        _writer.Save(_agg);
+        _mediator.Publish(new CreateOrderKlaimBpjsEvent(_agg, request), cancellationToken);
+        return Task.FromResult(new CreateOrderKlaimBpjsResponse(_agg.OrderKlaimBpjsId));
     }
 }
+
+public record CreateOrderKlaimBpjsEvent(
+    OrderKlaimBpjsModel Aggregate,
+    CreateOrderKlaimBpjsCommand Command) : INotification;
+
 
 public class CreateOrderKlaimBpjsValidator : AbstractValidator<CreateOrderKlaimBpjsCommand>
 {

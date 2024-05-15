@@ -23,4 +23,5 @@ public static class Sys
     public static IParamSistemKey LocalStoragePath => new ParamSistemModel("local-storage-path");
     public static IParamSistemKey OftaStorageUrl => new ParamSistemModel("ofta-storage-url");
     public static IParamSistemKey LocalStorageUrl => new ParamSistemModel("local-storage-url");
+    public static IParamSistemKey LocalTemplateUrl => new ParamSistemModel("local-template-url");
 }
