@@ -1,4 +1,5 @@
 ﻿using Nuna.Lib.DataAccessHelper;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
 using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
 
@@ -9,6 +10,7 @@ public interface IWorkListBpjsDal :
     IUpdate<WorkListBpjsModel>,
     IDelete<IOrderKlaimBpjsKey>,
     IGetData<WorkListBpjsModel, IOrderKlaimBpjsKey>,
-    IListData<WorkListBpjsModel>
+    IListData<WorkListBpjsModel>,
+    IListData<WorkListBpjsModel, int>
 {
 }

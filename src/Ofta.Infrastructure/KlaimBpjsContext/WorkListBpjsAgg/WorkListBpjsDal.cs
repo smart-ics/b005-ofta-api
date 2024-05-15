@@ -3,7 +3,6 @@ using System.Data.SqlClient;
 using Dapper;
 using Microsoft.Extensions.Options;
 using Nuna.Lib.DataAccessHelper;
-using Nuna.Lib.ValidationHelper;
 using Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.Contracts;
 using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
 using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
@@ -134,4 +133,27 @@ public class WorkListBpjsDal : IWorkListBpjsDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<WorkListBpjsModel>(sql);
     }
+
+    public IEnumerable<WorkListBpjsModel> ListData(int pageNo)
+    {
+        const string sql = @"
+             SELECT 
+                OrderKlaimBpjsId, OrderKlaimBpjsDate, KlaimBpjsId, 
+                WorkState, RegId,  PasienId, PasienName, 
+                NoSep, LayananName, DokterName, RajalRanap 
+            FROM 
+                OFTA_WorkListBpjs
+            ORDER BY
+                OrderKlaimBpjsDate DESC
+            OFFSET 
+                (@pageNumber - 1) * 50 ROWS
+                FETCH NEXT 50 ROWS ONLY";
+
+        var dp = new DynamicParameters();
+        dp.AddParam("@pageNumber", pageNo, SqlDbType.Int);
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Read<WorkListBpjsModel>(sql, dp);
+    }
+
 }
