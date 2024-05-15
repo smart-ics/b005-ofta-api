@@ -20,6 +20,7 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
 {
     IKlaimBpjsBuilder Create();
+    IKlaimBpjsBuilder UpdateState(IKlaimBpjsKey klaimBpjsKey, KlaimBpjsStateEnum klaimBpjsStateEnum);
     IKlaimBpjsBuilder Load(IKlaimBpjsKey klaimBpjsKey);
     IKlaimBpjsBuilder Attach(KlaimBpjsModel klaimBpjs);
     IKlaimBpjsBuilder UserOfta(IUserOftaKey userOftaKey);
@@ -95,6 +96,16 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             ListEvent = new List<KlaimBpjsEventModel>()
         };
         return this;
+    }
+
+    public IKlaimBpjsBuilder UpdateState(IKlaimBpjsKey klaimBpjsKey, KlaimBpjsStateEnum klaimBpjsStateEnum)
+    {
+        
+        _ = Load(klaimBpjsKey).Build();
+
+        _agg.KlaimBpjsState = klaimBpjsStateEnum;
+        return this;
+
     }
 
     public IKlaimBpjsBuilder Load(IKlaimBpjsKey klaimBpjsKey)

@@ -45,7 +45,9 @@ public class RemoteCetakBuilder : IRemoteCetakBuilder
                 {
                     KodeTrs = remoteCetakKey.KodeTrs,
                     TglSend = _tglJamDal.Now.ToString("yyyy-MM-dd"),
-                    JamSend = _tglJamDal.Now.ToString("HH:mm:ss")
+                    JamSend = _tglJamDal.Now.ToString("HH:mm:ss"),
+                    TglCetak = "3000-01-01",
+                    JamCetak = "00:00:00"
                 };
         return this;
     }
