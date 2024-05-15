@@ -1,18 +1,8 @@
 ﻿using MediatR;
-using Ofta.Application.DocContext.DocTypeAgg.Workers;
-using Ofta.Application.Helpers;
-using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 using Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.Workers;
-using Ofta.Application.PrintOutContext.RemoteCetakAgg.Workers;
-using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
-using Ofta.Domain.PrintOutContext.RemoteCetakAgg;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.UseCases.Event;
 
@@ -20,22 +10,27 @@ public class AddWorkListBpjsOnOrderKlaimBpjsCreateOrderEventHandler : INotificat
 {
     private readonly IWorkListBpjsBuilder _workListBpjsBuilder;
     private readonly IWorkListBpjsWriter _workListBpjsWriter;
-    private readonly IAppSettingService _appSettingService;
+    
 
     public AddWorkListBpjsOnOrderKlaimBpjsCreateOrderEventHandler(IWorkListBpjsBuilder workListBpjsBuilder,
-        IWorkListBpjsWriter workListBpjsWriter,
-        IAppSettingService appSettingService)
+        IWorkListBpjsWriter workListBpjsWriter)
     {
         _workListBpjsBuilder = workListBpjsBuilder;
         _workListBpjsWriter = workListBpjsWriter;
-        _appSettingService = appSettingService;
     }
 
     public Task Handle(CreateOrderKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
+        var data = notification.Aggregate;
+        var requests = notification.Command;
+
 
         var agg = _workListBpjsBuilder
-            .Load(new WorkListBpjsModel(notification.Aggregate.OrderKlaimBpjsId))
+            .Create(notification.Aggregate)
+            .Reg(notification.Aggregate)
+            .Layanan(notification.Aggregate.LayananName)
+            .Dokter(notification.Aggregate.DokterName)
+            .RajalRanap(notification.Aggregate.RajalRanap)
             .WorkState(KlaimBpjsStateEnum.Created)
             .Build();
 

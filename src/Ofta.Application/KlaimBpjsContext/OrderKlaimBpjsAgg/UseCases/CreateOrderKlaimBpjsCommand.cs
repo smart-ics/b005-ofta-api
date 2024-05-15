@@ -18,6 +18,7 @@ public record CreateOrderKlaimBpjsResponse(string OrderKlaimBpjsId);
 
 public class CreateOrderKlaimBpjsHandler : IRequestHandler<CreateOrderKlaimBpjsCommand, CreateOrderKlaimBpjsResponse>
 {
+    private OrderKlaimBpjsModel _agg = new();
     private readonly IOrderKlaimBpjsBuilder _builder;
     private readonly IOrderKlaimBpjsWriter _writer;
     private readonly IValidator<CreateOrderKlaimBpjsCommand> _guard;
@@ -40,9 +41,9 @@ public class CreateOrderKlaimBpjsHandler : IRequestHandler<CreateOrderKlaimBpjsC
         var guardResult = _guard.Validate(request);
         if (!guardResult.IsValid)
             throw new ValidationException(guardResult.Errors);
-        
+
         //  BUILDER
-        var order = _builder
+        _agg = _builder
             .Create()
             .Reg(request)
             .Layanan(request.LayananName)
@@ -52,9 +53,9 @@ public class CreateOrderKlaimBpjsHandler : IRequestHandler<CreateOrderKlaimBpjsC
             .Build();
 
         //  WRITE
-        _writer.Save(order);
-        _mediator.Publish(new CreateOrderKlaimBpjsEvent(order, request), cancellationToken);
-        return Task.FromResult(new CreateOrderKlaimBpjsResponse(order.OrderKlaimBpjsId));
+        _writer.Save(_agg);
+        _mediator.Publish(new CreateOrderKlaimBpjsEvent(_agg, request), cancellationToken);
+        return Task.FromResult(new CreateOrderKlaimBpjsResponse(_agg.OrderKlaimBpjsId));
     }
 }
 

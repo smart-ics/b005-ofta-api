@@ -10,7 +10,7 @@ namespace Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.Workers;
 
 public interface IWorkListBpjsBuilder : INunaBuilder<WorkListBpjsModel>
 {
-    IWorkListBpjsBuilder Create();
+    IWorkListBpjsBuilder Create(IOrderKlaimBpjsKey key);
     IWorkListBpjsBuilder Delete();
     IWorkListBpjsBuilder Load(IOrderKlaimBpjsKey orderKlaimBpjsKey);
     IWorkListBpjsBuilder Reg(IRegPasien regPasien);
@@ -41,10 +41,11 @@ public class WorkListBpjsBuilder : IWorkListBpjsBuilder
         return _agg;
     }
 
-    public IWorkListBpjsBuilder Create()
+    public IWorkListBpjsBuilder Create(IOrderKlaimBpjsKey key)
     {
         _agg = new WorkListBpjsModel
         {
+            OrderKlaimBpjsId = key.OrderKlaimBpjsId,
             OrderKlaimBpjsDate = _tglJamDal.Now
         };
         return this;
