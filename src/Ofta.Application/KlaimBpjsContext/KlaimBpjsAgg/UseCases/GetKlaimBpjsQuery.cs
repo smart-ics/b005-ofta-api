@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
@@ -29,11 +30,27 @@ public class GetKlaimBpjsDocResponse
     public int NoUrut { get; set; }
     public string DocTypeId { get; set; }
     public string DocTypeName { get; set; }
-    public string DocId { get; set; }
-    public string DocUrl { get; set; }
-    public string PrintOutReffId { get; set; }
+    public List<GetKlaimBPJSPrintOutResponse> ListPrinOut { get; set; }
 }
 
+public class GetKlaimBPJSPrintOutResponse
+{
+    public int NoUrut { get; set; }
+    public string PrintOutReffId { get; set; }
+    public string PrintState { get; set; }
+    public string DocId { get; set; }
+    public string DocUrl { get; set; }
+    public List<GetKlaimBPJSSigneeResponse> ListSign { get; set; }
+}
+
+public class GetKlaimBPJSSigneeResponse
+{
+    public int NoUrut { get; set; }
+    public string UserOftaId { get; set; }
+    public string Email { get; set; }
+    public string SignTag { get; set; }
+    public string SignPosition { get; set; }
+}
 public class GetKlaimBpjsEventResponse
 {
     public string KlaimBpjsId { get; set; }
@@ -74,9 +91,24 @@ public class GetKlaimBpjsQueryHandler : IRequestHandler<GetKlaimBpjsQuery, GetKl
                          NoUrut = x.NoUrut,
                          DocTypeId = x.DocTypeId,
                          DocTypeName = x.DocTypeName,
-                         DocId = string.Empty,//x.DocId,
-                         DocUrl = string.Empty,//x.DocUrl,
-                         PrintOutReffId = string.Empty //x.PrintOutReffId
+                         ListPrinOut = x.ListPrintOut
+                         .Select(y => new GetKlaimBPJSPrintOutResponse
+                          {
+                            NoUrut = y.NoUrut,
+                            PrintOutReffId = y.PrintOutReffId,
+                            PrintState = y.PrintState.ToString(),
+                            DocId = y.DocId,
+                            DocUrl = y.DocUrl,
+                            ListSign = y.ListSign
+                            .Select(z => new GetKlaimBPJSSigneeResponse
+                            {
+                                NoUrut = z.NoUrut,
+                                UserOftaId = z.UserOftaId,
+                                Email = z.Email,
+                                SignTag = z.SignTag,
+                                SignPosition = z.SignPosition.ToString()
+                             }).ToList()
+                          }).ToList()
                      }).ToList(),
             klaimBpjs.ListEvent
                         .Select(x => new GetKlaimBpjsEventResponse
