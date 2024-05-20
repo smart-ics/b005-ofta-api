@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="14c0f3b2-42bc-4b38-886d-6df299a15ab1" ChangeDateTime="05/03/2024 03:50:41">
+    <Property Name="ElementName" Value="[dbo].[Ofta_Tag].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Ofta_Tag]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Tag" />
+  </Operation>
+</Operations>

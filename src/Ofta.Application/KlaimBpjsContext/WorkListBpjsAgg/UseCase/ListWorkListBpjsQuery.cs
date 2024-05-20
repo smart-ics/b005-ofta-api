@@ -7,9 +7,10 @@ using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.UseCase;
 
-public record ListWorkListBpjsQuery(string pasienName,
-    string layananName, string dokterName, 
-    string rajalRanap, int pageNo) : IRequest<IEnumerable<ListWorkListBpjsResponse>>;
+public record ListWorkListBpjsQuery(string regId, string pasienId, string pasienName,
+                                    string layananName, string dokterName, 
+                                    string rajalRanap, string workState, 
+                                    int pageNo) : IRequest<IEnumerable<ListWorkListBpjsResponse>>;
 
 public record ListWorkListBpjsResponse(
     string OrderKlaimBpjsId,
@@ -47,24 +48,39 @@ public class ListWorkListBpjsHandler : IRequestHandler<ListWorkListBpjsQuery, IE
         ?? new List<WorkListBpjsModel>();
 
 
+        if (request.regId != null)
+            result = (from lr in result
+                      where lr.RegId.ToString().Trim() == request.regId.Trim()
+                      select lr).ToList();
+
+        if (request.pasienId != null)
+            result = (from lr in result
+                      where lr.PasienId.ToString().Trim() == request.pasienId.Trim()
+                      select lr).ToList();
+
         if (request.pasienName != null)
             result = (from lr in result
-                      where lr.PasienName.ToLower().Contains(request.pasienName.ToLower())
+                      where lr.PasienName.ToLower().Trim().Contains(request.pasienName.ToLower().Trim())
                       select lr).ToList();
 
         if (request.layananName != null)
             result = (from lr in result
-                      where lr.LayananName.ToLower().Contains(request.layananName.ToLower())
+                      where lr.LayananName.ToLower().Trim().Contains(request.layananName.ToLower().Trim())
                       select lr).ToList();
 
         if (request.dokterName != null)
             result = (from lr in result
-                      where lr.DokterName.ToLower().Contains(request.dokterName.ToLower())
+                      where lr.DokterName.ToLower().Trim().Contains(request.dokterName.ToLower().Trim())
                       select lr).ToList();
 
         if (request.rajalRanap != null)
             result = (from lr in result
-                      where lr.RajalRanap.ToString() == request.rajalRanap
+                      where lr.RajalRanap.ToString().Trim() == request.rajalRanap.Trim()
+                      select lr).ToList();
+
+        if (request.workState != null)
+            result = (from lr in result
+                      where lr.WorkState.ToString().Trim() == request.workState.Trim()
                       select lr).ToList();
 
         //  RESPONSE

@@ -18,12 +18,16 @@ public class WorkListBpjsController : Controller
 
     [HttpGet("{pageNo}/workListBpjs")]
     public async Task<IActionResult> ListProgress(int pageNo,
+                                                  [FromQuery] string? regId = null,
+                                                  [FromQuery] string? pasienId = null,
                                                   [FromQuery] string? pasienName = null,
                                                   [FromQuery] string? layananName = null,
                                                   [FromQuery] string? dokterName = null,
-                                                  [FromQuery] string? rajalRanap = null)
+                                                  [FromQuery] string? rajalRanap = null,
+                                                  [FromQuery] string? workState = null)
     {
-        var cmd = new ListWorkListBpjsQuery(pasienName!, layananName!, dokterName!, rajalRanap!, pageNo);
+        var cmd = new ListWorkListBpjsQuery(regId!, pasienId!, pasienName!, layananName!, dokterName!, 
+                                            rajalRanap!, workState!,pageNo);
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
