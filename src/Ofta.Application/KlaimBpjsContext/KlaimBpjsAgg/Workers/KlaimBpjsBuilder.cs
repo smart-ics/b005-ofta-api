@@ -20,7 +20,8 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
 {
     IKlaimBpjsBuilder Create();
-    IKlaimBpjsBuilder UpdateState(IKlaimBpjsKey klaimBpjsKey, KlaimBpjsStateEnum klaimBpjsStateEnum);
+    IKlaimBpjsBuilder UpdateState(KlaimBpjsStateEnum klaimBpjsStateEnum);
+    IKlaimBpjsBuilder UpdateStateCompleted();
     IKlaimBpjsBuilder Load(IKlaimBpjsKey klaimBpjsKey);
     IKlaimBpjsBuilder Attach(KlaimBpjsModel klaimBpjs);
     IKlaimBpjsBuilder UserOfta(IUserOftaKey userOftaKey);
@@ -98,12 +99,30 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder UpdateState(IKlaimBpjsKey klaimBpjsKey, KlaimBpjsStateEnum klaimBpjsStateEnum)
-    {
-        
-        _ = Load(klaimBpjsKey).Build();
-
+    public IKlaimBpjsBuilder UpdateState(KlaimBpjsStateEnum klaimBpjsStateEnum)
+    {        
         _agg.KlaimBpjsState = klaimBpjsStateEnum;
+        return this;
+
+    }
+
+    public IKlaimBpjsBuilder UpdateStateCompleted()
+    {
+        var thisPrintOutListed =
+            _agg.ListDocType
+                .SelectMany(x => x.ListPrintOut)
+                .FirstOrDefault(y => y.PrintState == PrintStateEnum.Listed);
+
+        var thisPrintOutFailed =
+             _agg.ListDocType
+                 .SelectMany(x => x.ListPrintOut)
+                 .FirstOrDefault(y => y.PrintState == PrintStateEnum.Failed);
+
+        if (thisPrintOutListed == null && thisPrintOutFailed == null)
+        { 
+            _agg.KlaimBpjsState = KlaimBpjsStateEnum.Completed;
+        }
+
         return this;
 
     }

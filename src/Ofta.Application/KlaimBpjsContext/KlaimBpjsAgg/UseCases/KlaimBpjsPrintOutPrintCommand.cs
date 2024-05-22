@@ -37,7 +37,7 @@ public class KlaimBpjsPrintOutPrintHandler : IRequestHandler<KlaimBpjsPrintOutPr
         //  BUILD
         var agg = _builder
             .Load(request)
-            .UpdateState(request, KlaimBpjsStateEnum.InProgress)
+            .UpdateState(KlaimBpjsStateEnum.InProgress)
             .PrintDoc(request, request.ReffId)
             .Build();
         

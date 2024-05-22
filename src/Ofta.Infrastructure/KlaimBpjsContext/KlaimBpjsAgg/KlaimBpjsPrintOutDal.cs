@@ -61,7 +61,7 @@ public class KlaimBpjsPrintOutDal : IKlaimBpjsPrintOutDal
         const string sql = @"
             SELECT
                 KlaimBpjsId, KlaimBpjsDocTypeId, KlaimBpjsPrintOutId, 
-                NoUrut, PrintOutReffId, DocId, DocUrl
+                NoUrut, PrintOutReffId, DocId, DocUrl, PrintState
             FROM
                 OFTA_KlaimBpjsPrintOut
             WHERE 

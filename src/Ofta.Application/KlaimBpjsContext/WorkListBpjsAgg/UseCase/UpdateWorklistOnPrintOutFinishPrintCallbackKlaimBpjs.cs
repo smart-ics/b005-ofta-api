@@ -6,23 +6,23 @@ using Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.Workers;
 namespace Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.UseCase;
 
 
-public class UpdateWorklistOnPrintOutAddKlaimBpjsEvent : INotificationHandler<PrintedDocKlaimBpjsEvent>
+public class UpdateWorklistOnPrintOutFinishPrintCallbackKlaimBpjs : INotificationHandler<FinishedPrintDocKlaimBpjsEvent>
 {
     private readonly IWorkListBpjsBuilder _builder;
     private readonly IWorkListBpjsWriter _writer;
 
-    public UpdateWorklistOnPrintOutAddKlaimBpjsEvent(IWorkListBpjsBuilder builder,
+    public UpdateWorklistOnPrintOutFinishPrintCallbackKlaimBpjs(IWorkListBpjsBuilder builder,
         IWorkListBpjsWriter writer)
     {
         _builder = builder;
         _writer = writer;
     }
 
-    public Task Handle(PrintedDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
+    public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
         var workListBpjs = _builder
-            .Load(notification.Aggregate)
-            .WorkState(notification.Aggregate.KlaimBpjsState)
+            .Load(notification.Agg)
+            .WorkState(notification.Agg.KlaimBpjsState)
             .Build();
 
         _ = _writer.Save(workListBpjs);
