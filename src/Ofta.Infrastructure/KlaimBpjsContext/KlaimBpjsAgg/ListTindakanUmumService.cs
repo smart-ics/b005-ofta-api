@@ -28,7 +28,7 @@ public class ListTindakanUmumService : IListTindakanUmumService
 	            ta_trs_tdk_umum aa
 	            LEFT JOIN ta_layanan bb ON aa.fs_kd_layanan = bb.fs_kd_layanan
             WHERE
-	            aa.fs_kd_reg = 'RG01789502'
+	            aa.fs_kd_reg = @regId 
 	            AND aa.fd_tgl_void = '3000-01-01'";
 
         var dp = new DynamicParameters();

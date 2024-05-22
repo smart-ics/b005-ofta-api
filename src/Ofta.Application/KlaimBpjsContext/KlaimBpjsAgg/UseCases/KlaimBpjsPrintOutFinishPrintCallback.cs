@@ -38,6 +38,7 @@ public class KlaimBpjsPrintOutFinishPrintHandler : IRequestHandler<KlaimBpjsPrin
         var agg = _builder
             .Load(request)
             .FinishPrintOut(request.PrintOutReffId)
+            .UpdateStateCompleted()
             .Build();
         
         //  WRITE

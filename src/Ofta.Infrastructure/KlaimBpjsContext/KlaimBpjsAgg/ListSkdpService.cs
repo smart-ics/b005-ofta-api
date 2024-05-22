@@ -28,7 +28,7 @@ public class ListSkdpService : IListSkdpService
             WHERE  
 	            aa.FS_KD_REG  = @regId 
 	            AND tglvoid = '3000-01-01' 
-	            AND isskdphidok = 0'";
+	            AND isskdphidok = '0'";
 
         var dp = new DynamicParameters();
         dp.AddParam("@regId", req, SqlDbType.VarChar);

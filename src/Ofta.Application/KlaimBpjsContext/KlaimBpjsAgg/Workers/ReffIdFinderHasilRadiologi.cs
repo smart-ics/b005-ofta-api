@@ -19,6 +19,6 @@ public class ReffIdFinderHasilRadiologi : IReffIdFinderHasilRadiologi
         var listtdk = _listTdkUmumService.Execute(regId)?.ToList() 
             ?? new List<TindakanUmumDto>();
         var result = listtdk.Where(x => x.LayananTypeDkdId == "4");
-        return result.Select(x => x.TindakanId);
+        return result.Select(x => x.TindakanId ?? string.Empty);
     }
 }

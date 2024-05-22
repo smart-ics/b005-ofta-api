@@ -12,7 +12,7 @@ public class ReffIdFinderNotaBill : IReffIdFinderNotaBill
         if (regId.Length < 10)
             throw new ArgumentException($"RegID invalid: '{regId}'");
         
-        var result = $"RO{regId.Right(8)}";
+        var result = regId ?? string.Empty;
 
         return new List<string> { result };
     }

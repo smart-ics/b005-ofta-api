@@ -16,6 +16,6 @@ public class ReffIdFinderSpri : IReffIdFinderSpri
     {
         var skdp = _listSkdpSvc.Execute(regId)?.ToList() ?? new List<SkdpDto>();
         var result = skdp.Where(x => x.IsSpri == true);
-        return result.Select(x => x.NoSuratKontrol);
+        return result.Select(x => x.NoSuratKontrol ?? string.Empty);
     }
 }

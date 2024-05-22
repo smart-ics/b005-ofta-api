@@ -26,7 +26,7 @@ public class ListRujukanFaskesService : IListRujukanFaskesService
             FROM
 	            ta_trs_rujukan_faskes aa
             WHERE
-	            aa.fs_kd_reg = 'RG01789502'
+	            aa.fs_kd_reg = @regId
 	            AND aa.fd_tgl_void = '3000-01-01'";
 
         var dp = new DynamicParameters();

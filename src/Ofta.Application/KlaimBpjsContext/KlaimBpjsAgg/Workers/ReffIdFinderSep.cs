@@ -16,7 +16,7 @@ public class ReffIdFinderSep : IReffIdFinderSep
 
     public IEnumerable<string> Find(string regId)
     {
-        var result = _getSepSvc.Execute(regId);
-        return new List<string> { result.TrsSepId };
+        var result = _getSepSvc.Execute(regId) ?? new SepDto();
+        return new List<string> { result.TrsSepId ?? string.Empty };
     }
 }
