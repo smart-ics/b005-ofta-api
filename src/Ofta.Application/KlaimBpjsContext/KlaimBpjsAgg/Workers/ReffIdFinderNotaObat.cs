@@ -16,7 +16,7 @@ public class ReffIdFinderNotaObat : IReffIdFinderNotaObat
 
     public IEnumerable<string> Find(string regId)
     {
-        var result = _listPenjualanSvc.Execute(regId);
-        return result.Select(x => x.PenjualanId);
+        var result = _listPenjualanSvc.Execute(regId) ?? new List<PenjualanDto>();
+        return result.Select(x => x.PenjualanId ?? string.Empty);
     }
 }

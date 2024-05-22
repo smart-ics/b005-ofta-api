@@ -18,6 +18,6 @@ public class ReffIdFinderHasilLab : IReffIdFinderHasilLab
         var listtdk = _listTdkUmumSvc.Execute(regId)?.ToList()
             ?? new List<TindakanUmumDto>();
         var result = listtdk.Where(x => x.LayananTypeDkdId == "5");
-        return result.Select(x => x.TindakanId);
+        return result.Select(x => x.TindakanId ?? string.Empty);
     }
 }

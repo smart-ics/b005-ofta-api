@@ -31,7 +31,8 @@ public class ListResepService : IListResepService
                 LEFT JOIN td_peg cc ON aa.fs_kd_petugas_medis = cc.fs_kd_peg
             WHERE
                 aa.fs_kd_reg = @regId
-                AND aa.fd_tgl_void = '3000-01-01'";
+                AND aa.fd_tgl_void = '3000-01-01'
+                AND aa.fb_resep = 1";
 
         var dp = new DynamicParameters();
         dp.AddParam("@regId", req, SqlDbType.VarChar);

@@ -16,7 +16,7 @@ public class ReffIdFinderResume : IReffIdFinderResume
 
     public IEnumerable<string> Find(string regId)
     {
-        var result = _service.Execute(regId);
-        return result.Select(x => x.ResumeId);
+        var result = _service.Execute(regId) ?? new List<ResumeDto>();
+        return result.Select(x => x.ResumeId ?? string.Empty);
     }
 }
