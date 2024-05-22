@@ -31,7 +31,10 @@ public class AddQueueRemoteCetakOnKlaimBpjsPrintOutPrintedEventHandler : INotifi
         var remoteAddr = _appSettingService.RemoteCetakAddress;
         var printOut = notification.Aggregate.ListDocType
             .SelectMany(hdr => hdr.ListPrintOut, (h, d) => new { h.DocTypeId, h.DocTypeName, d.PrintOutReffId })
+            .Where(x => x.DocTypeId == notification.Command.DocTypeId)
             .FirstOrDefault(x => x.PrintOutReffId == notification.Command.ReffId);
+            
+            
 
         if (printOut is null)
             throw new KeyNotFoundException("PrintOut Reff ID not found");
