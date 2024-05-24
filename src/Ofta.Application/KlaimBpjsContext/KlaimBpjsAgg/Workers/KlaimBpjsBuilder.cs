@@ -6,6 +6,7 @@ using Ofta.Application.DocContext.DocTypeAgg.Contracts;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.BlueprintAgg.Workers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
+using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
@@ -242,8 +243,8 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
 
         var errMsg2 = $"PrintOut already exist: '{printOutReffId}'";
         if (thisDocType.ListPrintOut.Any(x => x.PrintOutReffId == printOutReffId))
-            throw new ArgumentException(errMsg2);
-        
+            return this;
+
         var noUrut = thisDocType.ListPrintOut
             .DefaultIfEmpty(new KlaimBpjsPrintOutModel { NoUrut = 0 })
             .Max(x => x.NoUrut);
