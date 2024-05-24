@@ -9,11 +9,7 @@ public class ReffIdFinderNotaBill : IReffIdFinderNotaBill
 {
     public IEnumerable<string> Find(string regId)
     {
-        if (regId.Length < 10)
-            throw new ArgumentException($"RegID invalid: '{regId}'");
-        
         var result = regId ?? string.Empty;
-
         return new List<string> { result };
     }
 }
