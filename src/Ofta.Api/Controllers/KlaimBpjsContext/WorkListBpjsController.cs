@@ -32,4 +32,19 @@ public class WorkListBpjsController : Controller
         return Ok(new JSendOk(result));
     }
 
+    [HttpGet("/workListBpjsRekap")]
+    public async Task<IActionResult> RekapProgress([FromQuery] string? regId = null,
+                                                   [FromQuery] string? pasienId = null,
+                                                   [FromQuery] string? pasienName = null,
+                                                   [FromQuery] string? layananName = null,
+                                                   [FromQuery] string? dokterName = null,
+                                                   [FromQuery] string? rajalRanap = null,
+                                                   [FromQuery] string? workState = null)
+    {
+        var cmd = new ListWorkListBpjsRecapQuery(regId!, pasienId!, pasienName!, layananName!, dokterName!,
+                                                 rajalRanap!, workState!);
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
 }

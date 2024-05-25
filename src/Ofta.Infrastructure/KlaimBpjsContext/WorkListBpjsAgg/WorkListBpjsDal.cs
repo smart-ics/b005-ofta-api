@@ -124,7 +124,7 @@ public class WorkListBpjsDal : IWorkListBpjsDal
         const string sql = @"
             SELECT 
                 OrderKlaimBpjsId, OrderKlaimBpjsDate, KlaimBpjsId, 
-                UserOftaId, RegId,  PasienId, PasienName, 
+                WorkState, RegId,  PasienId, PasienName, 
                 NoSep, LayananName, DokterName, RajalRanap 
             FROM 
                 OFTA_WorkListBpjs";
