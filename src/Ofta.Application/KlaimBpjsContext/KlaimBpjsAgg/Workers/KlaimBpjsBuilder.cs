@@ -123,6 +123,10 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         { 
             _agg.KlaimBpjsState = KlaimBpjsStateEnum.Completed;
         }
+        else
+        {
+            _agg.KlaimBpjsState = KlaimBpjsStateEnum.InProgress;
+        }
 
         return this;
 

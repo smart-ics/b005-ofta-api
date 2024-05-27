@@ -61,7 +61,10 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
                 .ToList();
             listReffId.ForEach(reffId =>
             {
-                result.Add(new DocTypePrintOutDto(docType.DocTypeId, reffId));
+                if (!string.IsNullOrWhiteSpace(reffId))
+                {
+                    result.Add(new DocTypePrintOutDto(docType.DocTypeId, reffId));
+                }
             });
         });
         return result;
