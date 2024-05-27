@@ -32,7 +32,7 @@ public class WorkListBpjsController : Controller
         return Ok(new JSendOk(result));
     }
 
-    [HttpGet("/workListBpjsRekap")]
+    [HttpGet("workListBpjsRekap")]
     public async Task<IActionResult> RekapProgress([FromQuery] string? regId = null,
                                                    [FromQuery] string? pasienId = null,
                                                    [FromQuery] string? pasienName = null,
