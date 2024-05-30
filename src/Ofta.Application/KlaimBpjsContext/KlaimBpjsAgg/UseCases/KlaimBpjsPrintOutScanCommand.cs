@@ -14,17 +14,20 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
     private readonly IKlaimBpjsWriter _writer;
     private readonly IValidator<KlaimBpjsPrintOutScanCommand> _guard;
     private readonly IReffIdFinderFactory _finderFactory;
+    private readonly IMediator _mediator;
     private KlaimBpjsModel _agg;
 
     public KlaimBpjsPrintOutScanHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
         IValidator<KlaimBpjsPrintOutScanCommand> guard, 
-        IReffIdFinderFactory finderFactory)
+        IReffIdFinderFactory finderFactory,
+        IMediator mediator)
     {
         _builder = builder;
         _writer = writer;
         _guard = guard;
         _finderFactory = finderFactory;
+        _mediator = mediator;
     }
 
     public Task<Unit> Handle(KlaimBpjsPrintOutScanCommand request, CancellationToken cancellationToken)
@@ -43,10 +46,13 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
             .Aggregate(_agg, (current, item) => _builder
                 .Attach(current)
                 .AddPrintOut(new DocTypeModel(item.DocTypeId), item.ReffId)
+                .UpdateState(KlaimBpjsStateEnum.InProgress)
+                .PrintDoc(new DocTypeModel(item.DocTypeId), item.ReffId)
                 .Build());
 
         //  WRITE
         _ = _writer.Save(_agg);
+        _mediator.Publish(new ScannReffidKlaimBpjsEvent(_agg), cancellationToken);
         return Task.FromResult(Unit.Value);
     }
 
@@ -85,3 +91,6 @@ public class ScanReffIdKlaimBpjsGuard : AbstractValidator<KlaimBpjsPrintOutScanC
         RuleFor(x => x.KlaimBpjsId).NotEmpty();
     }
 }
+
+public record ScannReffidKlaimBpjsEvent(
+    KlaimBpjsModel Aggregate) : INotification;

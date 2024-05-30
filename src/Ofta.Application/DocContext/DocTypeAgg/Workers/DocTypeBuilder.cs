@@ -1,7 +1,9 @@
 ﻿using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
+using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Domain.DocContext.DocTypeAgg;
+using Ofta.Domain.ParamContext.SystemAgg;
 
 namespace Ofta.Application.DocContext.DocTypeAgg.Workers;
 
@@ -22,12 +24,15 @@ public class DocTypeBuilder : IDocTypeBuilder
     private DocTypeModel _aggregate = new();
     private readonly IDocTypeDal _docTypeDal;
     private readonly IDocTypeTagDal _docTypeTagDal;
+    private readonly IParamSistemDal _paramSistemDal;
 
     public DocTypeBuilder(IDocTypeDal docTypeDal, 
-        IDocTypeTagDal docTypeTagDal)
+        IDocTypeTagDal docTypeTagDal,
+        IParamSistemDal paramSistemDal)
     {
         _docTypeDal = docTypeDal;
         _docTypeTagDal = docTypeTagDal;
+        _paramSistemDal = paramSistemDal;
     }
 
     public DocTypeModel Build()
@@ -47,8 +52,16 @@ public class DocTypeBuilder : IDocTypeBuilder
 
     public IDocTypeBuilder Load(IDocTypeKey key)
     {
+
+        var templateUrl = _paramSistemDal.GetData(Sys.LocalTemplateUrl)
+                       ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
+
+
         _aggregate = _docTypeDal.GetData(key)
                      ?? throw new KeyNotFoundException("DocType not found");
+
+        _aggregate.FileUrl = $"{templateUrl.ParamSistemValue}/{_aggregate.FileUrl}";
+
         _aggregate.ListTag = _docTypeTagDal.ListData(key)?.ToList()
                              ?? new List<DocTypeTagModel>();
 
