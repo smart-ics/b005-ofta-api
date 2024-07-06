@@ -17,6 +17,9 @@ public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey, IUserOftaKey
     public string LayananName { get; set; }
     public string DokterName { get; set; }
     public RajalRanapEnum RajalRanap { get; set; }
+    public string MergerDocId { get; set; }
+    public string MergerDocUrl { get; set; }
     public List<KlaimBpjsDocTypeModel> ListDocType { get; set; }
     public List<KlaimBpjsEventModel> ListEvent { get; set; }
+    
 }

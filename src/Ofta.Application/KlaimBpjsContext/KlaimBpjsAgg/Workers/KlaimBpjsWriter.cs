@@ -18,6 +18,7 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
     private readonly IKlaimBpjsPrintOutDal _klaimBpjsPrintDal;
     private readonly IKlaimBpjsSigneeDal _klaimBpjsSigneeDal;
     private readonly IKlaimBpjsEventDal _klaimBpjsJurnalDal;
+    private readonly IKlaimBpjsMergerFileDal _klaimBpjsMergerFileDal;
     private readonly INunaCounterBL _counter;
     private readonly IValidator<KlaimBpjsModel> _validator;
 
@@ -26,6 +27,7 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
         IKlaimBpjsPrintOutDal klaimBpjsPrintDal,
         IKlaimBpjsSigneeDal klaimBpjsSigneeDal,
         IKlaimBpjsEventDal klaimBpjsJurnalDal, 
+        IKlaimBpjsMergerFileDal klaimBpjsMergerFileDal,
         INunaCounterBL counter, 
         IValidator<KlaimBpjsModel> validator)
     {
@@ -34,6 +36,7 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
         _klaimBpjsPrintDal = klaimBpjsPrintDal;
         _klaimBpjsSigneeDal = klaimBpjsSigneeDal;
         _klaimBpjsJurnalDal = klaimBpjsJurnalDal;
+        _klaimBpjsMergerFileDal = klaimBpjsMergerFileDal;
         _counter = counter;
         _validator = validator;
     }
@@ -74,6 +77,12 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
         
         var allPrint = model.ListDocType.SelectMany(x => x.ListPrintOut).ToList();
         var allSignee = allPrint.SelectMany(x => x.ListSign).ToList();
+        var mergerFile = new KlaimBpjsMergerFileModel()
+        {
+            KlaimBpjsId = model.KlaimBpjsId,
+            DocId = model.MergerDocId,
+            DocUrl = model.MergerDocUrl
+        };
         
         //  WRITE
         using var trans = TransHelper.NewScope();
@@ -95,7 +104,10 @@ public class KlaimBpjsWriter : IKlaimBpjsWriter
 
         _klaimBpjsJurnalDal.Delete(model);
         _klaimBpjsJurnalDal.Insert(model.ListEvent);
-        
+
+        _klaimBpjsMergerFileDal.Delete(model);
+        _klaimBpjsMergerFileDal.Insert(mergerFile);
+
         trans.Complete();
         return model;
     }
