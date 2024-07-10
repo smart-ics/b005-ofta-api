@@ -3,6 +3,7 @@ WHERE IsStandard = 1
 GO
 
 INSERT INTO OFTA_DocType
+SELECT 'DTX00',  'Merger File Klaim Bpjs', 1, 1, '', '' UNION ALL
 SELECT 'DTX01',  'Text Eklaim', 1, 1, '', '' UNION ALL
 SELECT 'DTX02',  'SEP', 1, 1, '', '' UNION ALL                                               
 SELECT 'DTX03',  'SKDP', 1, 1, '', '' UNION ALL

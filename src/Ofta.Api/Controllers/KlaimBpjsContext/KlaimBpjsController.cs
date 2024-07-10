@@ -73,5 +73,10 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-
+    [HttpPatch("mergerFile")]
+    public async Task<IActionResult> MergerFile(KlaimBpjsMergerFileCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
 }

@@ -106,13 +106,16 @@ public class KlaimBpjsDal : IKlaimBpjsDal
     {
         const string sql = @"
             SELECT
-                KlaimBpjsId, KlaimBpjsDate, OrderKlaimBpjsId,  
-                UserOftaId, BundleState, RegId, PasienId, PasienName, 
-                NoSep, LayananName, DokterName, RajalRanap
+                aa.KlaimBpjsId, aa.KlaimBpjsDate, aa.OrderKlaimBpjsId,  
+                aa.UserOftaId, aa.BundleState, aa.RegId, aa.PasienId, aa.PasienName, 
+                aa.NoSep, aa.LayananName, aa.DokterName, aa.RajalRanap,
+                ISNULL(bb.DocId,'') MergerDocId,
+                ISNULL(bb.DocUrl,'') MergerDocUrl
             FROM
-                OFTA_KlaimBpjs
+                OFTA_KlaimBpjs aa
+                LEFT JOIN OFTA_KlaimBpjsMergerFile bb ON aa.KlaimBpjsId = bb.KlaimBpjsId
             WHERE
-                KlaimBpjsId = @KlaimBpjsId";
+                aa.KlaimBpjsId = @KlaimBpjsId";
         
         var dp = new DynamicParameters();
         dp.AddParam("@KlaimBpjsId", key.KlaimBpjsId, SqlDbType.VarChar);
@@ -125,13 +128,16 @@ public class KlaimBpjsDal : IKlaimBpjsDal
     {
         const string sql = @"
             SELECT
-                KlaimBpjsId, KlaimBpjsDate, OrderKlaimBpjsId, 
-                UserOftaId, BundleState, RegId, PasienId, PasienName, 
-                NoSep, LayananName, DokterName, RajalRanap
+                aa.KlaimBpjsId, aa.KlaimBpjsDate, aa.OrderKlaimBpjsId, 
+                aa.UserOftaId, aa.BundleState, aa.RegId, aa.PasienId, aa.PasienName, 
+                aa.NoSep, aa.LayananName, aa.DokterName, aa.RajalRanap,
+                ISNULL(bb.DocId,'') MergerDocId,
+                ISNULL(bb.DocUrl,'') MergerDocUrl
             FROM
-                OFTA_KlaimBpjs
+                OFTA_KlaimBpjs aa
+                LEFT JOIN OFTA_KlaimBpjsMergerFile bb ON aa.KlaimBpjsId = bb.KlaimBpjsId
             WHERE
-                KlaimBpjsDate BETWEEN @StartDate AND @EndDate";
+                aa.KlaimBpjsDate BETWEEN @StartDate AND @EndDate";
         
         var dp = new DynamicParameters();
         dp.AddParam("@StartDate", filter.Tgl1, SqlDbType.DateTime);

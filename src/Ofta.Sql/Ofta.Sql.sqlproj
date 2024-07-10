@@ -101,5 +101,6 @@
     <Build Include="Tables\DocContext\Ofta_Tag.sql" />
     <Build Include="DataSeed\Ofta_ParamSistemDataSeed.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_WorkListBpjs.sql" />
+    <Build Include="Tables\KlaimBpjsContext\OFTA_KlaimBpjsMergerFile.sql" />
   </ItemGroup>
 </Project>
