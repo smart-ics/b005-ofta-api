@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
+using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.UseCases;
 
 namespace Ofta.Api.Controllers.KlaimBpjsContext;
 
@@ -77,6 +78,13 @@ public class KlaimBpjsController : Controller
     public async Task<IActionResult> MergerFile(KlaimBpjsMergerFileCommand cmd)
     {
         var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
+    [HttpGet("{tglAwal}/{tglAkhir}")]
+    public async Task<IActionResult> ListKlaimBpjsMerged(string tglAwal, string tglAkhir)
+    {
+        var result = await _mediator.Send(new ListKlaimBpjsMergedQuery(tglAwal, tglAkhir));
         return Ok(new JSendOk(result));
     }
 }
