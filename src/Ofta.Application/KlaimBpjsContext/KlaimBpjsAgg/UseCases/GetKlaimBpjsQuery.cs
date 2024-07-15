@@ -20,6 +20,7 @@ public record GetKlaimBpjsResponse(
     string LayananName,
     string DokterName,
     string RajalRanap,
+    string MergerDocUrl,
     List<GetKlaimBpjsDocResponse> ListDoc,
     List<GetKlaimBpjsEventResponse> ListEvent
 );
@@ -84,6 +85,7 @@ public class GetKlaimBpjsQueryHandler : IRequestHandler<GetKlaimBpjsQuery, GetKl
             klaimBpjs.LayananName,
             klaimBpjs.DokterName,
             klaimBpjs.RajalRanap.ToString().ToUpper(),
+            klaimBpjs.MergerDocUrl,
             klaimBpjs.ListDocType
                      .Select(x => new GetKlaimBpjsDocResponse
                      {

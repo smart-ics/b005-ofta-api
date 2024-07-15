@@ -107,8 +107,9 @@ public class KlaimBpjsDal : IKlaimBpjsDal
         const string sql = @"
             SELECT
                 aa.KlaimBpjsId, aa.KlaimBpjsDate, aa.OrderKlaimBpjsId,  
-                aa.UserOftaId, aa.BundleState, aa.RegId, aa.PasienId, aa.PasienName, 
-                aa.NoSep, aa.LayananName, aa.DokterName, aa.RajalRanap,
+                aa.UserOftaId, aa.BundleState KlaimBpjsState, aa.RegId,
+                aa.PasienId, aa.PasienName, aa.NoSep, aa.LayananName,
+                aa.DokterName, aa.RajalRanap,
                 ISNULL(bb.DocId,'') MergerDocId,
                 ISNULL(bb.DocUrl,'') MergerDocUrl
             FROM
@@ -129,8 +130,9 @@ public class KlaimBpjsDal : IKlaimBpjsDal
         const string sql = @"
             SELECT
                 aa.KlaimBpjsId, aa.KlaimBpjsDate, aa.OrderKlaimBpjsId, 
-                aa.UserOftaId, aa.BundleState, aa.RegId, aa.PasienId, aa.PasienName, 
-                aa.NoSep, aa.LayananName, aa.DokterName, aa.RajalRanap,
+                aa.UserOftaId, aa.BundleState KlaimBpjsState, aa.RegId, 
+                aa.PasienId, aa.PasienName, aa.NoSep, aa.LayananName,
+                aa.DokterName, aa.RajalRanap,
                 ISNULL(bb.DocId,'') MergerDocId,
                 ISNULL(bb.DocUrl,'') MergerDocUrl
             FROM
