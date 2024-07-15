@@ -23,6 +23,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder User(IUserOftaKey oftaKey);
     IDocBuilder DocName(string name);
     IDocBuilder GenRequestedDocUrl();
+    IDocBuilder GenRequestedMergedDocUrl(string mergerName);
     IDocBuilder GenPublishedDocUrl();
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum);
     IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
@@ -160,6 +161,19 @@ public class DocBuilder : IDocBuilder
         _aggregate.PublishedDocUrl = publishedDocUrl;
         return this;
     }
+
+    public IDocBuilder GenRequestedMergedDocUrl(string mergerName)
+    {
+        var storageUrl = _paramSistemDal.GetData(Sys.LocalStorageUrl)
+            ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
+        var docTypeName = CultureInfo.CurrentCulture.TextInfo
+            .ToTitleCase(_aggregate.DocTypeName)
+            .Replace(" ", "_");
+        var requestedDocUrl = $"{storageUrl.ParamSistemValue}/{mergerName}.pdf";
+        _aggregate.RequestedDocUrl = requestedDocUrl;
+        return this;
+    }
+
 
     public IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPosition)
     {

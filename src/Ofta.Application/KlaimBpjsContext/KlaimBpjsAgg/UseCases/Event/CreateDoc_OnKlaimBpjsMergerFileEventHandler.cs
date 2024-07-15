@@ -72,7 +72,7 @@ public class CreateDoc_OnKlaimBpjsMergerFileEventHandler
             .Build();
         doc = _docWriter.Save(doc);
         doc = _docBuilder.Attach(doc)
-            .GenRequestedDocUrl()
+            .GenRequestedMergedDocUrl(agg.NoSep)
             .Build();
         doc = _docWriter.Save(doc);
 
