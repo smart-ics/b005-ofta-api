@@ -5,6 +5,7 @@ using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
+using Ofta.Domain.RegContext.RegAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Workers;
@@ -13,6 +14,7 @@ public interface IOrderKlaimBpjsBuilder : INunaBuilder<OrderKlaimBpjsModel>
 {
     IOrderKlaimBpjsBuilder Create();
     IOrderKlaimBpjsBuilder Load(IOrderKlaimBpjsKey orderKlaimBpjsKey);
+    IOrderKlaimBpjsBuilder LoadReg(IRegKey regIdKey);
     IOrderKlaimBpjsBuilder Attach(OrderKlaimBpjsModel orderKlaimBpjs);
     IOrderKlaimBpjsBuilder Reg(IRegPasien regPasien);
     IOrderKlaimBpjsBuilder Layanan(string  layananName);
@@ -61,6 +63,12 @@ public class OrderKlaimBpjsBuilder : IOrderKlaimBpjsBuilder
         return this;
     }
 
+    public IOrderKlaimBpjsBuilder LoadReg(IRegKey regIdKey)
+    {
+        _agg = _orderKlaimBpjsDal.GetData(regIdKey)
+            ?? throw new KeyNotFoundException($"{regIdKey} not found");
+        return this;
+    }
     public IOrderKlaimBpjsBuilder Attach(OrderKlaimBpjsModel orderKlaimBpjs)
     {
         _agg = orderKlaimBpjs;
