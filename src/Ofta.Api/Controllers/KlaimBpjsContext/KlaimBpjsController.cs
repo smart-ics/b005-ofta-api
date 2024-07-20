@@ -60,7 +60,21 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
+
+    [HttpPatch("addPrintOut")]
+    public async Task<IActionResult> AddPrintOut(KlaimBpjsPrintOutAddCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
+    [HttpPatch("removePrintOut")]
+    public async Task<IActionResult> RemovePrintOut(KlaimBpjsPrintOutRemoveCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
     [HttpPatch("printDoc")]
     public async Task<IActionResult> PrintRemoteCetak(KlaimBpjsPrintOutPrintCommand cmd)
     {
@@ -82,9 +96,10 @@ public class KlaimBpjsController : Controller
     }
 
     [HttpGet("{tglAwal}/{tglAkhir}")]
-    public async Task<IActionResult> ListKlaimBpjsMerged(string tglAwal, string tglAkhir)
+    public async Task<IActionResult> ListKlaimBpjsMerged(string tglAwal, string tglAkhir,
+                                                         [FromQuery] string? rajalRanap = null)
     {
-        var result = await _mediator.Send(new ListKlaimBpjsMergedQuery(tglAwal, tglAkhir));
+        var result = await _mediator.Send(new ListKlaimBpjsMergedQuery(tglAwal, tglAkhir, rajalRanap!));
         return Ok(new JSendOk(result));
     }
 }

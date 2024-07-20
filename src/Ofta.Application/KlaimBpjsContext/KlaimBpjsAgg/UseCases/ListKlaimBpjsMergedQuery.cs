@@ -9,7 +9,7 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
 [PublicAPI]
-public record ListKlaimBpjsMergedQuery(string TglAwal, string TglAkhir)
+public record ListKlaimBpjsMergedQuery(string TglAwal, string TglAkhir, string rajalRanap)
     : IRequest<IEnumerable<ListKlaimBpjsMergedResponse>>;
 
 [PublicAPI]
@@ -54,6 +54,11 @@ public class ListKlaimBpjsHandler : IRequestHandler<ListKlaimBpjsMergedQuery, IE
 
         var result = listKlaimBpjs
                     .Where(x => x.KlaimBpjsState.ToString() == KlaimBpjsStateEnum.Merged.ToString()).ToList();
+
+        if (request.rajalRanap != null)
+            result = (from lr in result
+                      where lr.RajalRanap.ToString().Trim() == request.rajalRanap.Trim()
+                      select lr).ToList();
 
         //  RESPONSE
         var response = result.Select(x => new ListKlaimBpjsMergedResponse

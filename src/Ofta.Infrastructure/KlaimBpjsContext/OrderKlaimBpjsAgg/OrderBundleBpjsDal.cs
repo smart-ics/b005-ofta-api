@@ -6,6 +6,7 @@ using Nuna.Lib.DataAccessHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.Contracts;
 using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
+using Ofta.Domain.RegContext.RegAgg;
 using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.KlaimBpjsContext.OrderKlaimBpjsAgg;
@@ -114,6 +115,25 @@ public class OrderKlaimBpjsDal : IOrderKlaimBpjsDal
         var dp = new DynamicParameters();
         dp.AddParam("@OrderKlaimBpjsId", key.OrderKlaimBpjsId, SqlDbType.VarChar);
         
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.ReadSingle<OrderKlaimBpjsModel>(sql, dp);
+    }
+
+    public OrderKlaimBpjsModel GetData(IRegKey key)
+    {
+        const string sql = @"
+            SELECT 
+                OrderKlaimBpjsId, OrderKlaimBpjsDate, KlaimBpjsId, 
+                UserOftaId, RegId,  PasienId, PasienName, 
+                NoSep, LayananName, DokterName, RajalRanap 
+            FROM 
+                OFTA_OrderKlaimBpjs 
+            WHERE 
+                RegId = @RegId";
+
+        var dp = new DynamicParameters();
+        dp.AddParam("@RegId", key.RegId, SqlDbType.VarChar);
+
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.ReadSingle<OrderKlaimBpjsModel>(sql, dp);
     }
