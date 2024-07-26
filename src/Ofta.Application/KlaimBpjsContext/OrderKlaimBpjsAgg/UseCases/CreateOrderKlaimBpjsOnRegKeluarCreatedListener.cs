@@ -86,7 +86,7 @@ public class CreateOrderKlaimBpjsOnRegKeluarCreatedListener : IConsumer<RegOutCr
         OrderKlaimBpjsModel? orderKlaimBpjs = null;
         var fallbackPolicy = Policy<bool>
             .Handle<KeyNotFoundException>()
-            .Fallback(() => true);
+            .Fallback(() => false);
         var isExist = fallbackPolicy.Execute(() =>
         {
             orderKlaimBpjs = _builder.LoadReg(RegId).Build();
