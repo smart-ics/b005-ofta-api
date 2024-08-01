@@ -48,7 +48,7 @@ public class AddQueueRemoteCetakOnKlaimBpjsPrintOutPrintedEventHandler : INotifi
             Base64Content = string.Empty
         };
         var agg = _remoteCetakBuilder
-            .LoadOrCreate(new RemoteCetakModel(printOut.PrintOutReffId))
+            .Create(new RemoteCetakModel(printOut.PrintOutReffId))
             .RemoteAddr(remoteAddr)
             .JenisDoc(docType.JenisDokRemoteCetak)
             .CallbackDataOfta(JsonSerializer.Serialize(callbackDataOfta))

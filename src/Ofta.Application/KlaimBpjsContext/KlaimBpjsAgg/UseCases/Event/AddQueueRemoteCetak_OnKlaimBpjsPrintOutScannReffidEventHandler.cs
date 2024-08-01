@@ -45,7 +45,7 @@ public class AddQueueRemoteCetak_OnKlaimBpjsPrintOutScannReffidEventHandler : IN
                 Base64Content = string.Empty
             };
             var agg = _remoteCetakBuilder
-                .LoadOrCreate(new RemoteCetakModel(item.PrintOutReffId))
+                .Create(new RemoteCetakModel(item.PrintOutReffId))
                 .RemoteAddr(remoteAddr)
                 .JenisDoc(docType.JenisDokRemoteCetak)
                 .CallbackDataOfta(JsonSerializer.Serialize(callbackDataOfta))
