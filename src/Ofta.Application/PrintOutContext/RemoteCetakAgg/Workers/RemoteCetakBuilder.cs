@@ -8,7 +8,8 @@ namespace Ofta.Application.PrintOutContext.RemoteCetakAgg.Workers;
 
 public interface IRemoteCetakBuilder : INunaBuilder<RemoteCetakModel>
 {
-    IRemoteCetakBuilder LoadOrCreate(IRemoteCetakKey remoteCetakKey);
+    IRemoteCetakBuilder Create(IRemoteCetakKey remoteCetakKey);
+    IRemoteCetakBuilder Load(IRemoteCetakKey remoteCetakKey);
     IRemoteCetakBuilder Attach(RemoteCetakModel remoteCetak);
     IRemoteCetakBuilder JenisDoc(string jenisDoc);
     IRemoteCetakBuilder RemoteAddr(string remoteAddr);
@@ -37,11 +38,14 @@ public class RemoteCetakBuilder : IRemoteCetakBuilder
         return _agg;
     }
 
-    public IRemoteCetakBuilder LoadOrCreate(IRemoteCetakKey remoteCetakKey)
+    public IRemoteCetakBuilder Load(IRemoteCetakKey remoteCetakKey)
     {
         _agg = _remoteCetakDal.GetData(remoteCetakKey);
-        if (_agg is null)
-            _agg = new RemoteCetakModel
+        return this;
+    }
+    public IRemoteCetakBuilder Create(IRemoteCetakKey remoteCetakKey)
+    {
+        _agg = new RemoteCetakModel
                 {
                     KodeTrs = remoteCetakKey.KodeTrs,
                     TglSend = _tglJamDal.Now.ToString("yyyy-MM-dd"),

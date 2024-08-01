@@ -30,11 +30,7 @@ public class RemoteCetakWriter : IRemoteCetakWriter
             throw new ValidationException(validationResult.Errors);
         
         //  SAVE
-        var db = _remoteCetakDal.GetData(model);
-        if (db is null)
-            _remoteCetakDal.Insert(model);
-        else
-            _remoteCetakDal.Update(model);
+        _remoteCetakDal.Insert(model);
         return model;
     }
 }
