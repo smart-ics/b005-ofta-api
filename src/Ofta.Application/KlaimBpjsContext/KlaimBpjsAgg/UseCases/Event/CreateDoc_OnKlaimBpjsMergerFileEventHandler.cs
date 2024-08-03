@@ -6,6 +6,7 @@ using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
+using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.ParamContext.SystemAgg;
 using Polly;
 
@@ -79,6 +80,7 @@ public class CreateDoc_OnKlaimBpjsMergerFileEventHandler
         //      klaim
         agg.MergerDocId = doc.DocId;
         agg.MergerDocUrl = doc.RequestedDocUrl;
+        agg.KlaimBpjsState = KlaimBpjsStateEnum.Merged;
         _klaimBpjsWriter.Save(agg);
 
         //      mergerFile;       

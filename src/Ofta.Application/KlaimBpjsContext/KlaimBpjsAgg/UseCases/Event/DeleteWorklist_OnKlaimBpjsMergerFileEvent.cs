@@ -16,7 +16,7 @@ public class DeleteWorklist_OnKlaimBpjsMergerFileEventHandler
 
     public Task Handle(MergerFileBpjsEvent notification, CancellationToken cancellationToken)
     {
-        if (notification.Agg.KlaimBpjsState == KlaimBpjsStateEnum.Completed)
+        if (notification.Agg.KlaimBpjsState == KlaimBpjsStateEnum.Merged)
         {
             _workListWriter.Delete(notification.Agg);
         }
