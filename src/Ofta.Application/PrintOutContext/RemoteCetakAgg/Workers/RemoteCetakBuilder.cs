@@ -51,7 +51,8 @@ public class RemoteCetakBuilder : IRemoteCetakBuilder
                     TglSend = _tglJamDal.Now.ToString("yyyy-MM-dd"),
                     JamSend = _tglJamDal.Now.ToString("HH:mm:ss"),
                     TglCetak = "3000-01-01",
-                    JamCetak = "00:00:00"
+                    JamCetak = "00:00:00",
+                    PrintState  = 0
                 };
         return this;
     }
