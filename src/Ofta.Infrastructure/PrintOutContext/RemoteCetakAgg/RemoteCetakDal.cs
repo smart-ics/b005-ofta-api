@@ -57,17 +57,17 @@ public class RemoteCetakDal : IRemoteCetakDal
             UPDATE
                 ta_remote_cetak
             SET
-                fs_jenis_dok = @fs_jenis_dok,
                 fd_tgl_send = @fd_tgl_send,
                 fs_jam_send = @fs_jam_send,
-                fs_remote_addr = @fs_remote_addr,
                 fn_cetak = @fn_cetak,
                 fd_tgl_cetak = @fd_tgl_cetak,
                 fs_jam_cetak = @fs_jam_cetak,
                 fs_json_data = @fs_json_data,
                 CallbackDataOfta = @CallbackDataOfta
             WHERE
-                fs_kd_trs = @fs_kd_trs";
+                   fs_kd_trs = @fs_kd_trs
+               AND fs_jenis_dok = @fs_jenis_dok
+               AND fs_remote_addr = @fs_remote_addr";
         
         //  PARAM
         var dp = new DynamicParameters();
@@ -156,6 +156,34 @@ public class RemoteCetakDal : IRemoteCetakDal
         dp.AddParam("@tgl1", filter.Tgl1.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), SqlDbType.VarChar);
         dp.AddParam("@tgl2", filter.Tgl2.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), SqlDbType.VarChar);
         
+        //  EXEC
+        using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
+        return con.Query<RemoteCetakModel>(sql, dp);
+    }
+
+    public IEnumerable<RemoteCetakModel> ListData(IRemoteCetakKey key)
+    {
+        const string sql = @"
+            SELECT
+                fs_kd_trs AS KodeTrs, 
+                fs_jenis_dok AS JenisDoc, 
+                fd_tgl_send AS TglSend, 
+                fs_jam_send AS JamSend, 
+                fs_remote_addr AS RemoteAddr, 
+                fn_cetak AS PrintState, 
+                fd_tgl_cetak AS TglCetak, 
+                fs_jam_cetak AS JamCetak, 
+                fs_json_data AS JsonData,
+                CallbackDataOfta
+            FROM
+                ta_remote_cetak
+            WHERE
+                fs_kd_trs = @fs_kd_trs";
+
+        //  PARAM
+        var dp = new DynamicParameters();
+        dp.AddParam("@fs_kd_trs", key.KodeTrs, SqlDbType.VarChar);
+
         //  EXEC
         using var con = new SqlConnection(ConnStringHelperRemoteCetak.Get(_opt));
         return con.Query<RemoteCetakModel>(sql, dp);

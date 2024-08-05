@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
+using Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.Contracts;
 using Ofta.Application.PrintOutContext.RemoteCetakAgg.Contracts;
+using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
 using Ofta.Domain.PrintOutContext.RemoteCetakAgg;
 
 namespace Ofta.Application.PrintOutContext.RemoteCetakAgg.Workers;
@@ -28,9 +30,18 @@ public class RemoteCetakWriter : IRemoteCetakWriter
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
-        
+
         //  SAVE
-        _remoteCetakDal.Insert(model);
+        var db = _remoteCetakDal.ListData(model) ?.ToList()
+                 ?? new List<RemoteCetakModel>();
+
+        var filterDb = db.Where(d => d.JenisDoc == model.JenisDoc &&
+                                     d.RemoteAddr == model.RemoteAddr);
+
+        if (!filterDb.Any())
+            _remoteCetakDal.Insert(model);
+        else
+            _remoteCetakDal.Update(model);
         return model;
     }
 }

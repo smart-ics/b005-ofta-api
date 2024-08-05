@@ -9,6 +9,7 @@ public interface IRemoteCetakDal :
     IUpdate<RemoteCetakModel>,
     IGetData<RemoteCetakModel, IRemoteCetakKey>,
     IDelete<IRemoteCetakKey>,
+    IListData<RemoteCetakModel, IRemoteCetakKey>,
     IListData<RemoteCetakModel, Periode>
 {
     

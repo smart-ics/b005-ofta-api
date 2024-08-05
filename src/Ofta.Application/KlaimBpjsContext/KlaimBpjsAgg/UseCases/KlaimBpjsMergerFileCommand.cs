@@ -38,7 +38,6 @@ public class KlaimBpjsMergerFileHandler : IRequestHandler<KlaimBpjsMergerFileCom
         //  BUILD
         var agg = _builder
             .Load(request)
-            .UpdateState(KlaimBpjsStateEnum.Merged)
             .Build();
 
         //  WRITE
