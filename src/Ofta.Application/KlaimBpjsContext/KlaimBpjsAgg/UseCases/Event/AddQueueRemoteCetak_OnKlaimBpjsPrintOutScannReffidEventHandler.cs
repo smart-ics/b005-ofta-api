@@ -37,21 +37,28 @@ public class AddQueueRemoteCetak_OnKlaimBpjsPrintOutScannReffidEventHandler : IN
             var docTypeModel = new DocTypeModel(item.DocTypeId);
             var docType = _docTypeBuilder.Load(docTypeModel).Build();
 
+            if (!string.IsNullOrEmpty(docType?.DocTypeCode))
+                continue;
+
+            if (!string.IsNullOrWhiteSpace(docType?.DocTypeCode))
+                continue;
 
             var callbackDataOfta = new
-            {
-                KlaimBpjsId = notification.Aggregate.KlaimBpjsId,
-                PrintOutReffId = item.PrintOutReffId,
-                Base64Content = string.Empty
-            };
+                {
+                    KlaimBpjsId = notification.Aggregate.KlaimBpjsId,
+                    PrintOutReffId = item.PrintOutReffId,
+                    Base64Content = string.Empty
+                };
+
             var agg = _remoteCetakBuilder
-                .Create(new RemoteCetakModel(item.PrintOutReffId))
-                .RemoteAddr(remoteAddr)
-                .JenisDoc(docType.JenisDokRemoteCetak)
-                .CallbackDataOfta(JsonSerializer.Serialize(callbackDataOfta))
-                .Build();
+                    .Create(new RemoteCetakModel(item.PrintOutReffId))
+                    .RemoteAddr(remoteAddr)
+                    .JenisDoc(docType.JenisDokRemoteCetak)
+                    .CallbackDataOfta(JsonSerializer.Serialize(callbackDataOfta))
+                    .Build();
 
             _remoteCetakWriter.Save(agg);
+            
         }
 
         return Task.CompletedTask;

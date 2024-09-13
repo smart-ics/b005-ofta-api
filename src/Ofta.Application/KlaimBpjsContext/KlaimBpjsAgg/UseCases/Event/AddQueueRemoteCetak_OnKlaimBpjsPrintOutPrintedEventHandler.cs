@@ -33,28 +33,38 @@ public class AddQueueRemoteCetakOnKlaimBpjsPrintOutPrintedEventHandler : INotifi
             .SelectMany(hdr => hdr.ListPrintOut, (h, d) => new { h.DocTypeId, h.DocTypeName, d.PrintOutReffId })
             .Where(x => x.DocTypeId == notification.Command.DocTypeId)
             .FirstOrDefault(x => x.PrintOutReffId == notification.Command.ReffId);
-            
-            
-
+        
         if (printOut is null)
             throw new KeyNotFoundException("PrintOut Reff ID not found");
         
         var docType = _docTypeBuilder.Load(new DocTypeModel(printOut.DocTypeId)).Build();
+        if (!string.IsNullOrEmpty(docType?.DocTypeCode))
+        {
+            // Tidak mengirim ke RemoteCetakWriter jika DocTypeCode tidak kosong
+            return Task.CompletedTask;
+        }
+
+        if (!string.IsNullOrWhiteSpace(docType?.DocTypeCode))
+        {
+            // Tidak mengirim ke RemoteCetakWriter jika DocTypeCode tidak kosong
+            return Task.CompletedTask;
+        }
 
         var callbackDataOfta = new
-        {
-            KlaimBpjsId = notification.Aggregate.KlaimBpjsId,
-            PrintOutReffId = printOut.PrintOutReffId,
-            Base64Content = string.Empty
-        };
-        var agg = _remoteCetakBuilder
-            .Create(new RemoteCetakModel(printOut.PrintOutReffId))
-            .RemoteAddr(remoteAddr)
-            .JenisDoc(docType.JenisDokRemoteCetak)
-            .CallbackDataOfta(JsonSerializer.Serialize(callbackDataOfta))
-            .Build();
+            {
+                KlaimBpjsId = notification.Aggregate.KlaimBpjsId,
+                PrintOutReffId = printOut.PrintOutReffId,
+                Base64Content = string.Empty
+            };
+            var agg = _remoteCetakBuilder
+                .Create(new RemoteCetakModel(printOut.PrintOutReffId))
+                .RemoteAddr(remoteAddr)
+                .JenisDoc(docType.JenisDokRemoteCetak)
+                .CallbackDataOfta(JsonSerializer.Serialize(callbackDataOfta))
+                .Build();
 
-        _remoteCetakWriter.Save(agg);
+            _remoteCetakWriter.Save(agg);
+        
         return Task.CompletedTask;
     }
 }

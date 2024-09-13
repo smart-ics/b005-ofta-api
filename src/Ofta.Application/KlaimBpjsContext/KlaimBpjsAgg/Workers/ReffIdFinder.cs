@@ -6,7 +6,8 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 
 public interface IReffIdFinderAction
 {
-    IEnumerable<string> Find(string regId);
+    IEnumerable<string> Find(string regId, string docTypeCode);
+    
 }
 
 public interface IFactoryPattern<out TOut, in TIn1, in TIn2>
@@ -31,6 +32,8 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
     private readonly IReffIdFinderSkdp _skdpFinder;
     private readonly IReffIdFinderSpri _spriFinder;
     private readonly IReffIdFinderSep _sepFinder;
+    private readonly IReffIdFinderCppt _cpptFinder;
+    private readonly IReffIdFinderAssesment _assesmentFinder;
     public ReffIdFinderFactory(IReffIdFinderTextEklaim textEklaim,
         IReffIdFinderNotaBill notaBill,
         IReffIdFinderResep resepFinder,
@@ -41,7 +44,9 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
         IReffIdFinderSuratRujukan suratRujukanFinder,
         IReffIdFinderSkdp skdpFinder,
         IReffIdFinderSpri spriFinder,
-        IReffIdFinderSep sepFinder)
+        IReffIdFinderSep sepFinder, 
+        IReffIdFinderCppt cpptFinder,
+        IReffIdFinderAssesment assesmentFinder)
     {
         _notaBillFinder = notaBill;
         _resepFinder = resepFinder;
@@ -54,6 +59,8 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
         _skdpFinder = skdpFinder;
         _spriFinder = spriFinder;
         _sepFinder = sepFinder;
+        _cpptFinder = cpptFinder;
+        _assesmentFinder = assesmentFinder;
     }
 
     public IReffIdFinderAction Factory(IKlaimBpjsKey klaimBpjsKey, IDocTypeKey docTypeKey)
@@ -72,16 +79,19 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
             "DTX0B" => new ReffIdFinderDefault(),
             "DTX0C" => _resepFinder,
             "DTX0D" => _notaObatFinder,
-            "DTX0E" => new ReffIdFinderDefault(),
+            "DTX0E" => _cpptFinder,
+            "DTX0F" => _assesmentFinder,
             _ => new ReffIdFinderDefault()
         };
 }
 
 public class ReffIdFinderDefault : IReffIdFinderAction
 {
-    public IEnumerable<string> Find(string regId)
+    public IEnumerable<string> Find(string regId, string docTypeCode)
     {
         return new List<string>();
     }
+
+    
 }
 

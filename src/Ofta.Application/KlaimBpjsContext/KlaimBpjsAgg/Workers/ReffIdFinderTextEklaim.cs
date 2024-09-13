@@ -14,7 +14,7 @@ public class ReffIdFinderTextEklaim : IReffIdFinderTextEklaim
         _getSepSvc = getSepSvc;
     }
 
-    public IEnumerable<string> Find(string regId)
+    public IEnumerable<string> Find(string regId, string docTypeCode)
     {
         var result = _getSepSvc.Execute(regId) ?? new SepDto();
         return new List<string> { result.NoSep ?? string.Empty };
