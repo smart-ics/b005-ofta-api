@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using FluentValidation;
+using MassTransit;
 using MediatR;
 using Ofta.Application;
 using Nuna.Lib.AutoNumberHelper;
@@ -55,9 +56,31 @@ public static class ApplicationService
                     .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                     .AsSelfWithInterfaces()
                     .WithScopedLifetime()
-            
-        
             );
+        
+        services
+            .AddMassTransit(x =>
+            {
+                x.AddConsumers(typeof(ApplicationAssemblyAnchor).Assembly);
+                x.SetKebabCaseEndpointNameFormatter();
+
+                var rabbitMqOption = configuration.GetSection("RabbitMqOption");
+                var server = rabbitMqOption["Server"];
+                var userName = rabbitMqOption["UserName"];
+                var password = rabbitMqOption["Password"];
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(server, "/", h =>
+                    {
+                        h.Username(userName ?? string.Empty);
+                        h.Password(password ?? string.Empty);
+                    }); ;
+                    cfg.ConfigureEndpoints(context);
+
+                });
+            });
+
         return services;
     }
 }

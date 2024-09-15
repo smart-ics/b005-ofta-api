@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace Ofta.Api.Configurations;
 
@@ -12,7 +14,23 @@ public static class PresentationService
     {
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c =>
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            var version = assembly?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version??string.Empty;
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "OFTA Api",
+                Version = $"v{version}",
+                Description = "OFTAApi",
+                Contact = new OpenApiContact
+                {
+                    Name = "Intersolusi Cipta Softindo",
+                    Email = "support@smart-ics.com",
+                    Url = new Uri("https://smart-ics.com"),
+                },
+            });
+        });
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
