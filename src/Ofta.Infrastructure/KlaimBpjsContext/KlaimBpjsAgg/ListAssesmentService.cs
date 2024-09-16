@@ -28,7 +28,7 @@ public class ListAssesmentService : IListAssesmentService
     private async Task<IEnumerable<AssesmentDto>> ListAssesment(string regId)
     {
         //BUILD
-        var endPoint = $"{_opt.BaseApiUrl}//api/Assesment/Catalog/{regId}";
+        var endPoint = $"{_opt.BaseApiUrl}/api/Assesment/Catalog/{regId}";
         var client = new RestClient(endPoint);
         var req = new RestRequest();
 

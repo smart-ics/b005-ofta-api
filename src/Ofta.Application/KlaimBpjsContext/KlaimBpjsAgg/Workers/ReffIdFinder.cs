@@ -34,6 +34,7 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
     private readonly IReffIdFinderSep _sepFinder;
     private readonly IReffIdFinderCppt _cpptFinder;
     private readonly IReffIdFinderAssesment _assesmentFinder;
+    private readonly IReffIdFinderOtherDoc _reffIdFinderOtherDoc;
     public ReffIdFinderFactory(IReffIdFinderTextEklaim textEklaim,
         IReffIdFinderNotaBill notaBill,
         IReffIdFinderResep resepFinder,
@@ -46,7 +47,8 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
         IReffIdFinderSpri spriFinder,
         IReffIdFinderSep sepFinder, 
         IReffIdFinderCppt cpptFinder,
-        IReffIdFinderAssesment assesmentFinder)
+        IReffIdFinderAssesment assesmentFinder,
+        IReffIdFinderOtherDoc reffIdFinderOtherDoc)
     {
         _notaBillFinder = notaBill;
         _resepFinder = resepFinder;
@@ -61,6 +63,7 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
         _sepFinder = sepFinder;
         _cpptFinder = cpptFinder;
         _assesmentFinder = assesmentFinder;
+        _reffIdFinderOtherDoc = reffIdFinderOtherDoc;
     }
 
     public IReffIdFinderAction Factory(IKlaimBpjsKey klaimBpjsKey, IDocTypeKey docTypeKey)
@@ -81,6 +84,10 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
             "DTX0D" => _notaObatFinder,
             "DTX0E" => _cpptFinder,
             "DTX0F" => _assesmentFinder,
+            "DTX10" => _reffIdFinderOtherDoc,
+            "DTX11" => _reffIdFinderOtherDoc,
+            "DTX12" => _reffIdFinderOtherDoc,
+            "DTX13" => _reffIdFinderOtherDoc,
             _ => new ReffIdFinderDefault()
         };
 }
