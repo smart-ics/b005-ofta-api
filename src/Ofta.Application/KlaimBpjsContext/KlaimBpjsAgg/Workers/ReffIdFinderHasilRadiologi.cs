@@ -14,7 +14,7 @@ public class ReffIdFinderHasilRadiologi : IReffIdFinderHasilRadiologi
         _listTdkUmumService = listTdkUmumService;
     }
 
-    public IEnumerable<string> Find(string regId)
+    public IEnumerable<string> Find(string regId, string docTypeCode)
     {
         var listtdk = _listTdkUmumService.Execute(regId)?.ToList() 
             ?? new List<TindakanUmumDto>();

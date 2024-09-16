@@ -12,7 +12,7 @@ public class ReffIdFinderSuratRujukan : IReffIdFinderSuratRujukan
         _listRujukanFaskesSvc = listRujukanFaskesSvc;
     }
 
-    public IEnumerable<string> Find(string regId)
+    public IEnumerable<string> Find(string regId, string docTypeCode)
     {
         var result = _listRujukanFaskesSvc.Execute(regId) ?? new List<RujukanFaskesDto>();
         return result.Select(x => x.TrsRujukanFaskesId ?? string.Empty );

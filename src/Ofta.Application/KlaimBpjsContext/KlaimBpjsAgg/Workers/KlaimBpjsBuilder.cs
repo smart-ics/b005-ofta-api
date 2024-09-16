@@ -15,6 +15,7 @@ using Ofta.Domain.KlaimBpjsContext.BlueprintAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 
@@ -109,6 +110,10 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
 
     public IKlaimBpjsBuilder UpdateStateCompleted()
     {
+
+        if (_agg.KlaimBpjsState == KlaimBpjsStateEnum.Merged)
+            return this;
+
         var thisPrintOutListed =
             _agg.ListDocType
                 .SelectMany(x => x.ListPrintOut)

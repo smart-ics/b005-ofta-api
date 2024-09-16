@@ -3,6 +3,7 @@ using Nuna.Lib.ValidationHelper;
 using Ofta.Application.Helpers;
 using Ofta.Application.PrintOutContext.RemoteCetakAgg.Contracts;
 using Ofta.Domain.PrintOutContext.RemoteCetakAgg;
+using System.Globalization;
 
 namespace Ofta.Application.PrintOutContext.RemoteCetakAgg.Workers;
 
@@ -49,7 +50,7 @@ public class RemoteCetakBuilder : IRemoteCetakBuilder
                 {
                     KodeTrs = remoteCetakKey.KodeTrs,
                     TglSend = _tglJamDal.Now.ToString("yyyy-MM-dd"),
-                    JamSend = _tglJamDal.Now.ToString("HH:mm:ss"),
+                    JamSend = _tglJamDal.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture),
                     TglCetak = "3000-01-01",
                     JamCetak = "00:00:00",
                     PrintState  = 0

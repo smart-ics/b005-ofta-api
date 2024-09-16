@@ -13,7 +13,7 @@ public class ReffIdFinderHasilLab : IReffIdFinderHasilLab
         _listTdkUmumSvc = listTdkUmumSvc;
     }
 
-    public IEnumerable<string> Find(string regId)
+    public IEnumerable<string> Find(string regId, string docTypeCode)
     {
         var listtdk = _listTdkUmumSvc.Execute(regId)?.ToList()
             ?? new List<TindakanUmumDto>();

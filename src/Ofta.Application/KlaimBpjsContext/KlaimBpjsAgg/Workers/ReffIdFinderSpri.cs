@@ -12,7 +12,7 @@ public class ReffIdFinderSpri : IReffIdFinderSpri
     {
         _listSkdpSvc = listSkdpSvc;
     }
-    public IEnumerable<string> Find(string regId)
+    public IEnumerable<string> Find(string regId, string docTypeCode)
     {
         var skdp = _listSkdpSvc.Execute(regId)?.ToList() ?? new List<SkdpDto>();
         var result = skdp.Where(x => x.IsSpri == true);

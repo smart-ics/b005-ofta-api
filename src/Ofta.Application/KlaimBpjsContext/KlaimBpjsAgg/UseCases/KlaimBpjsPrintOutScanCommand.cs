@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
+using Ofta.Application.DocContext.DocAgg.Workers;
+using Ofta.Application.DocContext.DocTypeAgg.Workers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
@@ -10,24 +12,28 @@ public record KlaimBpjsPrintOutScanCommand(string KlaimBpjsId) : IRequest, IKlai
 
 public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutScanCommand>
 {
+    
     private readonly IKlaimBpjsBuilder _builder;
     private readonly IKlaimBpjsWriter _writer;
     private readonly IValidator<KlaimBpjsPrintOutScanCommand> _guard;
     private readonly IReffIdFinderFactory _finderFactory;
     private readonly IMediator _mediator;
     private KlaimBpjsModel _agg;
+    private readonly IDocTypeBuilder _docTypeBuilder;
 
     public KlaimBpjsPrintOutScanHandler(IKlaimBpjsBuilder builder, 
         IKlaimBpjsWriter writer, 
         IValidator<KlaimBpjsPrintOutScanCommand> guard, 
         IReffIdFinderFactory finderFactory,
-        IMediator mediator)
+        IMediator mediator,
+        IDocTypeBuilder docTypeBuilder)
     {
         _builder = builder;
         _writer = writer;
         _guard = guard;
         _finderFactory = finderFactory;
         _mediator = mediator;
+        _docTypeBuilder = docTypeBuilder;
     }
 
     public Task<Unit> Handle(KlaimBpjsPrintOutScanCommand request, CancellationToken cancellationToken)
@@ -61,9 +67,12 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
         List<DocTypePrintOutDto> result = new();
         klaimBpjs.ListDocType.ForEach(docType =>
         {
+            
+            var docTypeCode = _docTypeBuilder.Load(new DocTypeModel(docType.DocTypeId)).Build();
+
             var listReffId = _finderFactory
                 .Factory(docType,docType)
-                .Find(klaimBpjs.RegId)
+                .Find(klaimBpjs.RegId, docTypeCode.DocTypeCode)
                 .ToList();
             listReffId.ForEach(reffId =>
             {

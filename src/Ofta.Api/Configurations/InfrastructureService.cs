@@ -41,7 +41,8 @@ public static class InfrastructureService
             .Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SECTION_NAME))
             .Configure<TekenAjaProviderOptions>(configuration.GetSection(TekenAjaProviderOptions.SECTION_NAME))
             .Configure<RemoteCetakOptions>(configuration.GetSection(RemoteCetakOptions.SECTION_NAME))
-            .Configure<BillingOptions>(configuration.GetSection(BillingOptions.SECTION_NAME));
+            .Configure<BillingOptions>(configuration.GetSection(BillingOptions.SECTION_NAME))
+            .Configure<ICasterOptions>(configuration.GetSection(ICasterOptions.SECTION_NAME));
 
         services
             .Scan(selector => selector
