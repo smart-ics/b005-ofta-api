@@ -42,7 +42,9 @@ public static class InfrastructureService
             .Configure<TekenAjaProviderOptions>(configuration.GetSection(TekenAjaProviderOptions.SECTION_NAME))
             .Configure<RemoteCetakOptions>(configuration.GetSection(RemoteCetakOptions.SECTION_NAME))
             .Configure<BillingOptions>(configuration.GetSection(BillingOptions.SECTION_NAME))
-            .Configure<ICasterOptions>(configuration.GetSection(ICasterOptions.SECTION_NAME));
+            .Configure<ICasterOptions>(configuration.GetSection(ICasterOptions.SECTION_NAME))
+            .Configure<Emr25Options>(configuration.GetSection(Emr25Options.SECTION_NAME))
+            .Configure<SmassOptions>(configuration.GetSection(SmassOptions.SECTION_NAME));
 
         services
             .Scan(selector => selector
