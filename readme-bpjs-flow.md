@@ -28,7 +28,19 @@ sequenceDiagram
     note over kasir, TILAKA: EVENT-E
     casemix ->> OFTA: Order Create IncompleteDoc 
     OFTA -->> layanan: Notif Create IncompleteDoc
-    
+```
+
+```mermaid
+sequenceDiagram
+    title BUNDLING DOCUMENT BPJS Revisi-3, Part-1
+    actor kasir
+    participant OFTA
+    actor casemix
+    participant REMOTE_CETAK
+    actor layanan
+    participant FO/EMR
+    participant TILAKA
+    autonumber 1
     note over kasir, TILAKA: EVENT-F
     layanan ->> FO/EMR : Create IncompleteDoc
     FO/EMR -->> REMOTE_CETAK: Print Doc
