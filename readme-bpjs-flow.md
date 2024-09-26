@@ -31,20 +31,22 @@ sequenceDiagram
 
     note over kasir, TILAKA: SCENE-B: CREATE DOCUMENT 
     note over OFTA, casemix: B1
-    casemix ->> OFTA: Order Create IncompleteDoc 
-    OFTA -->> layanan: Notif Create IncompleteDoc
-    
-    note over layanan, FO/EMR: B2
-    layanan ->> FO/EMR : Create IncompleteDoc
+    casemix ->> OFTA: Order Create IncompleteDoc
 
+    note over OFTA, casemix: B2
+    layanan ->> OFTA: Doctor check inbox
+    OFTA -->> layanan: List Ordered Document
+
+    note over layanan, FO/EMR: B3
+    layanan ->> FO/EMR: Doctor Create IncompleteDoc
+    FO/EMR -->> OFTA: Notif Document Created
+    
     note over kasir, TILAKA: SCENE-C: SCAN & MAPPING DOCUMENT 
     note over OFTA, casemix: C1
-    OFTA ->> OFTA: Scan & Mapping Document Transaction
-    OFTA -->> OFTA: Notif Change Color Document
+    casemix ->> OFTA: Scan & Mapping Document Transaction
 
     note over OFTA, casemix: C2
-    OFTA ->> OFTA: Upload Manual Document Transaction
-    OFTA -->> OFTA: Notif Change Color Document
+    casemix ->> OFTA: Upload Manual Document Transaction
 ```
 
 ## PART-2
@@ -52,6 +54,7 @@ sequenceDiagram
 sequenceDiagram
     title BUNDLING DOCUMENT BPJS Revisi-4, Part-1
     actor kasir
+    actor doctor
     participant OFTA
     actor casemix
     participant REMOTE_CETAK
