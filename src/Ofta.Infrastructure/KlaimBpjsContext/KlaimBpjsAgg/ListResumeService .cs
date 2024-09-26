@@ -37,7 +37,7 @@ public class ListResumeService : IListResumeService
     private async Task<IEnumerable<ResumeRespDto>> ListResume(string regId)
     {
         //BUILD
-        var endPoint = $"{_opt.BaseApiUrl}/api/ResumeMedis/List/{regId}/Register";
+        var endPoint = $"{_opt.BaseApiUrl}/api/ResumeMedis/ListAdministratif/{regId}/Register";
         var client = new RestClient(endPoint);
         var req = new RestRequest();
 
