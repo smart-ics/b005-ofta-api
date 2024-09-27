@@ -10,7 +10,7 @@ public class TilakaProviderOptions
 {
     public const string SECTION_NAME = "TilakaProvider";
     public string TokenEndPoint { get; set; }
-    public string UploadEnpoint { get; set; }
+    public string UploadEndpoint { get; set; }
     public string ClientID { get; set; }
     public string SecretKey { get; set; }
 }

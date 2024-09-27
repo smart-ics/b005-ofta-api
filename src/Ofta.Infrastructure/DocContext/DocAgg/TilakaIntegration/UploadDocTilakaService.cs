@@ -4,10 +4,12 @@ using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Domain.ParamContext.SystemAgg;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
+using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Ofta.Infrastructure.DocContext.DocAgg.TilakaIntegration;
@@ -16,24 +18,30 @@ public class UploadDocTilakaService : ISendToSignProviderService
 {
     private readonly TilakaProviderOptions _opt;
     private readonly IParamSistemDal _paramSistemDal;
+    private readonly ITokenService _token;
 
-    public UploadDocTilakaService(IOptions<TilakaProviderOptions> options, IParamSistemDal paramSistemDal)
+    public UploadDocTilakaService(IOptions<TilakaProviderOptions> options, IParamSistemDal paramSistemDal, ITokenService token)
     {
         _opt = options.Value;
         _paramSistemDal = paramSistemDal;
+        _token = token;
     }
 
     public SendToSignProviderResponse Execute(SendToSignProviderRequest req)
     {
-        var data = Task.Run(() => GetDocIdTekenAja(req)).GetAwaiter().GetResult();
-        var result = new SendToSignProviderResponse { UploadedDocId = data?.data.id ?? string.Empty };
+        var data = Task.Run(() => GetDocIdTilaka(req)).GetAwaiter().GetResult();
+        var result = new SendToSignProviderResponse { UploadedDocId = data?.filename ?? string.Empty };
         return result;
     }
 
-    private async Task<SendToTekenAjaResponse?> GetDocIdTekenAja(SendToSignProviderRequest request)
+    private async Task<UploadDocToTilakaResponse?> GetDocIdTilaka(SendToSignProviderRequest request)
     {
         //  BUILD REQUEST
         var fileUrl = request.doc.RequestedDocUrl;
+        var token = await _token.Execute("TilakaProvider");
+        if (token is null)
+            throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
+
 
         //  replace url dengan lokasi path
         var paramStoragePath = _paramSistemDal.GetData(Sys.LocalStoragePath)
@@ -44,41 +52,25 @@ public class UploadDocTilakaService : ISendToSignProviderService
 
 
         var docPageCount = PdfHelper.GetPageCount(filePathName);
-        var expiredDate = request.doc.DocDate.AddDays(_opt.ValidityPeriod).ToString("yyyy-MM-dd");
-        var listSignee = request.doc.ListSignees
-            .Select(x => new SendToTekenAjaRequest(x.Email, _opt.SignLayout
-                .Where(y => y.SignPosition == (int)x.SignPosition)
-                .Select(y => new SendToTekenAjaRequestDetail(docPageCount, y.x, y.y, y.w, y.h))));
-
-        var signJson = JsonSerializer.Serialize(listSignee);
-        var endpoint = _opt.UploadEnpoint;
+        var endpoint = _opt.UploadEndpoint;
         var client = new RestClient(endpoint);
+        client.Authenticator = new JwtAuthenticator(token);
         var req = new RestRequest()
-            .AddHeader("apikey", _opt.ApiKey)
-            .AddFile("document", filePathName)
-            .AddParameter("signature", signJson)
-            .AddParameter("expiration_date", expiredDate)
-            .AddParameter("is_in_order", "1");
+            .AddFile("file", filePathName);
+
         req.Method = Method.Post;
 
         //  EXECUTE
         var response = await client.ExecuteAsync(req);
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
-        var resp = JsonSerializer.Deserialize<SendToTekenAjaResponse>(response.Content ?? string.Empty);
+        var resp = JsonSerializer.Deserialize<UploadDocToTilakaResponse>(response.Content ?? string.Empty);
 
         //  RETURN
         return resp;
     }
 
-    #region REQUEST COMMAND
-    private record SendToTekenAjaRequest(string email, IEnumerable<SendToTekenAjaRequestDetail> detail);
-    private record SendToTekenAjaRequestDetail(int p, int x, int y, int w, int h);
-    #endregion
-
     #region RESPONSE COMMAND
-    private record SendToTekenAjaResponse(string status, string ref_id, string code, string timestamp, string message, SendToTekenAjaResponseData data);
-    private record SendToTekenAjaResponseData(string id, string[] stamp, IEnumerable<SendToTekenAjaResponseDataSign> sign);
-    private record SendToTekenAjaResponseDataSign(string teken_id, string email, string url);
+    private record UploadDocToTilakaResponse(string status, string message, string filename);
     #endregion
-
+}
