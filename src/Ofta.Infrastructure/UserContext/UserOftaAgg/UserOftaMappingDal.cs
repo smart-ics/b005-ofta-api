@@ -26,6 +26,7 @@ public class UserOftaMappingDal: IUserOftaMappingDal
         conn.Open();
         bcp.AddMap("UserOftaId", "UserOftaId");
         bcp.AddMap("UserMappingId", "UserMappingId");
+        bcp.AddMap("PegId", "PegId");
         bcp.AddMap("UserType", "UserType");
 
         var fetched = listModel.ToList();
@@ -54,7 +55,7 @@ public class UserOftaMappingDal: IUserOftaMappingDal
     {
         const string sql = @"
             SELECT
-                UserOftaId, UserMappingId, UserType
+                UserOftaId, UserMappingId, PegId, UserType
             FROM 
                 OFTA_UserMapping
             WHERE
@@ -70,10 +71,11 @@ public class UserOftaMappingDal: IUserOftaMappingDal
 
 public class UserOftaMappingDto : UserOftaMappingModel
 {
-    public UserOftaMappingDto(string userOftaId, string userMappingId, UserTypeEnum userType) : base(userOftaId, userMappingId, userType)
+    public UserOftaMappingDto(string userOftaId, string userMappingId, string pegId, UserTypeEnum userType) : base(userOftaId, userMappingId, pegId, userType)
     {
         UserOftaId = userOftaId;
         UserMappingId = userMappingId;
+        PegId = pegId;
         UserType = userType;
     }
 }

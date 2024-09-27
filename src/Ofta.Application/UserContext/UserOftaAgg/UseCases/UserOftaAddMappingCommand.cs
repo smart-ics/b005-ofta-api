@@ -5,7 +5,12 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.UserContext.UserOftaAgg.UseCases;
 
-public record UserOftaAddMappingCommand(string UserOftaId, string UserMappingId, string UserType) : IRequest, IUserOftaKey;
+public record UserOftaAddMappingCommand(
+    string UserOftaId,
+    string UserMappingId,
+    string PegId,
+    string UserType
+) : IRequest, IUserOftaKey;
 
 public class UserOftaAddMappingHandler : IRequestHandler<UserOftaAddMappingCommand>
 {
@@ -31,7 +36,7 @@ public class UserOftaAddMappingHandler : IRequestHandler<UserOftaAddMappingComma
         // BUILD
         var user = _builder
             .Load(request)
-            .AddUserMapping(request.UserMappingId, request.UserType)
+            .AddUserMapping(request.UserMappingId, request.PegId, request.UserType)
             .Build();
 
         // WRITE

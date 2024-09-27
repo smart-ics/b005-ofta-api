@@ -14,7 +14,7 @@ public interface IUserBuilder : INunaBuilder<UserOftaModel>
 
     IUserBuilder UserOftaName(string userOftaName);
     IUserBuilder Email(string email);
-    IUserBuilder AddUserMapping(string userMappingId, string userType);
+    IUserBuilder AddUserMapping(string userMappingId, string pegId, string userType);
 }
 public class UserBuilder : IUserBuilder
 {
@@ -75,11 +75,12 @@ public class UserBuilder : IUserBuilder
         return this;
     }
 
-    public IUserBuilder AddUserMapping(string userMappingId, string userType)
+    public IUserBuilder AddUserMapping(string userMappingId, string pegId, string userType)
     {
         _aggregate.ListUserMapping.Add(new UserOftaMappingModel(
             _aggregate.UserOftaId,
             userMappingId,
+            pegId,
             Enum.Parse<UserTypeEnum>(userType)
         ));
 
