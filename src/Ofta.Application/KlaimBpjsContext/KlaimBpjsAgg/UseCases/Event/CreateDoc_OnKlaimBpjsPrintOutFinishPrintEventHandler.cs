@@ -15,19 +15,16 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
     private readonly IDocWriter _docWriter;
     private readonly IKlaimBpjsWriter _klaimBpjsWriter;
     private readonly IWriteFileService _writeFileService;
-    private readonly ISendToSignProviderService _sendToSignProviderService;
 
     public CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler(IDocBuilder docBuilder, 
         IDocWriter docWriter, 
         IKlaimBpjsWriter klaimBpjsWriter, 
-        IWriteFileService writeFileService,
-        ISendToSignProviderService sendToSignProviderService)
+        IWriteFileService writeFileService)
     {
         _docBuilder = docBuilder;
         _docWriter = docWriter;
         _klaimBpjsWriter = klaimBpjsWriter;
         _writeFileService = writeFileService;
-        _sendToSignProviderService = sendToSignProviderService;
     }
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
@@ -75,9 +72,8 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         //      save fisik file;
         var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);
         _ = _writeFileService.Execute(writeFileRequest);
-        return Task.CompletedTask;      
-        
-        //      Upload ke Tilaka
-        //var sendToSignProvider = new SendToSignProviderRequest()
+
+        return Task.CompletedTask;
+
     }
 }
