@@ -13,14 +13,17 @@ public interface IUserWriter : INunaWriterWithReturn<UserOftaModel>
 public class UserWriter : IUserWriter
 {
     private readonly IUserOftaDal _userDal;
+    private readonly IUserOftaMappingDal _userOftaMappingDal;
     private readonly IValidator<UserOftaModel> _validator;
     private readonly INunaCounterBL _counterBL;
 
-    public UserWriter(IUserOftaDal userDal, 
+    public UserWriter(IUserOftaDal userDal,
+        IUserOftaMappingDal userOftaMappingDal,
         IValidator<UserOftaModel> validator, 
         INunaCounterBL counterBL)
     {
         _userDal = userDal;
+        _userOftaMappingDal = userOftaMappingDal;
         _validator = validator;
         _counterBL = counterBL;
     }
@@ -37,6 +40,10 @@ public class UserWriter : IUserWriter
             _userDal.Insert(oftaModel);
         else
             _userDal.Update(oftaModel);
+        
+        _userOftaMappingDal.Delete(oftaModel);
+        _userOftaMappingDal.Insert(oftaModel.ListUserMapping);
+        
         return oftaModel;
     }
 }

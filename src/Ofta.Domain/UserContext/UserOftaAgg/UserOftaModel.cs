@@ -14,4 +14,6 @@ public class UserOftaModel : IUserOftaKey
     public bool IsVerified { get; set; }
     public DateTime VerifiedDate { get; set; }
     public DateTime ExpiredDate { get; set; }
+    
+    public List<UserOftaMappingModel> ListUserMapping { get; set; }
 }

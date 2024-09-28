@@ -22,6 +22,13 @@ public class UserController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+
+    [HttpPatch("addUserMapping")]
+    public async Task<IActionResult> AddUserMapping(UserOftaAddMappingCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
     
     [HttpGet("{email}")]
     public async Task<IActionResult> GetUser(string email)

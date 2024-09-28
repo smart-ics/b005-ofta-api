@@ -1,4 +1,5 @@
-﻿using Nuna.Lib.CleanArchHelper;
+﻿using Mapster.Utils;
+using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.UserContext.UserOftaAgg;
@@ -13,15 +14,18 @@ public interface IUserBuilder : INunaBuilder<UserOftaModel>
 
     IUserBuilder UserOftaName(string userOftaName);
     IUserBuilder Email(string email);
+    IUserBuilder AddUserMapping(string userMappingId, string pegId, string userType);
 }
 public class UserBuilder : IUserBuilder
 {
     private UserOftaModel _aggregate = new();
     private readonly IUserOftaDal _userDal;
+    private readonly IUserOftaMappingDal _userOftaMappingDal;
 
-    public UserBuilder(IUserOftaDal userDal)
+    public UserBuilder(IUserOftaDal userDal, IUserOftaMappingDal userOftaMappingDal)
     {
         _userDal = userDal;
+        _userOftaMappingDal = userOftaMappingDal;
     }
 
     public UserOftaModel Build()
@@ -45,6 +49,10 @@ public class UserBuilder : IUserBuilder
     {
         _aggregate = _userDal.GetData(userOftaKey)
             ?? throw new KeyNotFoundException("User Ofta not found");
+
+        _aggregate.ListUserMapping = _userOftaMappingDal.ListData(userOftaKey)?.ToList()
+            ?? new List<UserOftaMappingModel>();
+        
         return this;
     }
 
@@ -64,6 +72,18 @@ public class UserBuilder : IUserBuilder
     public IUserBuilder Email(string email)
     {
         _aggregate.Email = email;
+        return this;
+    }
+
+    public IUserBuilder AddUserMapping(string userMappingId, string pegId, string userType)
+    {
+        _aggregate.ListUserMapping.Add(new UserOftaMappingModel(
+            _aggregate.UserOftaId,
+            userMappingId,
+            pegId,
+            Enum.Parse<UserTypeEnum>(userType)
+        ));
+
         return this;
     }
 }
