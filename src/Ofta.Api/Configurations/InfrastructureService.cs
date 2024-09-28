@@ -32,6 +32,7 @@ public static class InfrastructureService
             .AddScoped<IUsmanPegDal, UsmanPegDal>()
             .AddScoped<CommandHandler, CommandHandler>()
             .AddScoped<ITokenService, TokenService>()
+            .AddScoped<ITokenTilakaService, TokenTilakaService>()
             .AddScoped<IMemoryCache, MemoryCache>()
             .AddScoped<INunaCounterDal, ParamNoDal>()
             .AddScoped<IAppSettingService, AppSettingService>()

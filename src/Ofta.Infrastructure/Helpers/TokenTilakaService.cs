@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Nuna.Lib.CleanArchHelper;
 using RestSharp;
+using System.Text.Json;
 
 namespace Ofta.Infrastructure.Helpers;
 
@@ -9,7 +10,7 @@ public interface ITokenTilakaService : INunaService<Task<string?>, string>
 {
 }
 
-public class TokenTilakaService : ITokenService
+public class TokenTilakaService : ITokenTilakaService
 {
     private readonly TilakaProviderOptions _opt;
     private readonly IMemoryCache _cache;
@@ -26,7 +27,7 @@ public class TokenTilakaService : ITokenService
         if (result is not null)
             return result;
 
-        var endpoint = $"{_opt.TokenEndPoint}/api/Token";
+        var endpoint = $"{_opt.TokenEndPoint}";
         var client = new RestClient(endpoint);
 
         
@@ -41,8 +42,19 @@ public class TokenTilakaService : ITokenService
 
         var response = await client.ExecutePostAsync<string>(req);
 
-        var cacheOption = new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(5) };
-        _cache.Set($"Token{provider}", response.Data, cacheOption);
+        if (response.Content is null)
+            return null;
+
+        var jsonResponse = JsonSerializer.Deserialize<Dictionary<string, object>>(response.Content);
+        if (jsonResponse is not null && jsonResponse.TryGetValue("access_token", out var accessToken))
+        {
+            var token = accessToken?.ToString();
+
+            var cacheOption = new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(5) };
+            _cache.Set($"Token{provider}", token, cacheOption);
+
+            return token;
+        }
 
         return response.Data;
     }

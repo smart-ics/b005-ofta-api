@@ -5,12 +5,7 @@ using Ofta.Domain.ParamContext.SystemAgg;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
 using RestSharp.Authenticators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Ofta.Infrastructure.DocContext.DocAgg.TilakaIntegration;
 
@@ -18,9 +13,9 @@ public class UploadDocTilakaService : ISendToSignProviderService
 {
     private readonly TilakaProviderOptions _opt;
     private readonly IParamSistemDal _paramSistemDal;
-    private readonly ITokenService _token;
+    private readonly ITokenTilakaService _token;
 
-    public UploadDocTilakaService(IOptions<TilakaProviderOptions> options, IParamSistemDal paramSistemDal, ITokenService token)
+    public UploadDocTilakaService(IOptions<TilakaProviderOptions> options, IParamSistemDal paramSistemDal, ITokenTilakaService token)
     {
         _opt = options.Value;
         _paramSistemDal = paramSistemDal;
