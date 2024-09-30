@@ -137,7 +137,8 @@ sequenceDiagram
     
     note over REMOTE_CETAK, FO/EMR: EVENT-F
     layanan ->> FO/EMR : Create IncompleteDoc
-    FO/EMR -->> REMOTE_CETAK: Print Doc
+    FO/EMR -->> OFTA: Notif CompletedDoc
+    OFTA -->> REMOTE_CETAK: Print Doc
 
     note over OFTA, REMOTE_CETAK: EVENT-G
     loop Loop Until All IncompleteDoc Printed
