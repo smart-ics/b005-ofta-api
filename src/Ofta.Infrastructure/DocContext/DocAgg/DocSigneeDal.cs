@@ -32,6 +32,8 @@ public class DocSigneeDal : IDocSigneeDal
         bcp.AddMap("Level", "Level");
         bcp.AddMap("SignState", "SignState");
         bcp.AddMap("SignedDate", "SignedDate");
+        bcp.AddMap("SignPositionDesc", "SignPositionDesc");
+        bcp.AddMap("SignUrl", "SignUrl");
 
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
@@ -60,7 +62,8 @@ public class DocSigneeDal : IDocSigneeDal
         const string sql = @"
             SELECT
                 DocId, UserOftaId, Email, SignTag, 
-                SignPosition, Level, SignState, SignedDate
+                SignPosition, Level, SignState, SignedDate,
+                SignPositionDesc, SignUrl
             FROM
                 OFTA_DocSignee
             WHERE

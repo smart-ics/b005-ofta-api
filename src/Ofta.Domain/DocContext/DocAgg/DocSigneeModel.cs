@@ -7,9 +7,11 @@ public class DocSigneeModel : IDocKey
     public string Email { get; set; }
     public string SignTag { get; set; }
     public SignPositionEnum SignPosition { get; set; }
-    public int Level { get; set; }  
+    public int Level { get; set; }
     public SignStateEnum SignState { get; set; }
     public DateTime SignedDate { get; set; }
+    public string SignPositionDesc { get; set;}
+    public string SignUrl { get; set;}
 }
 
 public enum SignStateEnum
