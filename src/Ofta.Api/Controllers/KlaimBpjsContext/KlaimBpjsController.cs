@@ -60,6 +60,13 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpPatch("orderCreateIncompleteDoc")]
+    public async Task<IActionResult> OrderCreateIncompleteDoc(KlaimBpjsOrderCreateIncompleteDocCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
 
     [HttpPatch("addPrintOut")]
     public async Task<IActionResult> AddPrintOut(KlaimBpjsPrintOutAddCommand cmd)
