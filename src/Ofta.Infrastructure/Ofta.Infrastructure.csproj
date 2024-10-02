@@ -10,6 +10,7 @@
     <PackageReference Include="Dawn.Guard" Version="1.12.0" />
     <PackageReference Include="itext7" Version="8.0.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.33" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
     <PackageReference Include="Nuna.Lib.NetStandard" Version="1.0.110" />

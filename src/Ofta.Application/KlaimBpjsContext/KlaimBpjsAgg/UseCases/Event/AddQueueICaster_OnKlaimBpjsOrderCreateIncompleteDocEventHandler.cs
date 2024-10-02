@@ -8,12 +8,10 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 public class AddQueueICaster_OnKlaimBpjsOrderCreateIncompleteDocEventHandler: INotificationHandler<KlaimBpjsOrderCreateIncompleteDocEvent>
 {
     private readonly ISendToICasterService _sendToICasterService;
-    private readonly IListener _listener;
 
-    public AddQueueICaster_OnKlaimBpjsOrderCreateIncompleteDocEventHandler(ISendToICasterService sendToICasterService, IListener listener)
+    public AddQueueICaster_OnKlaimBpjsOrderCreateIncompleteDocEventHandler(ISendToICasterService sendToICasterService)
     {
         _sendToICasterService = sendToICasterService;
-        _listener = listener;
     }
 
     public Task Handle(KlaimBpjsOrderCreateIncompleteDocEvent notification, CancellationToken cancellationToken)
