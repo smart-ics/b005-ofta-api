@@ -28,7 +28,7 @@ public class UploadDocTilakaService : ISendToSignProviderService
         var result = new SendToSignProviderResponse { UploadedDocId = data?.filename ?? string.Empty };
         return result;
     }
-
+    #region UPLOAD FILE
     private async Task<UploadDocToTilakaResponse?> GetDocIdTilaka(SendToSignProviderRequest request)
     {
         //  BUILD REQUEST
@@ -47,7 +47,7 @@ public class UploadDocTilakaService : ISendToSignProviderService
 
 
         var docPageCount = PdfHelper.GetPageCount(filePathName);
-        var endpoint = _opt.UploadEndpoint;
+        var endpoint = _opt.UploadEndpoint + "/upload";
         var client = new RestClient(endpoint);
         client.Authenticator = new JwtAuthenticator(token);
         var req = new RestRequest()
@@ -64,6 +64,8 @@ public class UploadDocTilakaService : ISendToSignProviderService
         //  RETURN
         return resp;
     }
+    #endregion
+
 
     #region RESPONSE COMMAND
     private record UploadDocToTilakaResponse(string status, string message, string filename);
