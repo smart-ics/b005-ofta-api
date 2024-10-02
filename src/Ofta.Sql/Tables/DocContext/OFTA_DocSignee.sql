@@ -5,10 +5,10 @@
     SignTag VARCHAR(50) NOT NULL CONSTRAINT OFTA_DocSignee_SignTag DEFAULT(''),
     SignPosition INT NOT NULL CONSTRAINT OFTA_DocSignee_SignPosition DEFAULT(0),
     Level INT NOT NULL CONSTRAINT OFTA_DocSignee_Level DEFAULT(0),
-    [SignedState] INT NOT NULL CONSTRAINT OFTA_DocSignee_IsSigned DEFAULT(0),
+    SignedState INT NOT NULL CONSTRAINT OFTA_DocSignee_IsSigned DEFAULT(0),
     SignedDate DATETIME NOT NULL CONSTRAINT OFTA_DocSignee_SignedDate DEFAULT('3000-01-01'), 
-    [SignPositionDesc] VARCHAR(200) NOT NULL DEFAULT '', 
-    [SignUrl] VARCHAR(200) NOT NULL DEFAULT '',   
+    SignPositionDesc VARCHAR(200) NOT NULL CONSTRAINT OFTA_DocSignee_SignPositionDesc DEFAULT(''), 
+    SignUrl VARCHAR(200) NOT NULL CONSTRAINT OFTA_DocSignee_SignUrl DEFAULT(''),   
 )
 GO
 

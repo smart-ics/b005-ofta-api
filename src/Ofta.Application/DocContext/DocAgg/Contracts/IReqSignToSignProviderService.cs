@@ -1,16 +1,10 @@
-﻿using iTextSharp.text;
-using Nuna.Lib.CleanArchHelper;
+﻿using Nuna.Lib.CleanArchHelper;
 using Ofta.Domain.DocContext.DocAgg;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ofta.Application.DocContext.DocAgg.Contracts;
 
 
-public record ReqSignToSignProviderRequest(DocModel doc, String DocIdTilaka);
+public record ReqSignToSignProviderRequest(DocModel Doc, string DocIdTilaka);
 
 public class ReqSignToSignProviderResponse
 {

@@ -4,7 +4,6 @@ using Nuna.Lib.DataTypeExtension;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Domain.DocContext.DocAgg;
-using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
@@ -41,16 +40,16 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
 
 
         //  BUILD
-        string UploadedDocId = aggregate.UploadedDocId;
+        var uploadedDocId = aggregate.UploadedDocId;
 
-        if (UploadedDocId.IsNullOrEmpty())
+        if (uploadedDocId.IsNullOrEmpty())
         {
             var sendToSignProviderRequest = new SendToSignProviderRequest(aggregate);
             var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
-            UploadedDocId = sendToSignProviderResponse.UploadedDocId ?? string.Empty;
+            uploadedDocId = sendToSignProviderResponse.UploadedDocId ?? string.Empty;
         }
         
-        var reqSignToSignProviderRequest = new ReqSignToSignProviderRequest(aggregate, UploadedDocId);
+        var reqSignToSignProviderRequest = new ReqSignToSignProviderRequest(aggregate, uploadedDocId);
         var reqSignToSignProviderResponse = _reqSignToSignProviderService.Execute(reqSignToSignProviderRequest);
 
         if (reqSignToSignProviderResponse?.Signees != null)
@@ -70,7 +69,7 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
         aggregate = _builder
             .Attach(aggregate)
             .AddJurnal(DocStateEnum.Uploaded, string.Empty)
-            .UploadedDocId(UploadedDocId)
+            .UploadedDocId(uploadedDocId)
             .Build();
 
 
