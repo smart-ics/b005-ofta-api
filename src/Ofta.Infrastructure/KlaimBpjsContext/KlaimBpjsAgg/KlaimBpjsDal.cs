@@ -6,6 +6,7 @@ using Nuna.Lib.DataAccessHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
+using Ofta.Domain.RegContext.RegAgg;
 using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.KlaimBpjsContext.KlaimBpjsAgg;
@@ -124,6 +125,29 @@ public class KlaimBpjsDal : IKlaimBpjsDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.QueryFirstOrDefault<KlaimBpjsModel>(sql, dp);
     }
+    
+    public KlaimBpjsModel GetData(IRegKey key)
+    {
+        const string sql = @"
+            SELECT
+                aa.KlaimBpjsId, aa.KlaimBpjsDate, aa.OrderKlaimBpjsId, 
+                aa.UserOftaId, aa.BundleState KlaimBpjsState, aa.RegId, 
+                aa.PasienId, aa.PasienName, aa.NoSep, aa.LayananName,
+                aa.DokterName, aa.RajalRanap,
+                ISNULL(bb.DocId,'') MergerDocId,
+                ISNULL(bb.DocUrl,'') MergerDocUrl
+            FROM
+                OFTA_KlaimBpjs aa
+                LEFT JOIN OFTA_KlaimBpjsMergerFile bb ON aa.KlaimBpjsId = bb.KlaimBpjsId
+            WHERE
+                aa.RegId = @RegId";
+        
+        var dp = new DynamicParameters();
+        dp.AddParam("@RegId", key.RegId, SqlDbType.VarChar);
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.QueryFirstOrDefault<KlaimBpjsModel>(sql, dp);
+    }
 
     public IEnumerable<KlaimBpjsModel> ListData(Periode filter)
     {
@@ -140,11 +164,11 @@ public class KlaimBpjsDal : IKlaimBpjsDal
                 LEFT JOIN OFTA_KlaimBpjsMergerFile bb ON aa.KlaimBpjsId = bb.KlaimBpjsId
             WHERE
                 aa.KlaimBpjsDate BETWEEN @StartDate AND @EndDate";
-        
+
         var dp = new DynamicParameters();
         dp.AddParam("@StartDate", filter.Tgl1, SqlDbType.DateTime);
         dp.AddParam("@EndDate", filter.Tgl2, SqlDbType.DateTime);
-        
+
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Query<KlaimBpjsModel>(sql, dp);
     }
