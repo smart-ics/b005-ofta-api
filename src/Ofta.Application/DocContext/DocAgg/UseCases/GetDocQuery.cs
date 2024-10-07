@@ -1,6 +1,8 @@
 ﻿using Dawn;
 using MediatR;
+using Nuna.Lib.CleanArchHelper;
 using Ofta.Application.DocContext.DocAgg.Workers;
+using Ofta.Application.UserContext.UserOftaAgg.Workers;
 using Ofta.Domain.DocContext.DocAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
@@ -34,7 +36,6 @@ public record GetDocResponseJurnal(
 public record GetDocResponseSignee(
 
     string SigneeUserOftaId,
-    string SigneeName,
     string SigneeEmail,
     string SignTag,
     string SignPosition,
@@ -47,8 +48,9 @@ public record GetDocResponseSignee(
 public class GetDocQueryHandler : IRequestHandler<GetDocQuery, GetDocResponse>
 {
     private readonly IDocBuilder _builder;
+    private readonly IUserBuilder _userBuilder;
 
-    public GetDocQueryHandler(IDocBuilder builder)
+    public GetDocQueryHandler(IDocBuilder builder, IUserBuilder userBuilder)
     {
         _builder = builder;
     }
@@ -80,7 +82,6 @@ public class GetDocQueryHandler : IRequestHandler<GetDocQuery, GetDocResponse>
             doc.PublishedDocUrl,
             doc.ListSignees.Select(x => new GetDocResponseSignee(
                 x.UserOftaId,
-                x.Email,
                 x.Email,
                 x.SignTag,
                 x.SignPosition.ToString(),

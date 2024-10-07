@@ -60,6 +60,10 @@ public class UserBuilder : IUserBuilder
     {
         _aggregate = _userDal.GetData(email)
                      ?? throw new KeyNotFoundException("Email not found");
+
+        _aggregate.ListUserMapping = _userOftaMappingDal.ListData(_aggregate)?.ToList()
+                    ?? new List<UserOftaMappingModel>();
+
         return this;
     }
 

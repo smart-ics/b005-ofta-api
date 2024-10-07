@@ -35,9 +35,6 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
         var aggregate = _builder
             .Load(request)
             .Build();
-        if (aggregate.DocState != DocStateEnum.Submited)
-            throw new ArgumentException("Upload failed: DocState should be Submited");
-
 
         //  BUILD
         var uploadedDocId = aggregate.UploadedDocId;

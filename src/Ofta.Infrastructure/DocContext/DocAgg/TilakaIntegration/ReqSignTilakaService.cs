@@ -4,17 +4,22 @@ using Ofta.Infrastructure.Helpers;
 using RestSharp.Authenticators;
 using RestSharp;
 using System.Text.Json;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.UserContext.UserOftaAgg;
+using Ofta.Application.UserContext.UserOftaAgg.Workers;
 
 namespace Ofta.Infrastructure.DocContext.DocAgg.TilakaIntegration;
 public class ReqSignTilakaService : IReqSignToSignProviderService
 {
     private readonly TilakaProviderOptions _opt;
     private readonly ITokenTilakaService _token;
+    private readonly IUserBuilder _userBuilder;
 
-    public ReqSignTilakaService(IOptions<TilakaProviderOptions> options, ITokenTilakaService token)
+    public ReqSignTilakaService(IOptions<TilakaProviderOptions> options, ITokenTilakaService token, IUserBuilder userBuilder)
     {
         _opt = options.Value;
         _token = token;
+        _userBuilder = userBuilder;
     }
 
     public ReqSignToSignProviderResponse Execute(ReqSignToSignProviderRequest req)
@@ -30,8 +35,15 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
                 var userIdentifierFromDesc = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
 
+                var userOfta = _userBuilder
+                               .Load(userIdentifierFromDesc)
+                               .Build();
+
+                var userProvider = userOfta.ListUserMapping
+                    .FirstOrDefault(mapping => mapping.UserType == UserTypeEnum.Tilaka)?.UserMappingId ?? string.Empty;
+
                 var authUrl = dataSign.Auth_Urls
-                    .FirstOrDefault(auth => auth.User_Identifier == userIdentifierFromDesc);
+                    .FirstOrDefault(auth => auth.User_Identifier == userProvider);
 
                 if (authUrl != null)
                 {
@@ -70,9 +82,16 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 var pageNumber = signPositionDescJson?.GetValueOrDefault("page_number").GetInt32();
                 var qrOption = signPositionDescJson?.GetValueOrDefault("qr_option").GetString();
 
+                var userOfta = _userBuilder
+                               .Load(userIdentifier)
+                               .Build();
+
+                var userProvider = userOfta.ListUserMapping
+                    .FirstOrDefault(mapping => mapping.UserType == UserTypeEnum.Tilaka)?.UserMappingId ?? string.Empty;
+
                 return new
                 {
-                    user_identifier = userIdentifier,
+                    user_identifier = userProvider,
                     width,
                     height,
                     coordinate_x = coordinateX,
@@ -141,7 +160,7 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
     #endregion
 
     #region RESPONSE COMMAND
-    private record ReqSignToTilakaResponse(string Status, string Message, List<AuthUrlData> Auth_Urls);
+    private record ReqSignToTilakaResponse(string Succes, string Message, List<AuthUrlData> Auth_Urls);
     private record AuthUrlData(string Url, string User_Identifier);
     #endregion
 }

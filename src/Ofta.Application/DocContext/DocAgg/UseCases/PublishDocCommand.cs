@@ -6,23 +6,26 @@ using Ofta.Domain.DocContext.DocAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-public record PublishDocCommand(string UploadedDocId, string DownloadUrl) : IRequest;
+public record PublishDocCommand(string DocId) : IRequest;
 
 public class PublishDocHandler : IRequestHandler<PublishDocCommand>
 {
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
     private readonly IDocDal _docDal;
+    private readonly ICheckSignStatusFromSignProviderService _checkSignStatusFromSignProviderService;
     private readonly IDownloadPublishedDocFromProviderService _downloader;
 
     public PublishDocHandler(IDocBuilder builder, 
         IDocWriter writer, 
         IDocDal docDal, 
+        ICheckSignStatusFromSignProviderService checkSignStatusFromSignProviderService,
         IDownloadPublishedDocFromProviderService downloader)
     {
         _builder = builder;
         _writer = writer;
         _docDal = docDal;
+        _checkSignStatusFromSignProviderService = checkSignStatusFromSignProviderService;
         _downloader = downloader;
     }
 
@@ -30,26 +33,41 @@ public class PublishDocHandler : IRequestHandler<PublishDocCommand>
     {
         //  GUARD
         Guard.Argument(() => request).NotNull()
-            .Member(x => x.UploadedDocId, y => y.NotEmpty())
-            .Member(x => x.DownloadUrl, y => y.NotEmpty());
-        
+            .Member(x => x.DocId, y => y.NotEmpty());
+
         //  BUILD
-        IUploadedDocKey uploadedDocKey = new DocModel{UploadedDocId = request.UploadedDocId};
-        var doc = _docDal.GetData(uploadedDocKey)
-            ?? throw new KeyNotFoundException("UploadedDocId not found");
+        IDocKey docKey = new DocModel { DocId = request.DocId };
+        var doc = _docDal.GetData(docKey);
+
+        if (doc == null)
+        {
+            throw new KeyNotFoundException("UploadedDocId or DocId not found");
+        }
+
         var aggregate = _builder
             .Load(doc)
-            .UploadedDocUrl(request.DownloadUrl)
             .GenPublishedDocUrl()
             .Build();
 
+        //checksign
+        var checkSignFromSignProviderRequest = new CheckSignStatusFromSignProviderRequest(doc);
+        var checksignFromSignProviderResponse = _checkSignStatusFromSignProviderService.Execute(checkSignFromSignProviderRequest);
+
+        var downloadUrl = checksignFromSignProviderResponse.DownloadUrl;
+
+        if (checksignFromSignProviderResponse == null )
+        {
+            throw new KeyNotFoundException("Doc Not Ready");
+        }
+
         var downloadReq = new DownloadPublishedDocFromProviderRequest(
-            aggregate.UploadedDocUrl, aggregate.PublishedDocUrl);
+            checksignFromSignProviderResponse.DownloadUrl, aggregate.PublishedDocUrl);
         _downloader.Execute(downloadReq);
         
         aggregate = _builder
             .Attach(aggregate)
             .AddJurnal(DocStateEnum.Published, string.Empty)
+            .UploadedDocUrl(downloadUrl)
             .Build();
         
         //  WRITE
