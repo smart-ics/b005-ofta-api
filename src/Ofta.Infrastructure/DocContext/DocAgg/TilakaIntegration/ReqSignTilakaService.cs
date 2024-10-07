@@ -141,7 +141,7 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
     #endregion
 
     #region RESPONSE COMMAND
-    private record ReqSignToTilakaResponse(string Status, string Message, List<AuthUrlData> Auth_Urls);
+    private record ReqSignToTilakaResponse(string Succes, string Message, List<AuthUrlData> Auth_Urls);
     private record AuthUrlData(string Url, string User_Identifier);
     #endregion
 }

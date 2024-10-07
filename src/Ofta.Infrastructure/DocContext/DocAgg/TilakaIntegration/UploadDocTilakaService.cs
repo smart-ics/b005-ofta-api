@@ -73,6 +73,6 @@ public class UploadDocTilakaService : ISendToSignProviderService
 
 
     #region RESPONSE COMMAND
-    private record UploadDocToTilakaResponse(string Status, string Message, string Filename);
+    private record UploadDocToTilakaResponse(string Succes, string Message, string Filename);
     #endregion
 }
