@@ -58,7 +58,13 @@ public class UploadDocTilakaService : ISendToSignProviderService
         var response = await client.ExecuteAsync(req);
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
-        var resp = JsonSerializer.Deserialize<UploadDocToTilakaResponse>(response.Content ?? string.Empty);
+
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var resp = JsonSerializer.Deserialize<UploadDocToTilakaResponse>(response.Content ?? string.Empty,jsonOptions);
 
         //  RETURN
         return resp;

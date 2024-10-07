@@ -23,15 +23,15 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
 
         var result = new ReqSignToSignProviderResponse();
 
-        if (dataSign?.AuthUrls != null)
+        if (dataSign?.Auth_Urls != null)
         {
             result.Signees = req.Doc.ListSignees.Select(signee =>
             {
                 var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
                 var userIdentifierFromDesc = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
 
-                var authUrl = dataSign.AuthUrls
-                    .FirstOrDefault(auth => auth.UserIdentifier == userIdentifierFromDesc);
+                var authUrl = dataSign.Auth_Urls
+                    .FirstOrDefault(auth => auth.User_Identifier == userIdentifierFromDesc);
 
                 if (authUrl != null)
                 {
@@ -128,7 +128,12 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
 
-        var respReqSign = JsonSerializer.Deserialize<ReqSignToTilakaResponse>(response.Content ?? string.Empty);
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var respReqSign = JsonSerializer.Deserialize<ReqSignToTilakaResponse>(response.Content ?? string.Empty,jsonOptions);
 
         // RETURN
         return respReqSign;
@@ -136,8 +141,8 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
     #endregion
 
     #region RESPONSE COMMAND
-    private record ReqSignToTilakaResponse(string Status, string Message, List<AuthUrlData> AuthUrls);
-    private record AuthUrlData(string Url, string UserIdentifier);
+    private record ReqSignToTilakaResponse(string Status, string Message, List<AuthUrlData> Auth_Urls);
+    private record AuthUrlData(string Url, string User_Identifier);
     #endregion
 }
 
