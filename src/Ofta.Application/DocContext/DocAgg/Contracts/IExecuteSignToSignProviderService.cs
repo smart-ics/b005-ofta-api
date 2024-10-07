@@ -4,11 +4,11 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.Contracts;
 
-public record ExecuteSignToSignProviderRequest(DocModel Doc, IUserOftaKey UserOfta );
+public record ExecuteSignToSignProviderRequest(DocModel Doc, String UserProvider );
 
 public class ExecuteSignToSignProviderResponse
 {
-    public string Status { get; set; }
+    public bool Status { get; set; }
     public string Message { get; set; }
 }
 public interface IExecuteSignToSignProviderService

@@ -15,7 +15,7 @@ public class DocCompletedCommandAdapter : ITekenAjaCallbackFactory
 
         var docReffId = data.document_id;
         var downloadUrl = data.download_url;
-        var cmd = new PublishDocCommand(docReffId, downloadUrl);
+        var cmd = new PublishDocCommand(docReffId);
         return cmd;
     }
 }

@@ -17,13 +17,11 @@ namespace Ofta.Infrastructure.DocContext.DocAgg.TilakaIntegration;
 public class CheckSignStatusTilakaService : ICheckSignStatusFromSignProviderService
 {
     private readonly TilakaProviderOptions _opt;
-    private readonly IParamSistemDal _paramSistemDal;
     private readonly ITokenTilakaService _token;
 
-    public CheckSignStatusTilakaService(IOptions<TilakaProviderOptions> options, IParamSistemDal paramSistemDal, ITokenTilakaService token)
+    public CheckSignStatusTilakaService(IOptions<TilakaProviderOptions> options, ITokenTilakaService token)
     {
         _opt = options.Value;
-        _paramSistemDal = paramSistemDal;
         _token = token;
     }
 
@@ -38,29 +36,23 @@ public class CheckSignStatusTilakaService : ICheckSignStatusFromSignProviderServ
     private async Task<CheckSignStatusFromTilakaResponse?> GetDownloadUrlTilaka(CheckSignStatusFromSignProviderRequest request)
     {
         //  BUILD REQUEST
-        var fileUrl = request.Doc.RequestedDocUrl;
         var token = await _token.Execute("TilakaProvider");
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
-
-        //  replace url dengan lokasi path
-        var paramStoragePath = _paramSistemDal.GetData(Sys.LocalStoragePath)
-            ?? throw new KeyNotFoundException("Parameter StoragePath not found");
-        var paramStorageUrl = _paramSistemDal.GetData(Sys.LocalStorageUrl)
-            ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
-        var filePathName = fileUrl.Replace(paramStorageUrl.ParamSistemValue, paramStoragePath.ParamSistemValue);
 
         var endpoint = _opt.UploadEndpoint + "/checksignstatus";
         var client = new RestClient(endpoint);
         client.Authenticator = new JwtAuthenticator(token);
 
-        var jsonBody = new
+        var payload = new
         {
             request_id = request.Doc.DocId
         };
 
+        var signJson = JsonSerializer.Serialize(payload);
+
         var req = new RestRequest()
-            .AddJsonBody(jsonBody);
+            .AddJsonBody(signJson);
 
         req.Method = Method.Post;
 

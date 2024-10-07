@@ -22,14 +22,13 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
     public ExecuteSignToSignProviderResponse Execute(ExecuteSignToSignProviderRequest req)
     {
         var data = Task.Run(() => ExecuteSign(req)).GetAwaiter().GetResult();
-        var result = new ExecuteSignToSignProviderResponse { Status = data?.Succes ?? string.Empty,Message = data?.Message ?? string.Empty };
+        var result = new ExecuteSignToSignProviderResponse { Status = data?.Success == true , Message = data?.Message ?? string.Empty };
         return result;
     }
     #region Execute Sign
     private async Task<ExecuteSignToTilakaResponse?> ExecuteSign(ExecuteSignToSignProviderRequest request)
     {
         //  BUILD REQUEST
-        var fileUrl = request.Doc.RequestedDocUrl;
         var token = await _token.Execute("TilakaProvider");
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
@@ -38,22 +37,21 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
         var client = new RestClient(endpoint);
         client.Authenticator = new JwtAuthenticator(token);
 
-        var jsonBody = new
+        var payload = new
         {
             request_id = request.Doc.DocId,
-            user_identifier = request.UserOfta
+            user_identifier = request.UserProvider
         };
 
-        var req = new RestRequest()
-            .AddJsonBody(jsonBody);
+        var signJson = JsonSerializer.Serialize(payload);
 
+        var req = new RestRequest()
+            .AddJsonBody(signJson);
 
         req.Method = Method.Post;
 
         //  EXECUTE
         var response = await client.ExecuteAsync(req);
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            return null;
 
         var jsonOptions = new JsonSerializerOptions
         {
@@ -69,6 +67,6 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
 
 
     #region RESPONSE COMMAND
-    private record ExecuteSignToTilakaResponse(string Succes, string Message);
+    private record ExecuteSignToTilakaResponse(bool Success, string Message, string Status);
     #endregion
 }

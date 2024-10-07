@@ -6,7 +6,7 @@ using Ofta.Domain.DocContext.DocAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-public record PublishDocCommand(string DocId, string DownloadUrl) : IRequest;
+public record PublishDocCommand(string DocId) : IRequest;
 
 public class PublishDocHandler : IRequestHandler<PublishDocCommand>
 {
@@ -33,8 +33,7 @@ public class PublishDocHandler : IRequestHandler<PublishDocCommand>
     {
         //  GUARD
         Guard.Argument(() => request).NotNull()
-            .Member(x => x.DocId, y => y.NotEmpty())
-            .Member(x => x.DownloadUrl, y => y.NotEmpty());
+            .Member(x => x.DocId, y => y.NotEmpty());
 
         //  BUILD
         IDocKey docKey = new DocModel { DocId = request.DocId };
@@ -54,6 +53,8 @@ public class PublishDocHandler : IRequestHandler<PublishDocCommand>
         var checkSignFromSignProviderRequest = new CheckSignStatusFromSignProviderRequest(doc);
         var checksignFromSignProviderResponse = _checkSignStatusFromSignProviderService.Execute(checkSignFromSignProviderRequest);
 
+        var downloadUrl = checksignFromSignProviderResponse.DownloadUrl;
+
         if (checksignFromSignProviderResponse == null )
         {
             throw new KeyNotFoundException("Doc Not Ready");
@@ -66,7 +67,7 @@ public class PublishDocHandler : IRequestHandler<PublishDocCommand>
         aggregate = _builder
             .Attach(aggregate)
             .AddJurnal(DocStateEnum.Published, string.Empty)
-            .UploadedDocUrl(request.DownloadUrl)
+            .UploadedDocUrl(downloadUrl)
             .Build();
         
         //  WRITE

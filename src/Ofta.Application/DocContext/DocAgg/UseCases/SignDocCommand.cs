@@ -2,8 +2,9 @@
 using MediatR;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
-using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Application.UserContext.UserOftaAgg.Workers;
 using Ofta.Domain.DocContext.DocAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
@@ -19,16 +20,17 @@ public class SignDocHandler : IRequestHandler<SignDocCommand>
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
     private readonly IDocDal _docDal;
-    private readonly IUserOftaDal _userOftaDal;
+    private readonly IUserBuilder _userBuilder;
+
     private readonly IExecuteSignToSignProviderService _executeSignToSignProviderService;
 
-    public SignDocHandler(IDocBuilder builder, IDocWriter writer, IDocDal docDal, IUserOftaDal userOftaDal,
+    public SignDocHandler(IDocBuilder builder, IDocWriter writer, IDocDal docDal, IUserBuilder userBuilder,
                           IExecuteSignToSignProviderService executeSignToSignProviderService)
     {
         _builder = builder;
         _writer = writer;
         _docDal = docDal;
-        _userOftaDal = userOftaDal;
+        _userBuilder = userBuilder;
         _executeSignToSignProviderService = executeSignToSignProviderService;
     }
 
@@ -48,13 +50,17 @@ public class SignDocHandler : IRequestHandler<SignDocCommand>
             throw new KeyNotFoundException("UploadedDocId or DocId not found");
         }
 
-        var userOfta = _userOftaDal.GetData(request.Email)
-                ?? throw new KeyNotFoundException("User Ofta not found");
+        var userOfta = _userBuilder
+                .Load(request.Email)
+                .Build();
 
-        var executeSignToSignProviderRequest = new ExecuteSignToSignProviderRequest(doc, userOfta);
+        var userProvider = userOfta.ListUserMapping
+            .FirstOrDefault(mapping => mapping.UserType == UserTypeEnum.Tilaka)?.UserMappingId ?? string.Empty;
+
+        var executeSignToSignProviderRequest = new ExecuteSignToSignProviderRequest(doc, userProvider);
         var executesignToSignProviderResponse = _executeSignToSignProviderService.Execute(executeSignToSignProviderRequest);
 
-        if (executesignToSignProviderResponse.Status != "Succes")
+        if (!executesignToSignProviderResponse.Status)
         {
             throw new KeyNotFoundException(executesignToSignProviderResponse.Message);
         }

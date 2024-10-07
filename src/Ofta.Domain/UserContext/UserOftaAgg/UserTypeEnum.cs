@@ -4,5 +4,6 @@ public enum UserTypeEnum
 { 
     EMR,
     NERS,
-    HospitalWeb
+    HospitalWeb,
+    Tilaka
 }

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
 using Ofta.Application.DocContext.DocAgg.UseCases;
-using Ofta.Application.KlaimBpjsContext.BlueprintAgg.UseCases;
 
 namespace Ofta.Api.Controllers.DocContext.TilakaIntegration;
 
@@ -17,13 +16,14 @@ public class TilakaController : Controller
         _mediator = mediator;
     }
 
-    [HttpPost]
+    [HttpPost("ExecuteSign")]
     public async Task<IActionResult> ExecuteSign(SignDocCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-
+   
+    [HttpPost("DownloadDoc")]
     public async Task<IActionResult> DownloadFile(PublishDocCommand cmd)
     {
         var result = await _mediator.Send(cmd);

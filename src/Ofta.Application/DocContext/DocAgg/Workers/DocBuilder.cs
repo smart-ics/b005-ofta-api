@@ -155,9 +155,11 @@ public class DocBuilder : IDocBuilder
 
     public IDocBuilder GenPublishedDocUrl()
     {
-        var oftaStorageUrl = _paramSistemDal.GetData(Sys.OftaStorageUrl)
+        var oftaStorageUrl = _paramSistemDal.GetData(Sys.LocalStorageUrl)
             ?? throw new KeyNotFoundException("'Sys.OftaStoragePath' not found");
-        var docTypeName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_aggregate.DocTypeName);
+        var docTypeName = CultureInfo.CurrentCulture.TextInfo
+            .ToTitleCase(_aggregate.DocTypeName)
+            .Replace(" ", "_");
         var publishedDocUrl = $"{oftaStorageUrl.ParamSistemValue}/{_aggregate.DocId}_{docTypeName}.pdf";
         _aggregate.PublishedDocUrl = publishedDocUrl;
         return this;
