@@ -55,4 +55,42 @@ public class SendToICasterService : ISendToICasterService
         //  RETURN
         return response.StatusCode == System.Net.HttpStatusCode.OK;
     }
+
+    public bool Execute(ICasterEmrModel req)
+    {
+        Guard.Argument(() => req).NotNull();
+
+        return ExecuteAsync(req).Result;
+    }
+    
+    private async Task<bool> ExecuteAsync(ICasterEmrModel req)
+    {
+        var endpoint = $"{_opt.BaseApiUrl}/api/Notif/toUser";
+        var client = new RestClient(endpoint);
+
+        var messageObj = new
+        {
+            docType = req.Message.DocType,
+            docReff = req.Message.DocReff
+        };
+        
+        var messageJsonString = JsonConvert.SerializeObject(messageObj);
+        
+        var reqObj = new
+        {
+            fromUser = req.FromUser,
+            toUser = req.ToUser,
+            message = messageJsonString 
+        };
+        
+        var reqBody = JsonConvert.SerializeObject(reqObj);
+        var request = new RestRequest(endpoint, Method.Post)
+            .AddBody(reqBody, "application/json");
+        
+        //  EXECUTE
+        var response = await client.ExecuteAsync(request);
+
+        //  RETURN
+        return response.StatusCode == System.Net.HttpStatusCode.OK;
+    }
 }
