@@ -78,6 +78,7 @@
     <Build Include="Tables\DocContext\OFTA_DocType.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeTag.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeUrl.sql" />
+    <Build Include="Tables\DocContext\OFTA_DraftOrder.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_Blueprint.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_BlueprintDocType.sql" />
     <Build Include="Tables\KlaimBpjsContext\OFTA_BlueprintSignee.sql" />

@@ -33,7 +33,6 @@
   <ItemGroup>
     <Folder Include="DocContext\BundleAgg\UseCases\" />
     <Folder Include="DocContext\BundleAgg\Workers\" />
-    <Folder Include="KlaimBpjsContext\OrderDocAgg\" />
     <Folder Include="UserContext\UserOftaAgg\" />
   </ItemGroup>
 

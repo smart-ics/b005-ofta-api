@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
+using Ofta.Application.DocContext.DraftOrderAgg.UseCases;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 using Ofta.Application.KlaimBpjsContext.OrderKlaimBpjsAgg.UseCases;
 
@@ -62,7 +63,7 @@ public class KlaimBpjsController : Controller
     }
     
     [HttpPatch("orderCreateIncompleteDoc")]
-    public async Task<IActionResult> OrderCreateIncompleteDoc(KlaimBpjsOrderDocCommand cmd)
+    public async Task<IActionResult> OrderCreateIncompleteDoc(DraftOrderKlaimBpjsCommand cmd)
     {
         await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
