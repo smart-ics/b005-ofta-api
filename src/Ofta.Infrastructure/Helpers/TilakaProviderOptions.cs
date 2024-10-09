@@ -13,4 +13,6 @@ public class TilakaProviderOptions
     public string UploadEndpoint { get; set; }
     public string ClientID { get; set; }
     public string SecretKey { get; set; }
+    public string Reason {  get; set; }
+    public string Location { get; set; }
 }

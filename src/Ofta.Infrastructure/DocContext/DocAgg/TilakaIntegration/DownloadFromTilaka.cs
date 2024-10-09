@@ -1,9 +1,6 @@
-﻿using iText.Commons.Utils;
-using Microsoft.Extensions.Options;
-using Ofta.Application.DocContext.DocAgg.Contracts;
+﻿using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Domain.ParamContext.SystemAgg;
-using Ofta.Infrastructure.Helpers;
 using System.Net;
 
 namespace Ofta.Infrastructure.DocContext.DocAgg.TilakaIntegration;
@@ -31,7 +28,7 @@ public class DownloadFromTilakaService : IDownloadPublishedDocFromProviderServic
 
         using (WebClient client = new WebClient())
         {
-            client.DownloadFile(url, fileUrl);
+            client.DownloadFile(url, filePathName);
         }
     }
 }
