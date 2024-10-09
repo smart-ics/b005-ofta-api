@@ -4,9 +4,10 @@ using Ofta.Infrastructure.Helpers;
 using RestSharp.Authenticators;
 using RestSharp;
 using System.Text.Json;
-using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.UserContext.UserOftaAgg;
 using Ofta.Application.UserContext.UserOftaAgg.Workers;
+using Nuna.Lib.ValidationHelper;
+
 
 namespace Ofta.Infrastructure.DocContext.DocAgg.TilakaIntegration;
 public class ReqSignTilakaService : IReqSignToSignProviderService
@@ -75,10 +76,12 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
 
                 var userIdentifier = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString();
-                var width = signPositionDescJson?.GetValueOrDefault("width").GetInt32();
-                var height = signPositionDescJson?.GetValueOrDefault("height").GetInt32();
-                var coordinateX = signPositionDescJson?.GetValueOrDefault("coordinate_x").GetInt32();
-                var coordinateY = signPositionDescJson?.GetValueOrDefault("coordinate_y").GetInt32();
+                var reason = _opt.Reason ;
+                var location = _opt.Location;
+                var width = signPositionDescJson?.GetValueOrDefault("width").GetDouble();
+                var height = signPositionDescJson?.GetValueOrDefault("height").GetDouble();
+                var coordinateX = signPositionDescJson?.GetValueOrDefault("coordinate_x").GetDouble();
+                var coordinateY = signPositionDescJson?.GetValueOrDefault("coordinate_y").GetDouble();
                 var pageNumber = signPositionDescJson?.GetValueOrDefault("page_number").GetInt32();
                 var qrOption = signPositionDescJson?.GetValueOrDefault("qr_option").GetString();
 
@@ -92,6 +95,8 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 return new
                 {
                     user_identifier = userProvider,
+                    reason,
+                    location,
                     width,
                     height,
                     coordinate_x = coordinateX,
@@ -121,6 +126,8 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 signatures = listSignee.Select(signee => new
                 {
                     signee.user_identifier,
+                    signee.reason,
+                    signee.location,
                     signee.width,
                     signee.height,
                     signee.coordinate_x,

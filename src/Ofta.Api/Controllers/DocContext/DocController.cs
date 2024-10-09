@@ -58,6 +58,14 @@ public class DocController : Controller
         return Ok(new JSendOk(result));
     }
 
+    [HttpGet("{id}/{email}/Signee")]
+    public async Task<IActionResult> GetDataDoc(string id, string email)
+    {
+        var query = new GetDocSigneeQuery(id,email);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
+
     [HttpGet("{email}/{tglYmd1}/{tglYmd2}")]
     public async Task<IActionResult> GetDataDoc(string email, string tglYmd1, string tglYmd2)
     {
