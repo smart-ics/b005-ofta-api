@@ -162,6 +162,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 NoUrut = c.NoUrut,
                 DocTypeId = c.DocTypeId,
                 DocTypeName = c.DocTypeName,
+                DrafterUserId = c.DrafterUserId,
                 ListPrintOut = listPrintOut
                     .Where(x => x.KlaimBpjsDocTypeId == c.KlaimBpjsDocTypeId)
                     .Select(y => new KlaimBpjsPrintOutModel
@@ -226,6 +227,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             NoUrut = noUrut,
             DocTypeId = docType.DocTypeId,
             DocTypeName = docType.DocTypeName,
+            DrafterUserId = string.Empty,
             ListPrintOut = new List<KlaimBpjsPrintOutModel>()
         });
         return this;

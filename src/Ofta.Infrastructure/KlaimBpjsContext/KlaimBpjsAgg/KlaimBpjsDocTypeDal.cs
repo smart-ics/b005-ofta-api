@@ -30,6 +30,7 @@ public class KlaimBpjsDocTypeDal : IKlaimBpjsDocTypeDal
         bcp.AddMap("NoUrut", "NoUrut");
         bcp.AddMap("DocTypeId", "DocTypeId");
         bcp.AddMap("DocTypeName", "DocTypeName");
+        bcp.AddMap("DrafterUserId", "DrafterUserId");
  
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
@@ -57,7 +58,7 @@ public class KlaimBpjsDocTypeDal : IKlaimBpjsDocTypeDal
         const string sql = @"
             SELECT
                 KlaimBpjsId, KlaimBpjsDocTypeId, NoUrut, 
-                DocTypeId, DocTypeName
+                DocTypeId, DocTypeName, DrafterUserId
             FROM
                 OFTA_KlaimBpjsDocType
             WHERE 

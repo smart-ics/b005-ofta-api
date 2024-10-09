@@ -11,3 +11,5 @@ GO
 
 CREATE INDEX IX_OFTA_KlaimBpjsDocType_KlaimBpjsId
     ON OFTA_KlaimBpjsDocType (KlaimBpjsId, KlaimBpjsDocTypeId)
+
+ALTER TABLE OFTA_KlaimBpjsDocType ADD DrafterUserId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_KlaimBpjsDocType_DrafterUserId DEFAULT ('')
