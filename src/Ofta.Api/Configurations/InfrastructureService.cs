@@ -47,7 +47,8 @@ public static class InfrastructureService
             .Configure<ICasterOptions>(configuration.GetSection(ICasterOptions.SECTION_NAME))
             .Configure<Emr20Options>(configuration.GetSection(Emr20Options.SECTION_NAME))
             .Configure<Emr25Options>(configuration.GetSection(Emr25Options.SECTION_NAME))
-            .Configure<SmassOptions>(configuration.GetSection(SmassOptions.SECTION_NAME));
+            .Configure<SmassOptions>(configuration.GetSection(SmassOptions.SECTION_NAME))
+            .Configure<OftaOptions>(configuration.GetSection(OftaOptions.SECTION_NAME));
 
         services
             .Scan(selector => selector

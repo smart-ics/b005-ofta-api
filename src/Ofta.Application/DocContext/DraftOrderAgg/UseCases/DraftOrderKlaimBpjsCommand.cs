@@ -1,32 +1,39 @@
 ﻿using Dawn;
 using MediatR;
 using Ofta.Application.DocContext.DraftOrderAgg.Workers;
-using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Domain.DocContext.DocTypeAgg;
+using Ofta.Domain.DocContext.DraftOrderAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.DocContext.DraftOrderAgg.UseCases;
 
+public record DraftOrderKlaimBpjsEvent(
+    DraftOrderModel Agg,
+    DraftOrderKlaimBpjsCommand Command
+) : INotification;
+    
 public record DraftOrderKlaimBpjsCommand(
     string DocTypeId,
     string RequesterUserId,
     string DrafterUserId,
     string KlaimBpjsId
-): IRequest, IDocTypeKey, IKlaimBpjsKey;
+) : IRequest, IDocTypeKey, IKlaimBpjsKey;
 
 public class DraftOrderKlaimBpjsHandler: IRequestHandler<DraftOrderKlaimBpjsCommand>
 {
     private readonly IKlaimBpjsBuilder _klaimBpjsBuilder;
     private readonly IDraftOrderBuilder _builder;
     private readonly IDraftOrderWriter _writer;
+    private readonly IMediator _mediator;
     private const string CONTEXT_NAME = "Klaim BPJS";
 
-    public DraftOrderKlaimBpjsHandler(IKlaimBpjsBuilder klaimBpjsBuilder, IDraftOrderBuilder builder, IDraftOrderWriter writer)
+    public DraftOrderKlaimBpjsHandler(IKlaimBpjsBuilder klaimBpjsBuilder, IDraftOrderBuilder builder, IDraftOrderWriter writer, IMediator mediator)
     {
         _klaimBpjsBuilder = klaimBpjsBuilder;
         _builder = builder;
         _writer = writer;
+        _mediator = mediator;
     }
     
     public Task<Unit> Handle(DraftOrderKlaimBpjsCommand request, CancellationToken cancellationToken)
@@ -53,6 +60,7 @@ public class DraftOrderKlaimBpjsHandler: IRequestHandler<DraftOrderKlaimBpjsComm
         
         // WRITE
         _ = _writer.Save(aggregate);
+        _mediator.Publish(new DraftOrderKlaimBpjsEvent(aggregate, request), CancellationToken.None);
         return Task.FromResult(Unit.Value);
     }
 }

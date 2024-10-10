@@ -54,6 +54,13 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpPatch("setDocTypeDrafter")]
+    public async Task<IActionResult> SetDocTypeDrafter(KlaimBpjsSetDrafterCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
 
     [HttpPatch("reOrderDoc")]
     public async Task<IActionResult> ReOrderDoc(KlaimBpjsDocTypeReOrderCommand cmd)
