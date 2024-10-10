@@ -22,7 +22,14 @@ public class TilakaController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-   
+
+    [HttpPost("RejectSign")]
+    public async Task<IActionResult> RejectSign(RejectSignDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
     [HttpPost("DownloadDoc")]
     public async Task<IActionResult> DownloadFile(PublishDocCommand cmd)
     {
