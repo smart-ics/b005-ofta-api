@@ -36,18 +36,18 @@ public class AddQueueICaster_OnKlaimBpjsPrintOutFinishPrintEventHandler: INotifi
         if (userEmr is null)
             return Task.CompletedTask;
         
-        var reqObj = new ICasterEmrModel()
-        {
-            FromUser = userEmr.UserOftaId,
-            ToUser = userEmr.UserMappingId,
-            Message = new MessageEmrModel
-            {
-                DocType = "resume",
-                DocReff = notification.Command.PrintOutReffId,
-            }
-        };
-        
-        _sendToICasterService.Execute(reqObj);
+        // var reqObj = new ICasterEmrModel()
+        // {
+        //     FromUser = userEmr.UserOftaId,
+        //     ToUser = userEmr.UserMappingId,
+        //     Message = new MessageEmrModel
+        //     {
+        //         DocType = "resume",
+        //         DocReff = notification.Command.PrintOutReffId,
+        //     }
+        // };
+        //
+        // _sendToICasterService.Execute(reqObj);
         return Task.CompletedTask;
     }
 }

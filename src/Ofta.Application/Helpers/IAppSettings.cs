@@ -3,4 +3,5 @@
 public interface IAppSettingService
 {
     string RemoteCetakAddress { get; }
+    string OftaMyDocWebUrl { get; }
 }
