@@ -27,17 +27,23 @@ public class SendNotifToEmrOnDraftOrderKlaimBpjsEventHandler : INotificationHand
 
     public Task Handle(DraftOrderKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
-        var toUser = notification.Agg.DrafterUserId;
+        var user = _userBuilder
+            .Load(new UserOftaModel(notification.Agg.DrafterUserId))
+            .Build();
 
-        if (toUser == string.Empty)
+        if (user is null)
+            return Task.CompletedTask;
+        
+        var externalSistem = ExternalSystemHelper.GetDestination(notification.Agg);
+        if (externalSistem is not UserTypeEnum.EMR)
+            return Task.CompletedTask;
+
+        var toUser = user.ListUserMapping.FirstOrDefault(x => x.UserType == externalSistem);
+        if (toUser is null)
             return Task.CompletedTask;
 
         var klaimBpjs = _klaimBpjsBuilder
             .Load(notification.Command)
-            .Build();
-
-        var user = _userBuilder
-            .Load(new UserOftaModel(notification.Agg.RequesterUserId))
             .Build();
 
         var messageObj = new
@@ -55,7 +61,7 @@ public class SendNotifToEmrOnDraftOrderKlaimBpjsEventHandler : INotificationHand
         var messageJsonString = JsonConvert.SerializeObject(messageObj);
         var reffId = $"{klaimBpjs.RegId}-{notification.Agg.DocTypeId}";
 
-        var reqObj = new EmrNotificationModel(toUser, messageJsonString, reffId);
+        var reqObj = new EmrNotificationModel(toUser.UserMappingId, messageJsonString, reffId);
         _sendNotifToEmrService.Execute(reqObj);
         return Task.CompletedTask;
     }

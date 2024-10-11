@@ -56,7 +56,7 @@ public class KlaimBpjsController : Controller
     }
     
     [HttpPatch("setDocTypeDrafter")]
-    public async Task<IActionResult> SetDocTypeDrafter(KlaimBpjsSetDrafterCommand cmd)
+    public async Task<IActionResult> SetDocTypeDrafter(KlaimBpjsDocTypeSetDrafterCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));

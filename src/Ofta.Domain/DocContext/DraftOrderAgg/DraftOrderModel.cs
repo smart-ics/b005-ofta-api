@@ -1,6 +1,8 @@
-﻿namespace Ofta.Domain.DocContext.DraftOrderAgg;
+﻿using Ofta.Domain.DocContext.DocTypeAgg;
 
-public class DraftOrderModel: IDraftOrderKey
+namespace Ofta.Domain.DocContext.DraftOrderAgg;
+
+public class DraftOrderModel: IDraftOrderKey, IDocTypeKey
 {
     public string DraftOrderId { get; set; }
     public DateTime DraftOrderDate { get; set; }

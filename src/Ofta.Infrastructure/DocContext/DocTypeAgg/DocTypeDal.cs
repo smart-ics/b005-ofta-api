@@ -24,10 +24,10 @@ public class DocTypeDal : IDocTypeDal
             INSERT INTO OFTA_DocType(
                 DocTypeId, DocTypeName, DocTypeCode,
                 IsStandard, IsActive, FileUrl, 
-                JenisDokRemoteCetak)
+                JenisDokRemoteCetak, DefaultDrafterUserId)
             VALUES (
                 @DocTypeId, @DocTypeName,@DocTypeCode, @IsStandard, 
-                @IsActive, @FileUrl, @JenisDokRemoteCetak)";
+                @IsActive, @FileUrl, @JenisDokRemoteCetak, @DefaultDrafterUserId)";
 
         var dp = new DynamicParameters();
         dp.AddParam("@DocTypeId", model.DocTypeId, SqlDbType.VarChar);
@@ -37,6 +37,7 @@ public class DocTypeDal : IDocTypeDal
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
         dp.AddParam("@FileUrl", model.FileUrl, SqlDbType.VarChar);
         dp.AddParam("@JenisDokRemoteCetak", model.JenisDokRemoteCetak, SqlDbType.VarChar);
+        dp.AddParam("@DefaultDrafterUserId", model.DefaultDrafterUserId, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -53,7 +54,8 @@ public class DocTypeDal : IDocTypeDal
                 IsStandard = @IsStandard,
                 IsActive = @IsActive,
                 FileUrl = @FileUrl,
-                JenisDokRemoteCetak = @JenisDokRemoteCetak
+                JenisDokRemoteCetak = @JenisDokRemoteCetak,
+                DefaultDrafterUserId = @DefaultDrafterUserId
             WHERE
                 DocTypeId = @DocTypeId
 ";
@@ -66,6 +68,7 @@ public class DocTypeDal : IDocTypeDal
         dp.AddParam("@IsActive", model.IsActive, SqlDbType.Bit);
         dp.AddParam("@FileUrl", model.FileUrl, SqlDbType.VarChar);
         dp.AddParam("@JenisDokRemoteCetak", model.JenisDokRemoteCetak, SqlDbType.VarChar);
+        dp.AddParam("@DefaultDrafterUserId", model.DefaultDrafterUserId, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -92,7 +95,7 @@ public class DocTypeDal : IDocTypeDal
             SELECT
                 DocTypeId, DocTypeName, DocTypeCode,
                 IsStandard, IsActive, FileUrl,
-                JenisDokRemoteCetak
+                JenisDokRemoteCetak, DefaultDrafterUserId
             FROM
                 OFTA_DocType
             WHERE
@@ -111,7 +114,7 @@ public class DocTypeDal : IDocTypeDal
             SELECT
                 DocTypeId, DocTypeName,DocTypeCode,
                 IsStandard, IsActive, FileUrl, 
-                JenisDokRemoteCetak
+                JenisDokRemoteCetak, DefaultDrafterUserId
             FROM
                 OFTA_DocType ";
         

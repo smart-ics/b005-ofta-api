@@ -31,6 +31,7 @@ public class GetKlaimBpjsDocResponse
     public int NoUrut { get; set; }
     public string DocTypeId { get; set; }
     public string DocTypeName { get; set; }
+    public string DrafterUserId { get; set; }
     public List<GetKlaimBPJSPrintOutResponse> ListPrinOut { get; set; }
 }
 
@@ -93,6 +94,7 @@ public class GetKlaimBpjsQueryHandler : IRequestHandler<GetKlaimBpjsQuery, GetKl
                          NoUrut = x.NoUrut,
                          DocTypeId = x.DocTypeId,
                          DocTypeName = x.DocTypeName,
+                         DrafterUserId = x.DrafterUserId,
                          ListPrinOut = x.ListPrintOut
                          .Select(y => new GetKlaimBPJSPrintOutResponse
                           {
