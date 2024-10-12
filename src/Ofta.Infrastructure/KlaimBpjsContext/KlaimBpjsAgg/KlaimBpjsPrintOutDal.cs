@@ -4,6 +4,7 @@ using Dapper;
 using Microsoft.Extensions.Options;
 using Nuna.Lib.DataAccessHelper;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Infrastructure.Helpers;
 
@@ -73,5 +74,24 @@ public class KlaimBpjsPrintOutDal : IKlaimBpjsPrintOutDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Query<KlaimBpjsPrintOutModel>(sql, dp);
     }
+
+    public KlaimBpjsPrintOutModel GetData(IDocKey key)
+    {
+        const string sql = @"
+            SELECT
+                KlaimBpjsId, KlaimBpjsDocTypeId, KlaimBpjsPrintOutId, 
+                NoUrut, PrintOutReffId, DocId, DocUrl, PrintState
+            FROM
+                OFTA_KlaimBpjsPrintOut
+            WHERE 
+                DocId = @DocId";
+
+        var dp = new DynamicParameters();
+        dp.AddParam("@DocId", key.DocId, SqlDbType.VarChar);
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.QueryFirstOrDefault<KlaimBpjsPrintOutModel>(sql, dp);
+    }
+
 
 }
