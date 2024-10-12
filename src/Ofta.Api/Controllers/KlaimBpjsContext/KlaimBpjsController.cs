@@ -19,14 +19,14 @@ public class KlaimBpjsController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateDoc(KlaimBpjsCreateCommand cmd)
+    public async Task<IActionResult> CreateKlaimBpjs(KlaimBpjsCreateCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
     
-    [HttpPost("scanReffId")]
-    public async Task<IActionResult> ScanReffId(KlaimBpjsPrintOutScanCommand cmd)
+    [HttpPost("scanDraft")]
+    public async Task<IActionResult> ScanDraft(KlaimBpjsPrintOutScanCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
@@ -55,22 +55,22 @@ public class KlaimBpjsController : Controller
         return Ok(new JSendOk(result));
     }
     
-    [HttpPatch("setDocTypeDrafter")]
-    public async Task<IActionResult> SetDocTypeDrafter(KlaimBpjsDocTypeSetDrafterCommand cmd)
+    [HttpPatch("setDrafter")]
+    public async Task<IActionResult> SetDrafter(KlaimBpjsDocTypeSetDrafterCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
     }
 
-    [HttpPatch("reOrderDoc")]
-    public async Task<IActionResult> ReOrderDoc(KlaimBpjsDocTypeReOrderCommand cmd)
+    [HttpPatch("reorderDocType")]
+    public async Task<IActionResult> ReorderDocType(KlaimBpjsDocTypeReOrderCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
     
-    [HttpPatch("orderCreateIncompleteDoc")]
-    public async Task<IActionResult> OrderCreateIncompleteDoc(DraftOrderKlaimBpjsCommand cmd)
+    [HttpPatch("orderDraft")]
+    public async Task<IActionResult> OrderDraft(DraftOrderKlaimBpjsCommand cmd)
     {
         await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
