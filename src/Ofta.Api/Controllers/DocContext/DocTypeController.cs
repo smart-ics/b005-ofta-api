@@ -45,6 +45,13 @@ public class DocTypeController : Controller
         await _mediator.Send(cmd);
         return Ok();
     }
+    
+    [HttpPatch("setDefaultDrafter")]
+    public async Task<IActionResult> SetDefaultDrafter(DocTypeSetDefaultDrafterCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
 
     [HttpPatch("addTag")]
     public async Task<IActionResult> AddTagDocType(AddTagDocTypeCommand cmd)

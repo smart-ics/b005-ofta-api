@@ -31,7 +31,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     
     IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey);
     IKlaimBpjsBuilder RemoveDocType(int noUrut);
-    IKlaimBpjsBuilder SetDocTypeDrafter(IDocTypeKey docTypeKey, string userId);
+    IKlaimBpjsBuilder SetDocTypeDrafter(IDocTypeKey docTypeKey, IUserOftaKey userOftaKey);
     
     IKlaimBpjsBuilder AddPrintOut(IDocTypeKey docTypeKey, string printReffId);
     IKlaimBpjsBuilder RemovePrintOut(string printOutReffId);
@@ -228,7 +228,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             NoUrut = noUrut,
             DocTypeId = docType.DocTypeId,
             DocTypeName = docType.DocTypeName,
-            DrafterUserId = string.Empty,
+            DrafterUserId = docType.DefaultDrafterUserId,
             ListPrintOut = new List<KlaimBpjsPrintOutModel>()
         });
         return this;
@@ -247,11 +247,11 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder SetDocTypeDrafter(IDocTypeKey docTypeKey, string userId)
+    public IKlaimBpjsBuilder SetDocTypeDrafter(IDocTypeKey docTypeKey, IUserOftaKey userOftaKey)
     {
         _agg.ListDocType
             .Where(x => x.DocTypeId == docTypeKey.DocTypeId)
-            .ForEach(x => x.DrafterUserId = userId);
+            .ForEach(x => x.DrafterUserId = userOftaKey.UserOftaId);
         
         return this;
     }

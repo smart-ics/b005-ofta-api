@@ -2,8 +2,10 @@
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
 using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.ParamContext.SystemAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocTypeAgg.Workers;
 
@@ -17,6 +19,7 @@ public interface IDocTypeBuilder : INunaBuilder<DocTypeModel>
     IDocTypeBuilder AddTag(string tag);
     IDocTypeBuilder RemoveTag(string tag);
     IDocTypeBuilder FileUrl(string fileUrl);
+    IDocTypeBuilder DefaultDrafter(IUserOftaKey key);
 }
 
 public class DocTypeBuilder : IDocTypeBuilder
@@ -25,14 +28,16 @@ public class DocTypeBuilder : IDocTypeBuilder
     private readonly IDocTypeDal _docTypeDal;
     private readonly IDocTypeTagDal _docTypeTagDal;
     private readonly IParamSistemDal _paramSistemDal;
+    private readonly IUserOftaDal _userOftaDal;
 
     public DocTypeBuilder(IDocTypeDal docTypeDal, 
         IDocTypeTagDal docTypeTagDal,
-        IParamSistemDal paramSistemDal)
+        IParamSistemDal paramSistemDal, IUserOftaDal userOftaDal)
     {
         _docTypeDal = docTypeDal;
         _docTypeTagDal = docTypeTagDal;
         _paramSistemDal = paramSistemDal;
+        _userOftaDal = userOftaDal;
     }
 
     public DocTypeModel Build()
@@ -111,6 +116,15 @@ public class DocTypeBuilder : IDocTypeBuilder
     public IDocTypeBuilder FileUrl(string fileUrl)
     {
         _aggregate.FileUrl = fileUrl;
+        return this;
+    }
+
+    public IDocTypeBuilder DefaultDrafter(IUserOftaKey key)
+    {
+        var user = _userOftaDal.GetData(key)
+            ?? throw new KeyNotFoundException($"User ofta {key.UserOftaId} not found");
+
+        _aggregate.DefaultDrafterUserId = user.UserOftaId;
         return this;
     }
 }

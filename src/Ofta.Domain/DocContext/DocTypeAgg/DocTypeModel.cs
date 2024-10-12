@@ -16,6 +16,7 @@ public class DocTypeModel : IDocTypeKey, IDocTypeFileUrl
     public bool IsActive { get; set; }
     public string FileUrl { get; set; }
     public string JenisDokRemoteCetak { get; set; }
+    public string DefaultDrafterUserId { get; set; }
     public List<DocTypeTagModel> ListTag { get; set; }
 }
 
