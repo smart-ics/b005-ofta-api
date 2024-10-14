@@ -2,6 +2,7 @@
 using MediatR;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
@@ -44,7 +45,6 @@ public class KlaimBpjsPrintOutFinishPrintHandler : IRequestHandler<KlaimBpjsPrin
         _writer.Save(agg);
         _mediator.Publish(new FinishedPrintDocKlaimBpjsEvent(agg, request), cancellationToken);
         return Task.FromResult(Unit.Value);
-        
     }
 }
 

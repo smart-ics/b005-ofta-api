@@ -1,10 +1,7 @@
 using MediatR;
-using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
-using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Workers;
 using Ofta.Domain.PrintOutContext.ICasterAgg;
-using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 
