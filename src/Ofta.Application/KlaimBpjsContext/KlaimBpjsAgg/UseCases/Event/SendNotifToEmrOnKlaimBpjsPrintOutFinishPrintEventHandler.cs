@@ -1,6 +1,5 @@
 using MediatR;
 using Newtonsoft.Json;
-using Ofta.Application.DocContext.DocTypeAgg.Workers;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
@@ -14,17 +13,14 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
 {
     private readonly IAppSettingService _appSettingService;
     private readonly IKlaimBpjsBuilder _klaimBpjsBuilder;
-    private readonly IDocTypeBuilder _docTypeBuilder;
     private readonly IUserBuilder _userBuilder;
     private readonly IListResumeService _listResumeService;
     private readonly ISendNotifToEmrService _sendNotifToEmrService;
-    private const string DOC_TYPE_NAME = "Resume Medis";
 
-    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IDocTypeBuilder docTypeBuilder, IUserBuilder userBuilder, IListResumeService listResumeService, ISendNotifToEmrService sendNotifToEmrService)
+    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IUserBuilder userBuilder, IListResumeService listResumeService, ISendNotifToEmrService sendNotifToEmrService)
     {
         _appSettingService = appSettingService;
         _klaimBpjsBuilder = klaimBpjsBuilder;
-        _docTypeBuilder = docTypeBuilder;
         _userBuilder = userBuilder;
         _listResumeService = listResumeService;
         _sendNotifToEmrService = sendNotifToEmrService;
@@ -44,7 +40,7 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
         var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == notification.Command.PrintOutReffId));
         
         var user = _userBuilder
-            .Load(notification.Agg)
+            .Load(new UserOftaModel(docType.DrafterUserId))
             .Build();
 
         var externalSistem = ExternalSystemHelper.GetDestination(docType);
