@@ -8,7 +8,6 @@ using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
-using Polly;
 
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
@@ -55,41 +54,22 @@ public class RepeatSignDocHandler : IRequestHandler<RepeatSignDocCommand>
         //  BUILD
         var aggdoc = _docBuilder
         .Load(request)
-        .AddJurnal(DocStateEnum.ReSign, string.Empty)
         .Build();
 
-        var klaimBpjsPrintOut = _klaimBpjsPrintOutDal.GetData(request) ??
-            new KlaimBpjsPrintOutModel();
 
-        var klaimBpjs = _klaimBpjsBuilder
-                .Load((IKlaimBpjsKey)klaimBpjsPrintOut)
-                .Build();
-
-        var printOut = klaimBpjs.ListDocType
-                    .SelectMany(x => x.ListPrintOut)
-                    .FirstOrDefault(x => x.DocId == request.DocId)
-                    ?? new KlaimBpjsPrintOutModel();
-
-        var fallback = Policy<DocModel>
-          .Handle<KeyNotFoundException>()
-          .Fallback(() => _docBuilder
-              .Create()
-              .DocType(new DocTypeModel(aggdoc.DocTypeId))
-              .User(aggdoc)
-              .AddJurnal(DocStateEnum.Created, string.Empty)
-              .Build());
-        var doc = fallback.Execute(() =>
-            _docBuilder.Load(new DocModel()).Build());
-
-
-        //  WRITE
+        // WRITE
         //      doc
+
+        var doc = _docBuilder
+             .Create()
+             .DocType(new DocTypeModel(aggdoc.DocTypeId))
+             .User(aggdoc)
+             .AddJurnal(DocStateEnum.Created, string.Empty)
+             .Build();
+        doc = _docWriter.Save(doc);
         doc = _docBuilder
             .Attach(doc)
             .AddJurnal(DocStateEnum.Submited, string.Empty)
-            .Build();
-        doc = _docWriter.Save(doc);
-        doc = _docBuilder.Attach(doc)
             .GenRequestedDocUrl()
             .Build();
         doc = _docWriter.Save(doc);
@@ -104,15 +84,48 @@ public class RepeatSignDocHandler : IRequestHandler<RepeatSignDocCommand>
                 signee.SignTag,
                 signee.SignPosition,
                 signee.SignPositionDesc,
-                signee.SignUrl)
+                "")
                 .Build();
         }
         doc = _docWriter.Save(doc);
 
-        //      klaim
-        printOut.DocId = doc.DocId;
-        printOut.DocUrl = doc.RequestedDocUrl;
-        _klaimBpjsWriter.Save(klaimBpjs);
+        //      add scope
+        foreach (var scope in aggdoc.ListScope)
+        {
+            doc = _docBuilder
+                .Attach(doc)
+                .AddScope((IScope)scope)
+                .Build();
+        }
+        doc = _docWriter.Save(doc);
+
+        //      add jurnal reSign 
+        var aggOriginDoc = _docBuilder
+            .Load(aggdoc)
+            .AddJurnal(DocStateEnum.ReSign, doc.DocId)
+            .Build();
+        _docWriter.Save(aggOriginDoc);
+
+        //      klaim bpjs doc
+        var klaimBpjsPrintOut = _klaimBpjsPrintOutDal.GetData(request) ??
+            new KlaimBpjsPrintOutModel();
+
+        if (!string.IsNullOrEmpty(klaimBpjsPrintOut.KlaimBpjsId))
+        {
+            var klaimBpjs = _klaimBpjsBuilder
+                .Load(new KlaimBpjsModel(klaimBpjsPrintOut.KlaimBpjsId))
+                .Build();
+
+
+            var printOut = klaimBpjs.ListDocType
+                        .SelectMany(x => x.ListPrintOut)
+                        .FirstOrDefault(x => x.DocId == request.DocId)
+                        ?? new KlaimBpjsPrintOutModel();
+
+            printOut.DocId = doc.DocId;
+            printOut.DocUrl = doc.RequestedDocUrl;
+            _klaimBpjsWriter.Save(klaimBpjs);
+        }
 
         //      Copy Paste fisik file;
         var copyFileRequest = new CopyFileRequest(doc.RequestedDocUrl, aggdoc.RequestedDocUrl);
