@@ -67,6 +67,23 @@ public class UserOftaMappingDal: IUserOftaMappingDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<UserOftaMappingDto>(sql, dp);
     }
+
+    public IEnumerable<UserOftaMappingModel> ListData(string filter)
+    {
+        const string sql = @"
+            SELECT
+                UserOftaId, UserMappingId, PegId, UserType
+            FROM 
+                OFTA_UserMapping
+            WHERE
+                UserMappingId = @UserMappingId";
+        
+        var dp = new DynamicParameters();
+        dp.AddParam("@UserMappingId", filter, SqlDbType.VarChar);
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Read<UserOftaMappingDto>(sql, dp);
+    }
 }
 
 public class UserOftaMappingDto : UserOftaMappingModel
