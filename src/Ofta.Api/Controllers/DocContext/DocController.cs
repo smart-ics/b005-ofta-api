@@ -49,7 +49,15 @@ public class DocController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
+
+    [HttpPost("repeatSign")]
+    public async Task<IActionResult> RepeatSignDoc(RepeatSignDocCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDataDoc(string id)
     {
