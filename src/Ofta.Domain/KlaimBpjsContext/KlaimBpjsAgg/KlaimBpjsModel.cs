@@ -5,6 +5,12 @@ namespace Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 public class KlaimBpjsModel : IKlaimBpjsKey, IOrderKlaimBpjsKey, IUserOftaKey
 {
+    public KlaimBpjsModel()
+    {
+    }
+
+    public KlaimBpjsModel(string id) => KlaimBpjsId = id;
+
     public string KlaimBpjsId { get; set; }
     public DateTime KlaimBpjsDate { get; set; }
     public string OrderKlaimBpjsId { get; set; }

@@ -8,5 +8,6 @@ public enum DocStateEnum
     Signed,
     Published,
     Expired,
-    Rejected
+    Rejected,
+    ReSign
 }
