@@ -98,8 +98,8 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         _klaimBpjsWriter.Save(agg);
         
         //      save fisik file;
-        // var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);
-        // _ = _writeFileService.Execute(writeFileRequest);
+        var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);
+        _ = _writeFileService.Execute(writeFileRequest);
 
         return Task.CompletedTask;
     }
