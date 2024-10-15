@@ -66,24 +66,43 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             .Build();
         
         var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
-        var signPosition = SignPositionEnum.SignLeft;
-        foreach (PropertyInfo prop in userSigns?.GetType().GetProperties()!)
+        if (userSigns?.UserSign1 is not null)
         {
-            var user = prop.GetValue(userSigns);
-            if (user is null)
-                continue;
-            
             var userOfta = _userOftaMappingDal
-                .ListData(user.ToString()!)
+                .ListData(userSigns.UserSign1)
                 .First();
             
             doc = _docBuilder
                 .Attach(doc)
-                .AddSignee(userOfta, "", signPosition, "", "")
+                .AddSignee(userOfta, "", SignPositionEnum.SignLeft, "", "")
                 .AddScope(userOfta)
                 .Build();
-
-            signPosition++;
+        }
+        
+        if (userSigns?.UserSign2 is not null)
+        {
+            var userOfta = _userOftaMappingDal
+                .ListData(userSigns.UserSign2)
+                .First();
+            
+            doc = _docBuilder
+                .Attach(doc)
+                .AddSignee(userOfta, "", SignPositionEnum.SignCenter, "", "")
+                .AddScope(userOfta)
+                .Build();
+        }
+        
+        if (userSigns?.UserSign3 is not null)
+        {
+            var userOfta = _userOftaMappingDal
+                .ListData(userSigns.UserSign3)
+                .First();
+            
+            doc = _docBuilder
+                .Attach(doc)
+                .AddSignee(userOfta, "", SignPositionEnum.SignRight, "", "")
+                .AddScope(userOfta)
+                .Build();
         }
         
         doc = _docWriter.Save(doc);
