@@ -1,28 +1,26 @@
 using MediatR;
 using Newtonsoft.Json;
-using Ofta.Application.DocContext.DocTypeAgg.Workers;
+using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Workers;
-using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 
-public class SendNotifToEmr_OnKlaimBpjsPrintOutFinishPrintEventHandler: INotificationHandler<FinishedPrintDocKlaimBpjsEvent>
+public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotificationHandler<FinishedPrintDocKlaimBpjsEvent>
 {
+    private readonly IAppSettingService _appSettingService;
     private readonly IKlaimBpjsBuilder _klaimBpjsBuilder;
-    private readonly IDocTypeBuilder _docTypeBuilder;
     private readonly IUserBuilder _userBuilder;
     private readonly IListResumeService _listResumeService;
     private readonly ISendNotifToEmrService _sendNotifToEmrService;
-    private const string DOC_TYPE_NAME = "Resume Medis"; 
 
-    public SendNotifToEmr_OnKlaimBpjsPrintOutFinishPrintEventHandler(IKlaimBpjsBuilder klaimBpjsBuilder, IDocTypeBuilder docTypeBuilder, IUserBuilder userBuilder, IListResumeService listResumeService, ISendNotifToEmrService sendNotifToEmrService)
+    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IUserBuilder userBuilder, IListResumeService listResumeService, ISendNotifToEmrService sendNotifToEmrService)
     {
+        _appSettingService = appSettingService;
         _klaimBpjsBuilder = klaimBpjsBuilder;
-        _docTypeBuilder = docTypeBuilder;
         _userBuilder = userBuilder;
         _listResumeService = listResumeService;
         _sendNotifToEmrService = sendNotifToEmrService;
@@ -39,33 +37,36 @@ public class SendNotifToEmr_OnKlaimBpjsPrintOutFinishPrintEventHandler: INotific
             .Load(notification.Agg)
             .Build();
         
+        var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == notification.Command.PrintOutReffId));
+        
         var user = _userBuilder
-            .Load(notification.Agg)
+            .Load(new UserOftaModel(docType.DrafterUserId))
             .Build();
 
-        var docType = klaimBpjs.ListDocType.First(x => x.DocTypeName == DOC_TYPE_NAME); 
-
-        var userEmr = user.ListUserMapping.Find(x => x.PegId == resumeMedis.DokterId && x.UserType == UserTypeEnum.EMR);
-        if (userEmr is null)
+        var externalSistem = ExternalSystemHelper.GetDestination(docType);
+        if (externalSistem is not UserTypeEnum.EMR)
+            return Task.CompletedTask;
+        
+        var toUser = user.ListUserMapping.FirstOrDefault(x => x.PegId == resumeMedis.DokterId && x.UserType == externalSistem);
+        if (toUser is null)
             return Task.CompletedTask;
 
         var messageObj = new
         {
-            Keterangan = "Request Sign Resume Medis",
-            KodeReg = klaimBpjs.RegId,
-            DocType = docType.DocTypeId,
-            UrlOfta = "ofta.com",
-            UserOfta = userEmr.UserOftaId
+            url = _appSettingService.OftaMyDocWebUrl,
+            docTypeId = docType.DocTypeId,
+            docTypeName = docType.DocTypeName,
+            regId = klaimBpjs.RegId,
+            userOfta = user.Email,
+            userOftaName = user.UserOftaName,
+            userOftaId = user.UserOftaId,
+            keterangan = $"Request Sign {docType.DocTypeName}",
         };
         
         var messageJsonString = JsonConvert.SerializeObject(messageObj);
+        var reffId = notification.Command.PrintOutReffId;
         
-        var reqObj = new EmrNotificationModel(
-            userEmr.UserMappingId,
-            messageJsonString,
-            notification.Command.PrintOutReffId
-        );
-        
+        var reqObj = new EmrNotificationModel(toUser.UserMappingId, messageJsonString, reffId);
         _sendNotifToEmrService.Execute(reqObj);
         return Task.CompletedTask;
     }

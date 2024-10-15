@@ -1,9 +1,13 @@
-﻿using MediatR;
+﻿using System.Reflection;
+using MediatR;
+using Newtonsoft.Json;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 using Polly;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
@@ -15,16 +19,18 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
     private readonly IDocWriter _docWriter;
     private readonly IKlaimBpjsWriter _klaimBpjsWriter;
     private readonly IWriteFileService _writeFileService;
+    private readonly IUserOftaMappingDal _userOftaMappingDal;
 
     public CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler(IDocBuilder docBuilder, 
         IDocWriter docWriter, 
         IKlaimBpjsWriter klaimBpjsWriter, 
-        IWriteFileService writeFileService)
+        IWriteFileService writeFileService, IUserOftaMappingDal userOftaMappingDal)
     {
         _docBuilder = docBuilder;
         _docWriter = docWriter;
         _klaimBpjsWriter = klaimBpjsWriter;
         _writeFileService = writeFileService;
+        _userOftaMappingDal = userOftaMappingDal;
     }
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
@@ -58,6 +64,47 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             .Attach(doc)
             .AddJurnal(DocStateEnum.Submited, string.Empty)
             .Build();
+        
+        var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
+        if (userSigns?.UserSign1 is not null)
+        {
+            var userOfta = _userOftaMappingDal
+                .ListData(userSigns.UserSign1)
+                .First();
+            
+            doc = _docBuilder
+                .Attach(doc)
+                .AddSignee(userOfta, "", SignPositionEnum.SignLeft, "", "")
+                .AddScope(userOfta)
+                .Build();
+        }
+        
+        if (userSigns?.UserSign2 is not null)
+        {
+            var userOfta = _userOftaMappingDal
+                .ListData(userSigns.UserSign2)
+                .First();
+            
+            doc = _docBuilder
+                .Attach(doc)
+                .AddSignee(userOfta, "", SignPositionEnum.SignCenter, "", "")
+                .AddScope(userOfta)
+                .Build();
+        }
+        
+        if (userSigns?.UserSign3 is not null)
+        {
+            var userOfta = _userOftaMappingDal
+                .ListData(userSigns.UserSign3)
+                .First();
+            
+            doc = _docBuilder
+                .Attach(doc)
+                .AddSignee(userOfta, "", SignPositionEnum.SignRight, "", "")
+                .AddScope(userOfta)
+                .Build();
+        }
+        
         doc = _docWriter.Save(doc);
         doc = _docBuilder.Attach(doc)
             .GenRequestedDocUrl()
@@ -74,6 +121,12 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         _ = _writeFileService.Execute(writeFileRequest);
 
         return Task.CompletedTask;
-
     }
+}
+
+public class UserSignee
+{
+    public string UserSign1 { get; set; }
+    public string UserSign2 { get; set; }
+    public string UserSign3 { get; set; }
 }
