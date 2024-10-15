@@ -1,55 +1,48 @@
 using MediatR;
-using Ofta.Application.Helpers;
+using Newtonsoft.Json;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
-using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
-using Ofta.Application.UserContext.UserOftaAgg.Workers;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.PrintOutContext.ICasterAgg;
-using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 
 public class AddQueueICasterOnKlaimBpjsPrintOutFinishPrintEventHandler: INotificationHandler<FinishedPrintDocKlaimBpjsEvent>
 {
-    private readonly IKlaimBpjsBuilder _klaimBpjsBuilder;
-    private readonly IUserBuilder _userBuilder;
-    private readonly IListResumeService _listResumeService;
     private readonly ISendToICasterService _sendToICasterService;
+    private readonly IUserOftaMappingDal _userOftaMappingDal;
 
-    public AddQueueICasterOnKlaimBpjsPrintOutFinishPrintEventHandler(IKlaimBpjsBuilder klaimBpjsBuilder, IUserBuilder userBuilder, IListResumeService listResumeService, ISendToICasterService sendToICasterService)
+    public AddQueueICasterOnKlaimBpjsPrintOutFinishPrintEventHandler(ISendToICasterService sendToICasterService, IUserOftaMappingDal userOftaMappingDal)
     {
-        _klaimBpjsBuilder = klaimBpjsBuilder;
-        _userBuilder = userBuilder;
-        _listResumeService = listResumeService;
         _sendToICasterService = sendToICasterService;
+        _userOftaMappingDal = userOftaMappingDal;
     }
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
-        var listResume = _listResumeService.Execute(notification.Agg.RegId);
-        var resumeMedis = listResume.FirstOrDefault(x => x.ResumeId == notification.Command.PrintOutReffId);
-        if (resumeMedis is null)
-            return Task.CompletedTask;
+        var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
         
-        var klaimBpjs = _klaimBpjsBuilder
-            .Load(notification.Agg)
-            .Build();
+        if (userSigns.UserSign1 != string.Empty)
+            SendNotifToIcaster(userSigns.UserSign1);
         
-        var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == notification.Command.PrintOutReffId));
+        if (userSigns.UserSign2 != string.Empty)
+            SendNotifToIcaster(userSigns.UserSign2);
         
-        var user = _userBuilder
-            .Load(new UserOftaModel(docType.DrafterUserId))
-            .Build();
-
-        var externalSistem = ExternalSystemHelper.GetDestination(docType);
-        if (externalSistem is not UserTypeEnum.EMR)
-            return Task.CompletedTask;
+        if (userSigns.UserSign3 != string.Empty)
+            SendNotifToIcaster(userSigns.UserSign3);
         
-        var userEmr = user.ListUserMapping.FirstOrDefault(x => x.PegId == resumeMedis.DokterId && x.UserType == externalSistem);
-        if (userEmr is null)
-            return Task.CompletedTask;
-
-        var reqObj = new ICasterEmrModel(userEmr.UserOftaId, userEmr.UserMappingId);
-        _sendToICasterService.Execute(reqObj);
         return Task.CompletedTask;
+    }
+
+    private void SendNotifToIcaster(string user)
+    {
+        var userOfta = _userOftaMappingDal
+            .ListData(user)
+            .First();
+
+        if (userOfta is null)
+            return;
+        
+        var reqObj = new ICasterEmrModel(userOfta.UserOftaId, userOfta.UserMappingId);
+        _sendToICasterService.Execute(reqObj);
     }
 }
