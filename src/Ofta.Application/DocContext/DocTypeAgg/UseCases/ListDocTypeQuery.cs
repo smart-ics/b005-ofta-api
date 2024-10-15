@@ -33,10 +33,10 @@ public class ListDocTypeHandler : IRequestHandler<ListDocTypeQuery, IEnumerable<
     {
         var listDocType = _docTypeDal.ListData()?.ToList() ?? new List<DocTypeModel>();
 
-        var listTagId = request.ListTag?
+        var requestListTag = request.ListTag.FirstOrDefault()?.Split(",").ToList();
+        var listTagId = requestListTag?
             .Select(x => (ITag)new listTagRecord(x)).ToList() ?? new List<ITag>();
         
-
         var listTag = _docTypeTagDal.ListData(listTagId)?.ToList() ?? new List<DocTypeTagModel>();
         
         var filteredDocType =(
