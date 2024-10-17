@@ -30,9 +30,6 @@ public class AddQueueICasterOnDraftOrderKlaimBpjsEventHandler: INotificationHand
             .Build();
 
         var externalSistem = ExternalSystemHelper.GetDestination(notification.Agg);
-        if (externalSistem is not UserTypeEnum.EMR)
-            return Task.CompletedTask;
-        
         var toUser = userOfta.ListUserMapping.FirstOrDefault(x => x.UserType == externalSistem);
         if (fromUser == string.Empty || toUser is null)
             return Task.CompletedTask;
