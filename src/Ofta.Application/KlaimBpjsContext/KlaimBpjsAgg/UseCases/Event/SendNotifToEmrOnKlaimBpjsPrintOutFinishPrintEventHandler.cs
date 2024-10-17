@@ -54,7 +54,7 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
     {
         var userOftaMapping = _userOftaMappingDal
             .ListData(user)
-            .First();
+            .FirstOrDefault(x => x.UserType == UserTypeEnum.EMR);
 
         if (userOftaMapping is null)
             return;
