@@ -5,13 +5,33 @@ using Moq;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
 using Ofta.Application.UserContext.TilakaAgg.Workers;
 using Ofta.Domain.UserContext.TilakaAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 using Xunit;
 
 namespace Ofta.Application.UserContext.TilakaAgg.UseCases;
 
-public record TilakaCheckUserCertificateCommand(string RegistrationId): IRequest<TilakaCheckUserCertificateResponse>, ITilakaRegistrationKey;
+public record TilakaCheckUserCertificateCommand(string Email): IRequest<TilakaCheckUserCertificateResponse>;
 
-public record TilakaCheckUserCertificateResponse(string RegistrationId, string TilakaName, string UserState, string CertificateStatus);
+public record MessageResponse(string Info);
+
+public record DataResponse(
+    string Status,
+    string Serialnumber,
+    string SubjectDn,
+    string StartActiveDate,
+    string ExpiryDate,
+    string Certificate
+);
+
+public record TilakaCheckUserCertificateResponse(
+    string RegistrationId,
+    string TilakaName,
+    string UserState,
+    string CertificateStatus,
+    int Status,
+    MessageResponse Message,
+    IEnumerable<DataResponse> Data
+);
 
 public class TilakaCheckUserCertificateHandler: IRequestHandler<TilakaCheckUserCertificateCommand, TilakaCheckUserCertificateResponse>
 {
@@ -30,16 +50,16 @@ public class TilakaCheckUserCertificateHandler: IRequestHandler<TilakaCheckUserC
     {
         // GUARD
         Guard.Argument(request).NotNull()
-            .Member(x => x.RegistrationId, y => y.NotEmpty());
+            .Member(x => x.Email, y => y.NotEmpty());
         
         // BUILD
         var aggregate = _builder
-            .Load(request)
+            .Load(request.Email)
             .Build();
 
         var checkUserCertificate = _checkUserCertificate.Execute(new CheckUserCertificateRequest(aggregate.TilakaName));
         if (!checkUserCertificate.Success)
-            throw new ArgumentException(checkUserCertificate.Message);
+            throw new ArgumentException(checkUserCertificate.Message.Info);
         
         aggregate = _builder
             .Attach(aggregate)
@@ -48,7 +68,15 @@ public class TilakaCheckUserCertificateHandler: IRequestHandler<TilakaCheckUserC
 
         // WRITE
         _ = _writer.Save(aggregate);
-        var response = new TilakaCheckUserCertificateResponse(aggregate.RegistrationId, aggregate.TilakaName, aggregate.UserState.ToString(), aggregate.CertificateState.ToString());
+        var response = new TilakaCheckUserCertificateResponse(
+            aggregate.RegistrationId,
+            aggregate.TilakaName,
+            aggregate.UserState.ToString(), 
+            aggregate.CertificateState.ToString(),
+            checkUserCertificate.Status,
+            new MessageResponse(checkUserCertificate.Message.Info),
+            checkUserCertificate.Data.Select(x => new DataResponse(x.Status, x.Serialnumber, x.SubjectDn, x.StartActiveDate, x.ExpiryDate, x.Certificate))
+        );
         return Task.FromResult(response);
     }
 }
@@ -79,10 +107,10 @@ public class TilakaCheckUserCertificateHandlerTest
             TilakaName = "B"
         };
 
-        _builder.Setup(x => x.Load(It.IsAny<ITilakaRegistrationKey>()).Build())
+        _builder.Setup(x => x.Load(It.IsAny<string>()).Build())
             .Returns(registrationData);
         
-        var expectedCheckUser = new CheckUserCertificateResponse(false, "", 0);
+        var expectedCheckUser = new CheckUserCertificateResponse(false, 0, new MessageDto(""), new List<DataDto>());
         _checkUserCertificate.Setup(x => x.Execute(It.IsAny<CheckUserCertificateRequest>()))
             .Returns(expectedCheckUser);
 
@@ -104,10 +132,10 @@ public class TilakaCheckUserCertificateHandlerTest
             TilakaName = "B"
         };
 
-        _builder.Setup(x => x.Load(It.IsAny<ITilakaRegistrationKey>()).Build())
+        _builder.Setup(x => x.Load(It.IsAny<string>()).Build())
             .Returns(registrationData);
         
-        var expectedCheckUser = new CheckUserCertificateResponse(true, "A", 3);
+        var expectedCheckUser = new CheckUserCertificateResponse(true, 3, new MessageDto(""), new List<DataDto>());
         _checkUserCertificate.Setup(x => x.Execute(It.IsAny<CheckUserCertificateRequest>()))
             .Returns(expectedCheckUser);
         

@@ -24,8 +24,9 @@ public class CheckUserCertificateService: ICheckUserCertificateService
         var result = Task.Run(() => ExecuteCheckUserCert(req)).GetAwaiter().GetResult();
         var response = new CheckUserCertificateResponse(
             result?.Success == true,
-            result?.Message ?? string.Empty,
-            result?.Status ?? 0
+            result?.Status ?? 0,
+            result?.Message ?? new MessageDto(string.Empty),
+            result?.Data ?? new List<DataDto>()
         );
         return response;
     }
@@ -57,5 +58,5 @@ public class CheckUserCertificateService: ICheckUserCertificateService
         return result;
     }
     
-    private record CheckUserCertificateDto(bool Success, int Status, string Message);
+    private record CheckUserCertificateDto(bool Success, int Status, MessageDto Message, List<DataDto>? Data);
 }

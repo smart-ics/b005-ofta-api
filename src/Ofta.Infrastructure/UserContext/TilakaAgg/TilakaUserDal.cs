@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Nuna.Lib.DataAccessHelper;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
 using Ofta.Domain.UserContext.TilakaAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 using Ofta.Infrastructure.Helpers;
 
 namespace Ofta.Infrastructure.UserContext.TilakaAgg;
@@ -73,7 +74,7 @@ public class TilakaUserDal: ITilakaUserDal
         conn.Execute(sql, dp);
     }
 
-    public TilakaUserModel GetData(ITilakaRegistrationKey key)
+    public TilakaUserModel GetData(IUserOftaKey key)
     {
         const string sql = @"
             SELECT
@@ -88,10 +89,10 @@ public class TilakaUserDal: ITilakaUserDal
             FROM
                 OFTA_TilakaUserRegistration
             WHERE 
-                RegistrationId = @RegistrationId";
+                UserOftaId = @UserOftaId";
 
         var dp = new DynamicParameters();
-        dp.AddParam("@RegistrationId", key.RegistrationId, SqlDbType.VarChar);
+        dp.AddParam("@UserOftaId", key.UserOftaId, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.ReadSingle<TilakaUserModel>(sql, dp);

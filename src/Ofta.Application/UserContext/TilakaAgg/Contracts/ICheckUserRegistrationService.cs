@@ -14,5 +14,7 @@ public record CheckUserRegistrationResponse(
     string Message,
     string TilakaName,
     string RegistrationStatus,
-    string ManualRegistrationStatus
+    string ManualRegistrationStatus,
+    string PhotoSelfie,
+    string ReasonCode
 );

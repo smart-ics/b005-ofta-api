@@ -27,7 +27,9 @@ public class CheckUserRegistrationService: ICheckUserRegistrationService
             result?.Message ?? string.Empty,
             result?.Data.TilakaName ?? string.Empty,
             result?.Data.Status ?? string.Empty,
-            result?.Data.ManualRegistrationStatus ?? string.Empty
+            result?.Data.ManualRegistrationStatus ?? string.Empty,
+            result?.Data.PhotoSelfie ?? string.Empty,
+            result?.Data.ReasonCode ?? string.Empty
         );
         return response;
     }
@@ -63,7 +65,9 @@ public class CheckUserRegistrationService: ICheckUserRegistrationService
     
     private record CheckUserRegistrationData(
         string Status,
+        string PhotoSelfie,
         string TilakaName,
+        string ReasonCode,
         string ManualRegistrationStatus
     );
 }

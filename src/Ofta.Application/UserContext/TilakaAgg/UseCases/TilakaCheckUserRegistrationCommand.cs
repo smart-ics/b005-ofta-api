@@ -11,9 +11,17 @@ using Xunit;
 
 namespace Ofta.Application.UserContext.TilakaAgg.UseCases;
 
-public record TilakaCheckUserRegistrationCommand(string RegistrationId): IRequest<TilakaCheckUserRegistrationResponse>, ITilakaRegistrationKey;
+public record TilakaCheckUserRegistrationCommand(string Email): IRequest<TilakaCheckUserRegistrationResponse>;
 
-public record TilakaCheckUserRegistrationResponse(string RegistrationId, string TilakaName, string UserState);
+public record TilakaCheckUserRegistrationResponse(
+    string RegistrationId,
+    string RegistrationStatus,
+    string ManualRegistrationStatus,
+    string ReasonCode,
+    string PhotoSelfie,
+    string TilakaName,
+    string UserState
+);
 
 public class TilakaCheckUserRegistrationHandler: IRequestHandler<TilakaCheckUserRegistrationCommand, TilakaCheckUserRegistrationResponse>
 {
@@ -32,11 +40,11 @@ public class TilakaCheckUserRegistrationHandler: IRequestHandler<TilakaCheckUser
     {
         // GUARD
         Guard.Argument(request).NotNull()
-            .Member(x => x.RegistrationId, y => y.NotEmpty());
+            .Member(x => x.Email, y => y.NotEmpty());
 
         // BUILD
         var aggregate = _builder
-            .Load(request)
+            .Load(request.Email)
             .Build();
 
         var checkUserReg = _checkUserRegistration.Execute(request.Adapt<CheckUserRegistrationRequest>());
@@ -58,7 +66,15 @@ public class TilakaCheckUserRegistrationHandler: IRequestHandler<TilakaCheckUser
 
         // WRITE
         _ = _writer.Save(aggregate);
-        var response = new TilakaCheckUserRegistrationResponse(aggregate.RegistrationId, aggregate.TilakaName, aggregate.UserState.ToString());
+        var response = new TilakaCheckUserRegistrationResponse(
+            aggregate.RegistrationId,
+            checkUserReg.RegistrationStatus,
+            checkUserReg.ManualRegistrationStatus,
+            checkUserReg.ReasonCode,
+            checkUserReg.PhotoSelfie,
+            aggregate.TilakaName,
+            aggregate.UserState.ToString()
+        );
         return Task.FromResult(response);
     }
 }
@@ -88,10 +104,10 @@ public class TilakaCheckUserRegistrationHandlerTest
             RegistrationId = "A",
         };
 
-        _builder.Setup(x => x.Load(It.IsAny<ITilakaRegistrationKey>()).Build())
+        _builder.Setup(x => x.Load(It.IsAny<string>()).Build())
             .Returns(registrationData);
         
-        var expectedCheckUser = new CheckUserRegistrationResponse(false, "", "", "", "");
+        var expectedCheckUser = new CheckUserRegistrationResponse(false, "", "", "", "", "", "");
         _checkUserRegistration.Setup(x => x.Execute(It.IsAny<CheckUserRegistrationRequest>()))
             .Returns(expectedCheckUser);
 
@@ -112,10 +128,10 @@ public class TilakaCheckUserRegistrationHandlerTest
             RegistrationId = "A",
         };
 
-        _builder.Setup(x => x.Load(It.IsAny<ITilakaRegistrationKey>()).Build())
+        _builder.Setup(x => x.Load(It.IsAny<string>()).Build())
             .Returns(registrationData);
     
-        var expectedCheckUser = new CheckUserRegistrationResponse(true, "", "", "", "A");
+        var expectedCheckUser = new CheckUserRegistrationResponse(true, "", "", "", "A", "", "");
         _checkUserRegistration.Setup(x => x.Execute(It.IsAny<CheckUserRegistrationRequest>()))
             .Returns(expectedCheckUser);
         
@@ -149,10 +165,10 @@ public class TilakaCheckUserRegistrationHandlerTest
             RegistrationId = "A",
         };
 
-        _builder.Setup(x => x.Load(It.IsAny<ITilakaRegistrationKey>()).Build())
+        _builder.Setup(x => x.Load(It.IsAny<string>()).Build())
             .Returns(registrationData);
     
-        var expectedCheckUser = new CheckUserRegistrationResponse(true, "", "A", "", "S");
+        var expectedCheckUser = new CheckUserRegistrationResponse(true, "", "A", "", "S", "", "");
         _checkUserRegistration.Setup(x => x.Execute(It.IsAny<CheckUserRegistrationRequest>()))
             .Returns(expectedCheckUser);
         
@@ -188,10 +204,10 @@ public class TilakaCheckUserRegistrationHandlerTest
             RegistrationId = "A",
         };
 
-        _builder.Setup(x => x.Load(It.IsAny<ITilakaRegistrationKey>()).Build())
+        _builder.Setup(x => x.Load(It.IsAny<string>()).Build())
             .Returns(registrationData);
     
-        var expectedCheckUser = new CheckUserRegistrationResponse(true, "", "A", "S", "");
+        var expectedCheckUser = new CheckUserRegistrationResponse(true, "", "A", "S", "", "", "");
         _checkUserRegistration.Setup(x => x.Execute(It.IsAny<CheckUserRegistrationRequest>()))
             .Returns(expectedCheckUser);
         
