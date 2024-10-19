@@ -13,7 +13,7 @@ namespace Ofta.Application.UserContext.TilakaAgg.UseCases;
 
 public record TilakaCheckUserRegistrationCommand(string RegistrationId): IRequest<TilakaCheckUserRegistrationResponse>, ITilakaRegistrationKey;
 
-public record TilakaCheckUserRegistrationResponse(string RegistrationId, string TilakaName, TilakaUserState UserState);
+public record TilakaCheckUserRegistrationResponse(string RegistrationId, string TilakaName, string UserState);
 
 public class TilakaCheckUserRegistrationHandler: IRequestHandler<TilakaCheckUserRegistrationCommand, TilakaCheckUserRegistrationResponse>
 {
@@ -58,7 +58,8 @@ public class TilakaCheckUserRegistrationHandler: IRequestHandler<TilakaCheckUser
 
         // WRITE
         _ = _writer.Save(aggregate);
-        return Task.FromResult(new TilakaCheckUserRegistrationResponse(aggregate.RegistrationId, aggregate.TilakaName, aggregate.UserState));
+        var response = new TilakaCheckUserRegistrationResponse(aggregate.RegistrationId, aggregate.TilakaName, aggregate.UserState.ToString());
+        return Task.FromResult(response);
     }
 }
 

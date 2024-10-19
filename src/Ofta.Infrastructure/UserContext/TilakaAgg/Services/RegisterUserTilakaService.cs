@@ -82,7 +82,7 @@ public class RegisterUserTilakaService: IRegisterUserTilakaService
     
     private string GetConsentHash(string message)
     {
-        var encoding = new ASCIIEncoding();
+        var encoding = new UTF8Encoding();
         var keyBytes = encoding.GetBytes(_opt.SecretKey);
         var messageBytes = encoding.GetBytes(message);
         var cryptographer = new HMACSHA256(keyBytes);

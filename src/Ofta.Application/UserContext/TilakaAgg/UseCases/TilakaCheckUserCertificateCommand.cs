@@ -11,7 +11,7 @@ namespace Ofta.Application.UserContext.TilakaAgg.UseCases;
 
 public record TilakaCheckUserCertificateCommand(string RegistrationId): IRequest<TilakaCheckUserCertificateResponse>, ITilakaRegistrationKey;
 
-public record TilakaCheckUserCertificateResponse(string RegistrationId, string TilakaName, TilakaCertificateState CertificateStatus);
+public record TilakaCheckUserCertificateResponse(string RegistrationId, string TilakaName, string UserState, string CertificateStatus);
 
 public class TilakaCheckUserCertificateHandler: IRequestHandler<TilakaCheckUserCertificateCommand, TilakaCheckUserCertificateResponse>
 {
@@ -48,7 +48,8 @@ public class TilakaCheckUserCertificateHandler: IRequestHandler<TilakaCheckUserC
 
         // WRITE
         _ = _writer.Save(aggregate);
-        return Task.FromResult(new TilakaCheckUserCertificateResponse(aggregate.RegistrationId, aggregate.TilakaName, aggregate.CertificateState));
+        var response = new TilakaCheckUserCertificateResponse(aggregate.RegistrationId, aggregate.TilakaName, aggregate.UserState.ToString(), aggregate.CertificateState.ToString());
+        return Task.FromResult(response);
     }
 }
 

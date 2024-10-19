@@ -25,9 +25,9 @@ public class CheckUserRegistrationService: ICheckUserRegistrationService
         var response = new CheckUserRegistrationResponse(
             result?.Success == true,
             result?.Message ?? string.Empty,
-            result?.Data is not null ? result.Data.TilakaName : string.Empty,
-            result?.Data is not null ? result.Data.Status : string.Empty,
-            result?.Data is not null ? result.Data.ManualRegistrationStatus : string.Empty
+            result?.Data.TilakaName ?? string.Empty,
+            result?.Data.Status ?? string.Empty,
+            result?.Data.ManualRegistrationStatus ?? string.Empty
         );
         return response;
     }
