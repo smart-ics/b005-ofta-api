@@ -98,6 +98,7 @@
     <Build Include="Tables\TimelineContext\OFTA_PostVisibility.sql" />
     <Build Include="Tables\UserContext\OFTA_Team.sql" />
     <Build Include="Tables\UserContext\OFTA_TeamUserOfta.sql" />
+    <Build Include="Tables\UserContext\OFTA_TilakaUserRegistration.sql" />
     <Build Include="Tables\UserContext\OFTA_User.sql" />
     <Build Include="Tables\DocContext\Ofta_Tag.sql" />
     <Build Include="DataSeed\Ofta_ParamSistemDataSeed.sql" />
