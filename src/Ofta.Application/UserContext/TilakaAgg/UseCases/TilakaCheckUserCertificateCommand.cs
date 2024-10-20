@@ -17,10 +17,8 @@ public record MessageResponse(string Info);
 public record DataResponse(
     string Status,
     string Serialnumber,
-    string SubjectDn,
     string StartActiveDate,
-    string ExpiryDate,
-    string Certificate
+    string ExpiryDate
 );
 
 public record TilakaCheckUserCertificateResponse(
@@ -75,7 +73,7 @@ public class TilakaCheckUserCertificateHandler: IRequestHandler<TilakaCheckUserC
             aggregate.CertificateState.ToString(),
             checkUserCertificate.Status,
             new MessageResponse(checkUserCertificate.Message.Info),
-            checkUserCertificate.Data.Select(x => new DataResponse(x.Status, x.SerialNumber, x.SubjectDn, x.StartActiveDate, x.ExpiryDate, x.Certificate))
+            checkUserCertificate.Data.Select(x => new DataResponse(x.Status, x.SerialNumber, x.StartActiveDate, x.ExpiryDate))
         );
         return Task.FromResult(response);
     }

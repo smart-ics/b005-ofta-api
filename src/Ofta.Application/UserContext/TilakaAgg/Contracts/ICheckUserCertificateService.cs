@@ -25,16 +25,10 @@ public class DataDto {
    
     [JsonPropertyName("serialnumber")]
     public string SerialNumber { get; set; }
-   
-    [JsonPropertyName("subject_dn")]
-    public string SubjectDn { get; set; }
 
     [JsonPropertyName("start_active_date")]
     public string StartActiveDate { get; set; }
 
     [JsonPropertyName("expiry_date")]
     public string ExpiryDate { get; set; }
-
-    [JsonPropertyName("certificate")]
-    public string Certificate { get; set; }
 }
