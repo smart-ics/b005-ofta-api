@@ -75,7 +75,7 @@ public class TilakaCheckUserCertificateHandler: IRequestHandler<TilakaCheckUserC
             aggregate.CertificateState.ToString(),
             checkUserCertificate.Status,
             new MessageResponse(checkUserCertificate.Message.Info),
-            checkUserCertificate.Data.Select(x => new DataResponse(x.Status, x.Serialnumber, x.SubjectDn, x.StartActiveDate, x.ExpiryDate, x.Certificate))
+            checkUserCertificate.Data.Select(x => new DataResponse(x.Status, x.SerialNumber, x.SubjectDn, x.StartActiveDate, x.ExpiryDate, x.Certificate))
         );
         return Task.FromResult(response);
     }

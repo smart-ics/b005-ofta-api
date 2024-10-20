@@ -46,8 +46,11 @@ public class TilakaCheckUserRegistrationHandler: IRequestHandler<TilakaCheckUser
         var aggregate = _builder
             .Load(request.Email)
             .Build();
+        
+        if (aggregate.RegistrationId == string.Empty)
+            throw new ArgumentException($"Registration id from email: {request.Email} not found");
 
-        var checkUserReg = _checkUserRegistration.Execute(request.Adapt<CheckUserRegistrationRequest>());
+        var checkUserReg = _checkUserRegistration.Execute(new CheckUserRegistrationRequest(aggregate.RegistrationId));
         if (!checkUserReg.Success)
             throw new ArgumentException(checkUserReg.Message);
 
