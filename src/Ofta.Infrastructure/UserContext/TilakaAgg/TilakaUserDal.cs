@@ -78,16 +78,20 @@ public class TilakaUserDal: ITilakaUserDal
     {
         const string sql = @"
             SELECT
-                RegistrationId,
-                UserOftaId,
-                TilakaName,
-                NomorIdentitas,
-                ExpiredDate,
-                UserState,
-                CertificateState,
-                RevokeReason
+                aa.RegistrationId,
+                aa.UserOftaId,
+                aa.TilakaName,
+                aa.NomorIdentitas,
+                aa.ExpiredDate,
+                aa.UserState,
+                aa.CertificateState,
+                aa.RevokeReason,
+                ISNULL(bb.UserOftaName, '') AS UserOftaName,
+                ISNULL(bb.Email, '') AS Email
             FROM
-                OFTA_TilakaUserRegistration
+                OFTA_TilakaUserRegistration aa
+            LEFT JOIN
+                OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
             WHERE 
                 UserOftaId = @UserOftaId";
 
@@ -102,16 +106,20 @@ public class TilakaUserDal: ITilakaUserDal
     {
         const string sql = @"
             SELECT
-                RegistrationId,
-                UserOftaId,
-                TilakaName,
-                NomorIdentitas,
-                ExpiredDate,
-                UserState,
-                CertificateState,
-                RevokeReason
+                aa.RegistrationId,
+                aa.UserOftaId,
+                aa.TilakaName,
+                aa.NomorIdentitas,
+                aa.ExpiredDate,
+                aa.UserState,
+                aa.CertificateState,
+                aa.RevokeReason,
+                ISNULL(bb.UserOftaName, '') AS UserOftaName,
+                ISNULL(bb.Email, '') AS Email
             FROM
-                OFTA_TilakaUserRegistration
+                OFTA_TilakaUserRegistration aa
+            LEFT JOIN
+                OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
             WHERE 
                 RegistrationId = @RegistrationId";
 

@@ -38,7 +38,7 @@ public class CheckExistingAccountService: ICheckExistingAccountService
             throw new ArgumentException($"Get tilaka token {_opt.TokenEndPoint} failed");
         
         var endpoint = _opt.BaseApiUrl + "/checkAkunDSExist";
-        var client = new RestClient();
+        var client = new RestClient(endpoint);
         client.Authenticator = new JwtAuthenticator(tilakaToken);
 
         var reqBody = new
