@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
 using Ofta.Infrastructure.Helpers;
@@ -62,12 +63,22 @@ public class CheckUserRegistrationService: ICheckUserRegistrationService
     }
 
     private record CheckUserRegistrationDto(bool Success, string Message, CheckUserRegistrationData Data);
-    
-    private record CheckUserRegistrationData(
-        string Status,
-        string PhotoSelfie,
-        string TilakaName,
-        string ReasonCode,
-        string ManualRegistrationStatus
-    );
+
+    private class CheckUserRegistrationData
+    {
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+        
+        [JsonPropertyName("photo_selfie")]
+        public string PhotoSelfie { get; set; }
+        
+        [JsonPropertyName("tilaka_name")]
+        public string TilakaName { get; set; }
+
+        [JsonPropertyName("reason_code")] 
+        public string ReasonCode { get; set; }
+        
+        [JsonPropertyName("manual_registration_status")]
+        public string ManualRegistrationStatus { get; set; }
+    }
 }
