@@ -44,6 +44,14 @@ public class TilakaController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpGet("GetEmailByRegisterId/{registerId}")]
+    public async Task<IActionResult> GetEmailByRegisterId(string registerId)
+    {
+        var query = new TilakaGetEmailByRegistrationIdQuery(registerId);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 
     [HttpPost("ExecuteSign")]
     public async Task<IActionResult> ExecuteSign(SignDocCommand cmd)

@@ -12,6 +12,7 @@ public interface ITilakaUserBuilder : INunaBuilder<TilakaUserModel>
 {
     ITilakaUserBuilder Attach(TilakaUserModel model);
     ITilakaUserBuilder Create();
+    ITilakaUserBuilder Load(ITilakaRegistrationKey key);
     ITilakaUserBuilder Load(string email);
     ITilakaUserBuilder RegistrationId(ITilakaRegistrationKey key);
     ITilakaUserBuilder UserOfta(IUserOftaKey key);
@@ -62,13 +63,20 @@ public class TilakaUserBuilder: ITilakaUserBuilder
         return this;
     }
 
+    public ITilakaUserBuilder Load(ITilakaRegistrationKey key)
+    {
+        _aggregate = _tilakaUserDal.GetData(key)
+            ?? throw new KeyNotFoundException($"Tilaka Registration with id {key.RegistrationId} not found");
+        return this;
+    }
+
     public ITilakaUserBuilder Load(string email)
     {
         var userOfta = _userOftaDal.GetData(email)
-            ?? throw new KeyNotFoundException($"User Ofta with email {email} Not Found");
+            ?? throw new KeyNotFoundException($"User Ofta with email: {email} not found");
         
         _aggregate = _tilakaUserDal.GetData(userOfta)
-            ?? throw new KeyNotFoundException($"Tilaka Registration with UserOftaId {userOfta.UserOftaId} Not Found");
+            ?? throw new KeyNotFoundException($"Tilaka Registration with UserOftaId: {userOfta.UserOftaId} not found");
 
         return this;
     }

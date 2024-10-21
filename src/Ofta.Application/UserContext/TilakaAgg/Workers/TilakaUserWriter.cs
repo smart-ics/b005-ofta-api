@@ -1,6 +1,7 @@
 using Nuna.Lib.CleanArchHelper;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
 using Ofta.Domain.UserContext.TilakaAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.UserContext.TilakaAgg.Workers;
 
@@ -17,7 +18,7 @@ public class TilakaUserWriter: ITilakaUserWriter
 
     public TilakaUserModel Save(TilakaUserModel model)
     {
-        var db = _tilakaUserDal.GetData(model);
+        var db = _tilakaUserDal.GetData((IUserOftaKey)model);
         if (db is null)
             _tilakaUserDal.Insert(model);
         else

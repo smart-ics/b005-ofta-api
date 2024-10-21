@@ -97,4 +97,28 @@ public class TilakaUserDal: ITilakaUserDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.ReadSingle<TilakaUserModel>(sql, dp);
     }
+
+    public TilakaUserModel GetData(ITilakaRegistrationKey key)
+    {
+        const string sql = @"
+            SELECT
+                RegistrationId,
+                UserOftaId,
+                TilakaName,
+                NomorIdentitas,
+                ExpiredDate,
+                UserState,
+                CertificateState,
+                RevokeReason
+            FROM
+                OFTA_TilakaUserRegistration
+            WHERE 
+                RegistrationId = @RegistrationId";
+
+        var dp = new DynamicParameters();
+        dp.AddParam("@RegistrationId", key.RegistrationId, SqlDbType.VarChar);
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.ReadSingle<TilakaUserModel>(sql, dp);
+    }
 }
