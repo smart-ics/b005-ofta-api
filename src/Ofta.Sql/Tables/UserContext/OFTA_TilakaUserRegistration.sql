@@ -1,6 +1,7 @@
 CREATE TABLE OFTA_TilakaUserRegistration (
   RegistrationId VARCHAR(50) NOT NULL CONSTRAINT DF_OFTA_TilakaUserRegistration_RegistrationId DEFAULT (''),
   UserOftaId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_TilakaUserRegistration_OftaUserId DEFAULT (''),
+  TilakaId VARCHAR(50) NOT NULL CONSTRAINT DF_OFTA_TilakaUserRegistration_TilakaId DEFAULT (''),
   TilakaName VARCHAR(50) NOT NULL CONSTRAINT DF_OFTA_TilakaUserRegistration_TilakaName DEFAULT (''),
   NomorIdentitas VARCHAR(16) NOT NULL CONSTRAINT DF_OFTA_TilakaUserRegistration_NomorIdentitas DEFAULT (''),
   ExpiredDate DATETIME NOT NULL CONSTRAINT DF_OFTA_TilakaUserRegistration_ExpiredDate DEFAULT('3000-01-01'),

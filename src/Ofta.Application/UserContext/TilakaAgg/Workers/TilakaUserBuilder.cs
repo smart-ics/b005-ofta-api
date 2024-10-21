@@ -17,6 +17,7 @@ public interface ITilakaUserBuilder : INunaBuilder<TilakaUserModel>
     ITilakaUserBuilder RegistrationId(ITilakaRegistrationKey key);
     ITilakaUserBuilder UserOfta(IUserOftaKey key);
     ITilakaUserBuilder Identitas(string nomorIdentitas, string fotoKtpBase64);
+    ITilakaUserBuilder TilakaId(string id);
     ITilakaUserBuilder TilakaName(string name);
     ITilakaUserBuilder UserState(TilakaUserState state);
     ITilakaUserBuilder CertificateState(TilakaCertificateState state);
@@ -103,6 +104,12 @@ public class TilakaUserBuilder: ITilakaUserBuilder
     {
         _aggregate.NomorIdentitas = nomorIdentitas;
         _aggregate.FotoKtpBase64 = fotoKtpBase64;
+        return this;
+    }
+
+    public ITilakaUserBuilder TilakaId(string id)
+    {
+        _aggregate.TilakaId = id;
         return this;
     }
 

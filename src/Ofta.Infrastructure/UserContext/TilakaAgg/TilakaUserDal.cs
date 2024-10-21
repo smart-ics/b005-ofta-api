@@ -23,17 +23,18 @@ public class TilakaUserDal: ITilakaUserDal
     {
         const string sql = @"
             INSERT INTO OFTA_TilakaUserRegistration(
-                RegistrationId, UserOftaId, TilakaName, NomorIdentitas, 
+                RegistrationId, UserOftaId, TilakaId, TilakaName, NomorIdentitas, 
                 ExpiredDate, UserState, CertificateState, RevokeReason
             )
             VALUES (
-                @RegistrationId, @UserOftaId, @TilakaName, @NomorIdentitas,
+                @RegistrationId, @UserOftaId, @TilakaId, @TilakaName, @NomorIdentitas,
                 @ExpiredDate, @UserState, @CertificateState, @RevokeReason
             )";
 
         var dp = new DynamicParameters();
         dp.AddParam("@RegistrationId", model.RegistrationId, SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
+        dp.AddParam("@TilakaId", model.TilakaId, SqlDbType.VarChar);
         dp.AddParam("@TilakaName", model.TilakaName, SqlDbType.VarChar);
         dp.AddParam("@NomorIdentitas", model.NomorIdentitas, SqlDbType.VarChar);
         dp.AddParam("@ExpiredDate", model.ExpiredDate, SqlDbType.DateTime);
@@ -51,6 +52,7 @@ public class TilakaUserDal: ITilakaUserDal
             UPDATE OFTA_TilakaUserRegistration
                 SET
                     UserOftaId = @UserOftaId,
+                    TilakaId = @TilakaId,
                     TilakaName = @TilakaName,
                     NomorIdentitas = @NomorIdentitas, 
                     ExpiredDate = @ExpiredDate,
@@ -63,6 +65,7 @@ public class TilakaUserDal: ITilakaUserDal
         var dp = new DynamicParameters();
         dp.AddParam("@RegistrationId", model.RegistrationId, SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
+        dp.AddParam("@TilakaId", model.TilakaId, SqlDbType.VarChar);
         dp.AddParam("@TilakaName", model.TilakaName, SqlDbType.VarChar);
         dp.AddParam("@NomorIdentitas", model.NomorIdentitas, SqlDbType.VarChar);
         dp.AddParam("@ExpiredDate", model.ExpiredDate, SqlDbType.DateTime);
@@ -80,6 +83,7 @@ public class TilakaUserDal: ITilakaUserDal
             SELECT
                 aa.RegistrationId,
                 aa.UserOftaId,
+                aa.TilakaId,
                 aa.TilakaName,
                 aa.NomorIdentitas,
                 aa.ExpiredDate,
@@ -108,6 +112,7 @@ public class TilakaUserDal: ITilakaUserDal
             SELECT
                 aa.RegistrationId,
                 aa.UserOftaId,
+                aa.TilakaId,
                 aa.TilakaName,
                 aa.NomorIdentitas,
                 aa.ExpiredDate,
