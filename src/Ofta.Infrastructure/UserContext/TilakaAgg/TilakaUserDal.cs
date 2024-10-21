@@ -93,7 +93,7 @@ public class TilakaUserDal: ITilakaUserDal
             LEFT JOIN
                 OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
             WHERE 
-                UserOftaId = @UserOftaId";
+                aa.UserOftaId = @UserOftaId";
 
         var dp = new DynamicParameters();
         dp.AddParam("@UserOftaId", key.UserOftaId, SqlDbType.VarChar);
@@ -121,7 +121,7 @@ public class TilakaUserDal: ITilakaUserDal
             LEFT JOIN
                 OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
             WHERE 
-                RegistrationId = @RegistrationId";
+                aa.RegistrationId = @RegistrationId";
 
         var dp = new DynamicParameters();
         dp.AddParam("@RegistrationId", key.RegistrationId, SqlDbType.VarChar);
