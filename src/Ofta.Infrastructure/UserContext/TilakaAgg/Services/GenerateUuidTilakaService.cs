@@ -1,0 +1,58 @@
+using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Ofta.Application.UserContext.TilakaAgg.Contracts;
+using Ofta.Infrastructure.Helpers;
+using RestSharp;
+using RestSharp.Authenticators;
+
+namespace Ofta.Infrastructure.UserContext.TilakaAgg.Services;
+
+public class GenerateUuidTilakaService : IGenerateUuidTilakaService
+{
+    private readonly TilakaProviderOptions _opt;
+    private readonly ITokenTilakaService _tokenService;
+
+    public GenerateUuidTilakaService(IOptions<TilakaProviderOptions> opt, ITokenTilakaService tokenService)
+    {
+        _opt = opt.Value;
+        _tokenService = tokenService;
+    }
+
+    public GenerateUuidTilakaResponse Execute()
+    {
+        var result = Task.Run(ExecuteGenerateUuid).GetAwaiter().GetResult();
+        var response = new GenerateUuidTilakaResponse(
+            result?.Success == true,
+            result?.Message ?? string.Empty,
+            result?.Data is not null ? result.Data.First() : string.Empty
+        );
+        return response;
+    }
+
+    private async Task<GenerateUuidTilakaDto?> ExecuteGenerateUuid()
+    {
+        // BUILD
+        var tilakaToken = await _tokenService.Execute(TilakaProviderOptions.SECTION_NAME);
+        if (tilakaToken is null)
+            throw new ArgumentException($"Get tilaka token {_opt.TokenEndPoint} failed");
+
+        var endpoint = _opt.BaseApiUrl + "/generateUUID";
+        var client = new RestClient(endpoint);
+        client.Authenticator = new JwtAuthenticator(tilakaToken);
+
+        var req = new RestRequest();
+
+        // EXECUTE
+        var response = await client.ExecutePostAsync(req);
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        // RETURN
+        var result = JsonSerializer.Deserialize<GenerateUuidTilakaDto>(response.Content ?? string.Empty, jsonOptions);
+        return result;
+    }
+
+    private record GenerateUuidTilakaDto(bool Success, string Message, List<string> Data);
+}

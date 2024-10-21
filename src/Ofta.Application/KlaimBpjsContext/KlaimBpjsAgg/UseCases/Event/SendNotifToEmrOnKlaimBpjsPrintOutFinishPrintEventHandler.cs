@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
-using Ofta.Application.UserContext.UserOftaAgg.Workers;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
@@ -13,61 +13,70 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
 {
     private readonly IAppSettingService _appSettingService;
     private readonly IKlaimBpjsBuilder _klaimBpjsBuilder;
-    private readonly IUserBuilder _userBuilder;
-    private readonly IListResumeService _listResumeService;
     private readonly ISendNotifToEmrService _sendNotifToEmrService;
+    private readonly IUserOftaDal _userOftaDal;
+    private readonly IUserOftaMappingDal _userOftaMappingDal;
 
-    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IUserBuilder userBuilder, IListResumeService listResumeService, ISendNotifToEmrService sendNotifToEmrService)
+    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, ISendNotifToEmrService sendNotifToEmrService, IUserOftaDal userOftaDal, IUserOftaMappingDal userOftaMappingDal)
     {
         _appSettingService = appSettingService;
         _klaimBpjsBuilder = klaimBpjsBuilder;
-        _userBuilder = userBuilder;
-        _listResumeService = listResumeService;
         _sendNotifToEmrService = sendNotifToEmrService;
+        _userOftaDal = userOftaDal;
+        _userOftaMappingDal = userOftaMappingDal;
     }
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
-        var listResume = _listResumeService.Execute(notification.Agg.RegId);
-        var resumeMedis = listResume.FirstOrDefault(x => x.ResumeId == notification.Command.PrintOutReffId);
-        if (resumeMedis is null)
-            return Task.CompletedTask;
-
         var klaimBpjs = _klaimBpjsBuilder
             .Load(notification.Agg)
             .Build();
         
         var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == notification.Command.PrintOutReffId));
-        
-        var user = _userBuilder
-            .Load(new UserOftaModel(docType.DrafterUserId))
-            .Build();
-
         var externalSistem = ExternalSystemHelper.GetDestination(docType);
         if (externalSistem is not UserTypeEnum.EMR)
             return Task.CompletedTask;
         
-        var toUser = user.ListUserMapping.FirstOrDefault(x => x.PegId == resumeMedis.DokterId && x.UserType == externalSistem);
-        if (toUser is null)
-            return Task.CompletedTask;
+        var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
+        if (userSigns.UserSign1 != string.Empty)
+            SendNotifToEmr(klaimBpjs,  docType, userSigns.UserSign1, notification.Command.PrintOutReffId);
+        
+        if (userSigns.UserSign2 != string.Empty)
+            SendNotifToEmr(klaimBpjs,  docType, userSigns.UserSign2, notification.Command.PrintOutReffId);
+        
+        if (userSigns.UserSign3 != string.Empty)
+            SendNotifToEmr(klaimBpjs,  docType, userSigns.UserSign3, notification.Command.PrintOutReffId);
+        
+        return Task.CompletedTask;
+    }
+    
+    private void SendNotifToEmr(KlaimBpjsModel klaimBpjs, KlaimBpjsDocTypeModel docType, string user, string reffId)
+    {
+        var userOftaMapping = _userOftaMappingDal
+            .ListData(user)
+            .FirstOrDefault(x => x.UserType == UserTypeEnum.EMR);
 
+        if (userOftaMapping is null)
+            return;
+
+        var userOfta = _userOftaDal.GetData(userOftaMapping);
+        if (userOfta is null)
+            return;
+        
         var messageObj = new
         {
             url = _appSettingService.OftaMyDocWebUrl,
             docTypeId = docType.DocTypeId,
             docTypeName = docType.DocTypeName,
             regId = klaimBpjs.RegId,
-            userOfta = user.Email,
-            userOftaName = user.UserOftaName,
-            userOftaId = user.UserOftaId,
+            userOfta = userOfta.Email,
+            userOftaName = userOfta.UserOftaName,
+            userOftaId = userOfta.UserOftaId,
             keterangan = $"Request Sign {docType.DocTypeName}",
         };
         
         var messageJsonString = JsonConvert.SerializeObject(messageObj);
-        var reffId = notification.Command.PrintOutReffId;
-        
-        var reqObj = new EmrNotificationModel(toUser.UserMappingId, messageJsonString, reffId);
+        var reqObj = new EmrNotificationModel(userOftaMapping.UserMappingId, messageJsonString, reffId);
         _sendNotifToEmrService.Execute(reqObj);
-        return Task.CompletedTask;
     }
 }
