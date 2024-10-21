@@ -24,6 +24,13 @@ public class TilakaController : Controller
         return Ok(new JSendOk(result));
     }
     
+    [HttpPost("CheckExistingAccount")]
+    public async Task<IActionResult> CheckExistingAccount(TilakaCheckExistingAccountCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
     [HttpPost("CheckUserRegistration")]
     public async Task<IActionResult> CheckUserRegistration(TilakaCheckUserRegistrationCommand cmd)
     {
