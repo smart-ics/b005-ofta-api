@@ -5,4 +5,6 @@ public enum TilakaUserState
     Created,
     ManualRegistration,
     Verified,
+    RevokeRequested,
+    Revoked
 }

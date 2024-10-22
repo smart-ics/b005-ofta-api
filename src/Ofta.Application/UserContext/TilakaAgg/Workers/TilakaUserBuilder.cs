@@ -21,6 +21,7 @@ public interface ITilakaUserBuilder : INunaBuilder<TilakaUserModel>
     ITilakaUserBuilder TilakaName(string name);
     ITilakaUserBuilder UserState(TilakaUserState state);
     ITilakaUserBuilder CertificateState(TilakaCertificateState state);
+    ITilakaUserBuilder RevokeReason(string reason);
 }
 
 public class TilakaUserBuilder: ITilakaUserBuilder
@@ -128,6 +129,12 @@ public class TilakaUserBuilder: ITilakaUserBuilder
     public ITilakaUserBuilder CertificateState(TilakaCertificateState state)
     {
         _aggregate.CertificateState = state;
+        return this;
+    }
+
+    public ITilakaUserBuilder RevokeReason(string reason)
+    {
+        _aggregate.RevokeReason = reason;
         return this;
     }
 }

@@ -45,6 +45,13 @@ public class TilakaController : Controller
         return Ok(new JSendOk(result));
     }
     
+    [HttpPost("RevokeCertificate")]
+    public async Task<IActionResult> RevokeCertificate(TilakaRequestRevokeCertificateCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
     [HttpGet("GetEmailByRegisterId/{registerId}")]
     public async Task<IActionResult> GetEmailByRegisterId(string registerId)
     {
