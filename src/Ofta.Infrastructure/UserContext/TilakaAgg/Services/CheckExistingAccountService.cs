@@ -11,9 +11,9 @@ namespace Ofta.Infrastructure.UserContext.TilakaAgg.Services;
 public class CheckExistingAccountService : ICheckExistingAccountService
 {
     private readonly TilakaProviderOptions _opt;
-    private readonly ITokenService _tokenService;
+    private readonly ITokenTilakaService _tokenService;
 
-    public CheckExistingAccountService(IOptions<TilakaProviderOptions> opt, ITokenService tokenService)
+    public CheckExistingAccountService(IOptions<TilakaProviderOptions> opt, ITokenTilakaService tokenService)
     {
         _opt = opt.Value;
         _tokenService = tokenService;

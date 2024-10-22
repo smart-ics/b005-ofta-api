@@ -11,9 +11,9 @@ namespace Ofta.Infrastructure.UserContext.TilakaAgg.Services;
 public class RequestRevokeService: IRequestRevokeService
 {
     private readonly TilakaProviderOptions _opt;
-    private readonly ITokenService _tokenService;
+    private readonly ITokenTilakaService _tokenService;
 
-    public RequestRevokeService(IOptions<TilakaProviderOptions> opt, ITokenService tokenService)
+    public RequestRevokeService(IOptions<TilakaProviderOptions> opt, ITokenTilakaService tokenService)
     {
         _opt = opt.Value;
         _tokenService = tokenService;
@@ -26,8 +26,8 @@ public class RequestRevokeService: IRequestRevokeService
         var response = new RequestRevokeResponse(
             result?.Success == true,
             result?.Message ?? string.Empty,
-            data[0],
-            data[1]
+            data.Count > 0 ? data.First() : string.Empty,
+            data.Count > 0 ? data.Last() : string.Empty
         );
         return response;
     }
