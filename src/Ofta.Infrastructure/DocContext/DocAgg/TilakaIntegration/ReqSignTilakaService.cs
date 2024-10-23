@@ -3,7 +3,6 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.UserContext.TilakaAgg.Workers;
-using Ofta.Application.UserContext.UserOftaAgg.Workers;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -13,14 +12,12 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
 {
     private readonly TilakaProviderOptions _opt;
     private readonly ITokenTilakaService _token;
-    private readonly IUserBuilder _userBuilder;
     private readonly ITilakaUserBuilder _tilakaUserBuilder;
 
-    public ReqSignTilakaService(IOptions<TilakaProviderOptions> options, ITokenTilakaService token, IUserBuilder userBuilder, ITilakaUserBuilder tilakaUserBuilder)
+    public ReqSignTilakaService(IOptions<TilakaProviderOptions> options, ITokenTilakaService token, ITilakaUserBuilder tilakaUserBuilder)
     {
         _opt = options.Value;
         _token = token;
-        _userBuilder = userBuilder;
         _tilakaUserBuilder = tilakaUserBuilder;
     }
 
@@ -41,7 +38,7 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                    .Load(userIdentifierFromDesc)
                    .Build();
 
-                var userProvider = tilakaUser != null ? tilakaUser.TilakaName : string.Empty;
+                var userProvider = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
 
                 var authUrl = dataSign.Auth_Urls
                     .FirstOrDefault(auth => auth.User_Identifier == userProvider);
@@ -89,7 +86,7 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                    .Load(userIdentifier)
                    .Build();
 
-                var userProvider = tilakaUser != null ? tilakaUser.TilakaName : string.Empty;
+                var userProvider = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
 
                 return new
                 {
