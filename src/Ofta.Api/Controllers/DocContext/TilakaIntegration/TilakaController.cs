@@ -59,6 +59,14 @@ public class TilakaController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpGet("GetTilakaNameByUserMapping/{userId}/{userType}")]
+    public async Task<IActionResult> GetTilakaNameByUserMapping(string userId, string userType)
+    {
+        var query = new TilakaUserGetByUserMappingQuery(userId, userType);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 
     [HttpPost("ExecuteSign")]
     public async Task<IActionResult> ExecuteSign(SignDocCommand cmd)
