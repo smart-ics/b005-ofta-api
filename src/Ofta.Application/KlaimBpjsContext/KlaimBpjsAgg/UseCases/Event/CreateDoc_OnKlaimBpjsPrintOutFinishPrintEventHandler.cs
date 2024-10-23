@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using MediatR;
+﻿using MediatR;
 using Newtonsoft.Json;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
@@ -7,7 +6,6 @@ using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
-using Ofta.Domain.UserContext.UserOftaAgg;
 using Polly;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
@@ -59,68 +57,54 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             _docBuilder.Load(new DocModel(printOut.DocId)).Build());
 
         //  WRITE
-        //      doc
+        //  doc
         doc = _docBuilder
             .Attach(doc)
             .AddJurnal(DocStateEnum.Submited, string.Empty)
             .Build();
+        doc = _docWriter.Save(doc);
         
         var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
-        if (userSigns?.UserSign1 is not null)
-        {
-            var userOfta = _userOftaMappingDal
-                .ListData(userSigns.UserSign1)
-                .First();
-            
-            doc = _docBuilder
-                .Attach(doc)
-                .AddSignee(userOfta, "", SignPositionEnum.SignLeft, "", "")
-                .AddScope(userOfta)
-                .Build();
-        }
+        if (userSigns.UserSign1 != string.Empty)
+            doc = AddSigneeAndScope(doc, userSigns.UserSign1, SignPositionEnum.SignLeft);
         
-        if (userSigns?.UserSign2 is not null)
-        {
-            var userOfta = _userOftaMappingDal
-                .ListData(userSigns.UserSign2)
-                .First();
-            
-            doc = _docBuilder
-                .Attach(doc)
-                .AddSignee(userOfta, "", SignPositionEnum.SignCenter, "", "")
-                .AddScope(userOfta)
-                .Build();
-        }
+        if (userSigns.UserSign2 != string.Empty)
+            doc = AddSigneeAndScope(doc, userSigns.UserSign2, SignPositionEnum.SignCenter);
         
-        if (userSigns?.UserSign3 is not null)
-        {
-            var userOfta = _userOftaMappingDal
-                .ListData(userSigns.UserSign3)
-                .First();
-            
-            doc = _docBuilder
-                .Attach(doc)
-                .AddSignee(userOfta, "", SignPositionEnum.SignRight, "", "")
-                .AddScope(userOfta)
-                .Build();
-        }
+        if (userSigns.UserSign3 != string.Empty)
+            doc = AddSigneeAndScope(doc, userSigns.UserSign3, SignPositionEnum.SignRight);
         
-        doc = _docWriter.Save(doc);
         doc = _docBuilder.Attach(doc)
             .GenRequestedDocUrl()
             .Build();
         doc = _docWriter.Save(doc);
 
-        //      klaim
+        //  klaim
         printOut.DocId = doc.DocId;
         printOut.DocUrl = doc.RequestedDocUrl;
         _klaimBpjsWriter.Save(agg);
         
-        //      save fisik file;
+        //  save fisik file;
         var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);
         _ = _writeFileService.Execute(writeFileRequest);
 
         return Task.CompletedTask;
+    }
+
+    private DocModel AddSigneeAndScope(DocModel doc, string user, SignPositionEnum signPosition)
+    {
+        var userOfta = _userOftaMappingDal
+            .ListData(user)
+            .First();
+
+        if (userOfta is null)
+            return doc;
+            
+        return _docBuilder
+            .Attach(doc)
+            .AddSignee(userOfta, "", signPosition, "", "")
+            .AddScope(userOfta)
+            .Build();
     }
 }
 

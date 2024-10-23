@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
 using Ofta.Application.DocContext.DocAgg.UseCases;
+using Ofta.Application.UserContext.TilakaAgg.UseCases;
 
 namespace Ofta.Api.Controllers.DocContext.TilakaIntegration;
 
@@ -14,6 +15,49 @@ public class TilakaController : Controller
     public TilakaController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpPost("RegisterUser")]
+    public async Task<IActionResult> RegisterUser(TilakaRegistrationCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpPost("CheckExistingAccount")]
+    public async Task<IActionResult> CheckExistingAccount(TilakaCheckExistingAccountCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpPost("CheckUserRegistration")]
+    public async Task<IActionResult> CheckUserRegistration(TilakaCheckUserRegistrationCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+
+    [HttpPost("CheckUserCertificate")]
+    public async Task<IActionResult> CheckUserCertificate(TilakaCheckUserCertificateCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpPost("RevokeCertificate")]
+    public async Task<IActionResult> RevokeCertificate(TilakaRequestRevokeCertificateCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpGet("GetEmailByRegisterId/{registerId}")]
+    public async Task<IActionResult> GetEmailByRegisterId(string registerId)
+    {
+        var query = new TilakaGetEmailByRegistrationIdQuery(registerId);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
     }
 
     [HttpPost("ExecuteSign")]
