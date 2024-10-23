@@ -1,13 +1,12 @@
-﻿using Microsoft.Extensions.Options;
-using Ofta.Application.DocContext.DocAgg.Contracts;
-using Ofta.Infrastructure.Helpers;
-using RestSharp.Authenticators;
-using RestSharp;
+﻿using System.Net;
 using System.Text.Json;
-using Ofta.Domain.UserContext.UserOftaAgg;
+using Microsoft.Extensions.Options;
+using Ofta.Application.DocContext.DocAgg.Contracts;
+using Ofta.Application.UserContext.TilakaAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Workers;
-using Nuna.Lib.ValidationHelper;
-
+using Ofta.Infrastructure.Helpers;
+using RestSharp;
+using RestSharp.Authenticators;
 
 namespace Ofta.Infrastructure.DocContext.DocAgg.TilakaIntegration;
 public class ReqSignTilakaService : IReqSignToSignProviderService
@@ -15,12 +14,14 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
     private readonly TilakaProviderOptions _opt;
     private readonly ITokenTilakaService _token;
     private readonly IUserBuilder _userBuilder;
+    private readonly ITilakaUserBuilder _tilakaUserBuilder;
 
-    public ReqSignTilakaService(IOptions<TilakaProviderOptions> options, ITokenTilakaService token, IUserBuilder userBuilder)
+    public ReqSignTilakaService(IOptions<TilakaProviderOptions> options, ITokenTilakaService token, IUserBuilder userBuilder, ITilakaUserBuilder tilakaUserBuilder)
     {
         _opt = options.Value;
         _token = token;
         _userBuilder = userBuilder;
+        _tilakaUserBuilder = tilakaUserBuilder;
     }
 
     public ReqSignToSignProviderResponse Execute(ReqSignToSignProviderRequest req)
@@ -36,12 +37,11 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
                 var userIdentifierFromDesc = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
 
-                var userOfta = _userBuilder
-                               .Load(userIdentifierFromDesc)
-                               .Build();
+                var tilakaUser = _tilakaUserBuilder
+                   .Load(userIdentifierFromDesc)
+                   .Build();
 
-                var userProvider = userOfta.ListUserMapping
-                    .FirstOrDefault(mapping => mapping.UserType == UserTypeEnum.Tilaka)?.UserMappingId ?? string.Empty;
+                var userProvider = tilakaUser != null ? tilakaUser.TilakaName : string.Empty;
 
                 var authUrl = dataSign.Auth_Urls
                     .FirstOrDefault(auth => auth.User_Identifier == userProvider);
@@ -75,7 +75,7 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
             {
                 var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
 
-                var userIdentifier = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString();
+                var userIdentifier = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
                 var reason = _opt.Reason ;
                 var location = _opt.Location;
                 var width = signPositionDescJson?.GetValueOrDefault("width").GetDouble();
@@ -85,12 +85,11 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 var pageNumber = signPositionDescJson?.GetValueOrDefault("page_number").GetInt32();
                 var qrOption = signPositionDescJson?.GetValueOrDefault("qr_option").GetString();
 
-                var userOfta = _userBuilder
-                               .Load(userIdentifier)
-                               .Build();
+                var tilakaUser = _tilakaUserBuilder
+                   .Load(userIdentifier)
+                   .Build();
 
-                var userProvider = userOfta.ListUserMapping
-                    .FirstOrDefault(mapping => mapping.UserType == UserTypeEnum.Tilaka)?.UserMappingId ?? string.Empty;
+                var userProvider = tilakaUser != null ? tilakaUser.TilakaName : string.Empty;
 
                 return new
                 {
@@ -151,7 +150,7 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
 
         // EXECUTE
         var response = await client.ExecuteAsync(req);
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        if (response.StatusCode != HttpStatusCode.OK)
             return null;
 
         var jsonOptions = new JsonSerializerOptions
