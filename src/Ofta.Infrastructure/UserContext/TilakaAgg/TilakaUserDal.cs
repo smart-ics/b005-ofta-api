@@ -79,26 +79,7 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(IUserOftaKey key)
     {
-        const string sql = @"
-            SELECT
-                aa.RegistrationId,
-                aa.UserOftaId,
-                aa.TilakaId,
-                aa.TilakaName,
-                aa.NomorIdentitas,
-                aa.ExpiredDate,
-                aa.UserState,
-                aa.CertificateState,
-                aa.RevokeReason,
-                ISNULL(bb.UserOftaName, '') AS UserOftaName,
-                ISNULL(bb.Email, '') AS Email
-            FROM
-                OFTA_TilakaUserRegistration aa
-            LEFT JOIN
-                OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
-            WHERE 
-                aa.UserOftaId = @UserOftaId";
-
+        var sql = $@"{SelectFromClause()} WHERE aa.UserOftaId = @UserOftaId";
         var dp = new DynamicParameters();
         dp.AddParam("@UserOftaId", key.UserOftaId, SqlDbType.VarChar);
 
@@ -108,8 +89,27 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(ITilakaRegistrationKey key)
     {
-        const string sql = @"
-            SELECT
+        var sql = $@"{SelectFromClause()} WHERE aa.RegistrationId = @RegistrationId";
+        var dp = new DynamicParameters();
+        dp.AddParam("@RegistrationId", key.RegistrationId, SqlDbType.VarChar);
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.ReadSingle<TilakaUserModel>(sql, dp);
+    }
+
+    public TilakaUserModel GetData(string key)
+    {
+        var sql = $@"{SelectFromClause()} WHERE aa.TilakaName = @TilakaName";
+        var dp = new DynamicParameters();
+        dp.AddParam("@TilakaName", key, SqlDbType.VarChar);
+
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.ReadSingle<TilakaUserModel>(sql, dp);
+    }
+
+    private static string SelectFromClause()
+    {
+        return @"SELECT
                 aa.RegistrationId,
                 aa.UserOftaId,
                 aa.TilakaId,
@@ -124,14 +124,6 @@ public class TilakaUserDal: ITilakaUserDal
             FROM
                 OFTA_TilakaUserRegistration aa
             LEFT JOIN
-                OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId
-            WHERE 
-                aa.RegistrationId = @RegistrationId";
-
-        var dp = new DynamicParameters();
-        dp.AddParam("@RegistrationId", key.RegistrationId, SqlDbType.VarChar);
-
-        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
-        return conn.ReadSingle<TilakaUserModel>(sql, dp);
+                OFTA_UserOfta bb ON aa.UserOftaId = bb.UserOftaId";
     }
 }
