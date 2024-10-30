@@ -1,3 +1,4 @@
+using Dawn;
 using MediatR;
 using Newtonsoft.Json;
 using Ofta.Application.Helpers;
@@ -10,7 +11,7 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record KlaimBpjsRequestSignCommand(string KlaimBpjsId, string UserOftaId, string PrintOutReffId): IRequest, IKlaimBpjsKey, IUserOftaKey;
+public record KlaimBpjsRequestSignCommand(string KlaimBpjsId, string SignUserId, string PrintOutReffId): IRequest, IKlaimBpjsKey;
 
 public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCommand>
 {
@@ -31,6 +32,13 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
 
     public Task<Unit> Handle(KlaimBpjsRequestSignCommand request, CancellationToken cancellationToken)
     {
+        // GUARD
+        Guard.Argument(request).NotNull()
+            .Member(x => x.KlaimBpjsId, y => y.NotEmpty())
+            .Member(x => x.SignUserId, y => y.NotEmpty())
+            .Member(x => x.PrintOutReffId, y => y.NotEmpty());
+        
+        // BUILD
         var klaimBpjs = _klaimBpjsBuilder
             .Load(request)
             .Build();
@@ -41,7 +49,7 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
             return Task.FromResult(Unit.Value);
 
         var userOfta = _userBuilder
-            .Load(request)
+            .Load(new UserOftaModel(request.SignUserId))
             .Build();
 
         var userEmr = userOfta.ListUserMapping.FirstOrDefault(x => x.UserType == UserTypeEnum.EMR);
@@ -62,6 +70,7 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
         
         var messageJsonString = JsonConvert.SerializeObject(messageObj);
         
+        // EXECUTE
         var emrNotification = new EmrNotificationModel(userEmr.UserMappingId, messageJsonString, request.PrintOutReffId);
         _sendNotifToEmrService.Execute(emrNotification);
         
