@@ -75,6 +75,13 @@ public class KlaimBpjsController : Controller
         await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
     }
+    
+    [HttpPatch("orderSign")]
+    public async Task<IActionResult> OrderSign(KlaimBpjsRequestSignCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
 
     [HttpPatch("addPrintOut")]
     public async Task<IActionResult> AddPrintOut(KlaimBpjsPrintOutAddCommand cmd)
