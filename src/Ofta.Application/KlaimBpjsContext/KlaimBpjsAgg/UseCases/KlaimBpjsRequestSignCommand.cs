@@ -1,10 +1,12 @@
 using Dawn;
 using MediatR;
 using Newtonsoft.Json;
+using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Workers;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.PrintOutContext.ICasterAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
@@ -17,14 +19,16 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
 {
     private readonly IAppSettingService _appSettingService;
     private readonly IKlaimBpjsBuilder _klaimBpjsBuilder;
+    private readonly IDocBuilder _docBuilder;
     private readonly IUserBuilder _userBuilder;
     private readonly ISendToICasterService _sendToICasterService;
     private readonly ISendNotifToEmrService _sendNotifToEmrService;
 
-    public KlaimBpjsRequestSignHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IUserBuilder userBuilder, ISendToICasterService sendToICasterService, ISendNotifToEmrService sendNotifToEmrService)
+    public KlaimBpjsRequestSignHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IDocBuilder docBuilder, IUserBuilder userBuilder, ISendToICasterService sendToICasterService, ISendNotifToEmrService sendNotifToEmrService)
     {
         _appSettingService = appSettingService;
         _klaimBpjsBuilder = klaimBpjsBuilder;
+        _docBuilder = docBuilder;
         _userBuilder = userBuilder;
         _sendToICasterService = sendToICasterService;
         _sendNotifToEmrService = sendNotifToEmrService;
@@ -44,6 +48,9 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
             .Build();
         
         var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == request.PrintOutReffId));
+        var docId = docType.ListPrintOut.First(x => x.PrintOutReffId == request.PrintOutReffId).DocId;
+        var doc = _docBuilder.Load(new DocModel(docId)).Build();
+        
         var externalSistem = ExternalSystemHelper.GetDestination(docType);
         if (externalSistem is not UserTypeEnum.EMR)
             return Task.FromResult(Unit.Value);
@@ -61,6 +68,8 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
             url = _appSettingService.OftaMyDocWebUrl,
             docTypeId = docType.DocTypeId,
             docTypeName = docType.DocTypeName,
+            docId = doc.DocId,
+            uploadedDocId = doc.UploadedDocId,
             regId = klaimBpjs.RegId,
             userOfta = userOfta.Email,
             userOftaName = userOfta.UserOftaName,

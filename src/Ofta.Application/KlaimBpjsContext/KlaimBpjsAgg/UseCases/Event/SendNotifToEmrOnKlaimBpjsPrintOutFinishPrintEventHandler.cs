@@ -1,9 +1,11 @@
 using MediatR;
 using Newtonsoft.Json;
+using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
+using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
@@ -16,14 +18,16 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
     private readonly ISendNotifToEmrService _sendNotifToEmrService;
     private readonly IUserOftaDal _userOftaDal;
     private readonly IUserOftaMappingDal _userOftaMappingDal;
+    private readonly IDocBuilder _docBuilder;
 
-    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, ISendNotifToEmrService sendNotifToEmrService, IUserOftaDal userOftaDal, IUserOftaMappingDal userOftaMappingDal)
+    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, ISendNotifToEmrService sendNotifToEmrService, IUserOftaDal userOftaDal, IUserOftaMappingDal userOftaMappingDal, IDocBuilder docBuilder)
     {
         _appSettingService = appSettingService;
         _klaimBpjsBuilder = klaimBpjsBuilder;
         _sendNotifToEmrService = sendNotifToEmrService;
         _userOftaDal = userOftaDal;
         _userOftaMappingDal = userOftaMappingDal;
+        _docBuilder = docBuilder;
     }
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
@@ -33,24 +37,27 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
             .Build();
         
         var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == notification.Command.PrintOutReffId));
+        var docId = docType.ListPrintOut.First(x => x.PrintOutReffId == notification.Command.PrintOutReffId).DocId;
+        var doc = _docBuilder.Load(new DocModel(docId)).Build();
+        
         var externalSistem = ExternalSystemHelper.GetDestination(docType);
         if (externalSistem is not UserTypeEnum.EMR)
             return Task.CompletedTask;
         
         var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
         if (userSigns.UserSign1 != string.Empty)
-            SendNotifToEmr(klaimBpjs,  docType, userSigns.UserSign1, notification.Command.PrintOutReffId);
+            SendNotifToEmr(klaimBpjs, docType, doc, userSigns.UserSign1, notification.Command.PrintOutReffId);
         
         if (userSigns.UserSign2 != string.Empty)
-            SendNotifToEmr(klaimBpjs,  docType, userSigns.UserSign2, notification.Command.PrintOutReffId);
+            SendNotifToEmr(klaimBpjs, docType, doc, userSigns.UserSign2, notification.Command.PrintOutReffId);
         
         if (userSigns.UserSign3 != string.Empty)
-            SendNotifToEmr(klaimBpjs,  docType, userSigns.UserSign3, notification.Command.PrintOutReffId);
+            SendNotifToEmr(klaimBpjs, docType, doc, userSigns.UserSign3, notification.Command.PrintOutReffId);
         
         return Task.CompletedTask;
     }
     
-    private void SendNotifToEmr(KlaimBpjsModel klaimBpjs, KlaimBpjsDocTypeModel docType, string user, string reffId)
+    private void SendNotifToEmr(KlaimBpjsModel klaimBpjs, KlaimBpjsDocTypeModel docType, DocModel doc, string user, string reffId)
     {
         var userOftaMapping = _userOftaMappingDal
             .ListData(user)
@@ -68,6 +75,8 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
             url = _appSettingService.OftaMyDocWebUrl,
             docTypeId = docType.DocTypeId,
             docTypeName = docType.DocTypeName,
+            docId = doc.DocId,
+            uploadedDocId = doc.UploadedDocId,
             regId = klaimBpjs.RegId,
             userOfta = userOfta.Email,
             userOftaName = userOfta.UserOftaName,
