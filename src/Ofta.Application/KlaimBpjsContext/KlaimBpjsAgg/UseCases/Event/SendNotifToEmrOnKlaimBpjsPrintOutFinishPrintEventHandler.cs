@@ -4,9 +4,11 @@ using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
+using Ofta.Application.RegContext.RegAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
+using Ofta.Domain.RegContext.RegAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
@@ -19,8 +21,9 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
     private readonly IUserOftaDal _userOftaDal;
     private readonly IUserOftaMappingDal _userOftaMappingDal;
     private readonly IDocBuilder _docBuilder;
+    private readonly IGetRegService _getRegService;
 
-    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, ISendNotifToEmrService sendNotifToEmrService, IUserOftaDal userOftaDal, IUserOftaMappingDal userOftaMappingDal, IDocBuilder docBuilder)
+    public SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, ISendNotifToEmrService sendNotifToEmrService, IUserOftaDal userOftaDal, IUserOftaMappingDal userOftaMappingDal, IDocBuilder docBuilder, IGetRegService getRegService)
     {
         _appSettingService = appSettingService;
         _klaimBpjsBuilder = klaimBpjsBuilder;
@@ -28,6 +31,7 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
         _userOftaDal = userOftaDal;
         _userOftaMappingDal = userOftaMappingDal;
         _docBuilder = docBuilder;
+        _getRegService = getRegService;
     }
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
@@ -36,6 +40,7 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
             .Load(notification.Agg)
             .Build();
         
+        var pasien = _getRegService.Execute(new RegModel(klaimBpjs.RegId));
         var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == notification.Command.PrintOutReffId));
         var docId = docType.ListPrintOut.First(x => x.PrintOutReffId == notification.Command.PrintOutReffId).DocId;
         var doc = _docBuilder.Load(new DocModel(docId)).Build();
@@ -46,18 +51,18 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
         
         var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
         if (userSigns.UserSign1 != string.Empty)
-            SendNotifToEmr(klaimBpjs, docType, doc, userSigns.UserSign1, notification.Command.PrintOutReffId);
+            SendNotifToEmr(klaimBpjs, docType, doc, pasien, userSigns.UserSign1, notification.Command.PrintOutReffId);
         
         if (userSigns.UserSign2 != string.Empty)
-            SendNotifToEmr(klaimBpjs, docType, doc, userSigns.UserSign2, notification.Command.PrintOutReffId);
+            SendNotifToEmr(klaimBpjs, docType, doc, pasien, userSigns.UserSign2, notification.Command.PrintOutReffId);
         
         if (userSigns.UserSign3 != string.Empty)
-            SendNotifToEmr(klaimBpjs, docType, doc, userSigns.UserSign3, notification.Command.PrintOutReffId);
+            SendNotifToEmr(klaimBpjs, docType, doc, pasien, userSigns.UserSign3, notification.Command.PrintOutReffId);
         
         return Task.CompletedTask;
     }
     
-    private void SendNotifToEmr(KlaimBpjsModel klaimBpjs, KlaimBpjsDocTypeModel docType, DocModel doc, string user, string reffId)
+    private void SendNotifToEmr(KlaimBpjsModel klaimBpjs, KlaimBpjsDocTypeModel docType, DocModel doc, RegModel pasien, string user, string reffId)
     {
         var userOftaMapping = _userOftaMappingDal
             .ListData(user)
@@ -78,6 +83,8 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
             docId = doc.DocId,
             uploadedDocId = doc.UploadedDocId,
             regId = klaimBpjs.RegId,
+            pasienId = pasien?.PasienId,
+            pasienName = pasien?.PasienName,
             userOfta = userOfta.Email,
             userOftaName = userOfta.UserOftaName,
             userOftaId = userOfta.UserOftaId,
