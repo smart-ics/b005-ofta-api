@@ -49,6 +49,9 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
         var reqSignToSignProviderRequest = new ReqSignToSignProviderRequest(aggregate, uploadedDocId);
         var reqSignToSignProviderResponse = _reqSignToSignProviderService.Execute(reqSignToSignProviderRequest);
 
+        if (!reqSignToSignProviderResponse.Success)
+            throw new ArgumentException($"Tilaka: {reqSignToSignProviderResponse.Message}. Re-upload the document and repeat sign");
+
         if (reqSignToSignProviderResponse?.Signees != null)
         {
             foreach (var updatedSignee in reqSignToSignProviderResponse.Signees)
