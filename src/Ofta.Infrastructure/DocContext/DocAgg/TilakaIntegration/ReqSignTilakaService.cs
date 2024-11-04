@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.UserContext.TilakaAgg.Workers;
@@ -25,7 +24,11 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
     {
         var dataSign = Task.Run(() => GetUrlSignTilaka(req, req.DocIdTilaka)).GetAwaiter().GetResult();
 
-        var result = new ReqSignToSignProviderResponse();
+        var result = new ReqSignToSignProviderResponse
+        {
+            Success = dataSign?.Success == true,
+            Message = dataSign?.Message ?? string.Empty,
+        };
 
         if (dataSign?.Auth_Urls != null)
         {
@@ -54,9 +57,7 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
 
         return result;
     }
-
-
-    #region REQUEST SIGN 
+    
     private async Task<ReqSignToTilakaResponse?> GetUrlSignTilaka(ReqSignToSignProviderRequest request, string docIdTilaka)
     {
         // BUILD REQUEST
@@ -147,8 +148,6 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
 
         // EXECUTE
         var response = await client.ExecuteAsync(req);
-        if (response.StatusCode != HttpStatusCode.OK)
-            return null;
 
         var jsonOptions = new JsonSerializerOptions
         {
@@ -160,11 +159,8 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
         // RETURN
         return respReqSign;
     }
-    #endregion
-
-    #region RESPONSE COMMAND
-    private record ReqSignToTilakaResponse(string Succes, string Message, List<AuthUrlData> Auth_Urls);
+    
+    private record ReqSignToTilakaResponse(bool Success, string Message, List<AuthUrlData> Auth_Urls);
     private record AuthUrlData(string Url, string User_Identifier);
-    #endregion
 }
 

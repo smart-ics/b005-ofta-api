@@ -5,10 +5,12 @@ using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
+using Ofta.Application.RegContext.RegAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Workers;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 using Ofta.Domain.PrintOutContext.ICasterAgg;
+using Ofta.Domain.RegContext.RegAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
@@ -23,8 +25,9 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
     private readonly IUserBuilder _userBuilder;
     private readonly ISendToICasterService _sendToICasterService;
     private readonly ISendNotifToEmrService _sendNotifToEmrService;
+    private readonly IGetRegService _getRegService;
 
-    public KlaimBpjsRequestSignHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IDocBuilder docBuilder, IUserBuilder userBuilder, ISendToICasterService sendToICasterService, ISendNotifToEmrService sendNotifToEmrService)
+    public KlaimBpjsRequestSignHandler(IAppSettingService appSettingService, IKlaimBpjsBuilder klaimBpjsBuilder, IDocBuilder docBuilder, IUserBuilder userBuilder, ISendToICasterService sendToICasterService, ISendNotifToEmrService sendNotifToEmrService, IGetRegService getRegService)
     {
         _appSettingService = appSettingService;
         _klaimBpjsBuilder = klaimBpjsBuilder;
@@ -32,6 +35,7 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
         _userBuilder = userBuilder;
         _sendToICasterService = sendToICasterService;
         _sendNotifToEmrService = sendNotifToEmrService;
+        _getRegService = getRegService;
     }
 
     public Task<Unit> Handle(KlaimBpjsRequestSignCommand request, CancellationToken cancellationToken)
@@ -46,7 +50,8 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
         var klaimBpjs = _klaimBpjsBuilder
             .Load(request)
             .Build();
-        
+
+        var pasien = _getRegService.Execute(new RegModel(klaimBpjs.RegId));
         var docType = klaimBpjs.ListDocType.First(x => x.ListPrintOut.Any(y => y.PrintOutReffId == request.PrintOutReffId));
         var docId = docType.ListPrintOut.First(x => x.PrintOutReffId == request.PrintOutReffId).DocId;
         var doc = _docBuilder.Load(new DocModel(docId)).Build();
@@ -71,6 +76,8 @@ public class KlaimBpjsRequestSignHandler: IRequestHandler<KlaimBpjsRequestSignCo
             docId = doc.DocId,
             uploadedDocId = doc.UploadedDocId,
             regId = klaimBpjs.RegId,
+            pasienId = pasien?.PasienId,
+            pasienName = pasien?.PasienName,
             userOfta = userOfta.Email,
             userOftaName = userOfta.UserOftaName,
             userOftaId = userOfta.UserOftaId,

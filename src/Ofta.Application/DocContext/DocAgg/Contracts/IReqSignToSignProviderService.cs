@@ -8,8 +8,11 @@ public record ReqSignToSignProviderRequest(DocModel Doc, string DocIdTilaka);
 
 public class ReqSignToSignProviderResponse
 {
+    public bool Success { get; set; }
+    public string Message { get; set; }
     public List<DocSigneeModel> Signees { get; set; } = new List<DocSigneeModel>();
 }
+
 public interface IReqSignToSignProviderService
     : INunaService<ReqSignToSignProviderResponse, ReqSignToSignProviderRequest>
 {
