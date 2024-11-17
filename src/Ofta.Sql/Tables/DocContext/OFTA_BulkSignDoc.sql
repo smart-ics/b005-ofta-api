@@ -1,0 +1,15 @@
+CREATE TABLE OFTA_BulkSignDoc(
+    BulkSignId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_BulkSignDoc_BulkSignId DEFAULT(''),
+    DocId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_BulkSignDoc_DocId DEFAULT(''),
+    UploadedDocId VARCHAR(255) NOT NULL CONSTRAINT DF_OFTA_BulkSignDoc_UploadedDocId DEFAULT(''),
+    NoUrut INT NOT NULL CONSTRAINT DF_OFTA_BulkSignDoc_NoUrut DEFAULT(0),
+)
+GO
+
+CREATE CLUSTERED INDEX CX_OFTA_BulkSignDoc ON OFTA_BulkSignDoc(BulkSignId)
+GO
+
+CREATE INDEX IX_OFTA_BulkSignDoc_UploadedDocId
+    ON OFTA_BulkSignDoc(UploadedDocId, DocId)
+    WITH(FILLFACTOR = 75)
+GO
