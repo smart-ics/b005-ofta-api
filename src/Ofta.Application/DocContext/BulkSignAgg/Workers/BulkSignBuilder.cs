@@ -5,8 +5,10 @@ using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.BulkSignAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.Helpers;
+using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.BulkSignAgg;
 using Ofta.Domain.DocContext.DocAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 using Xunit;
 
 namespace Ofta.Application.DocContext.BulkSignAgg.Workers;
@@ -16,6 +18,7 @@ public interface IBulkSignBuilder : INunaBuilder<BulkSignModel>
     IBulkSignBuilder Create();
     IBulkSignBuilder Attach(BulkSignModel model);
     IBulkSignBuilder Load(IBulkSignKey key);
+    IBulkSignBuilder UserOfta(IUserOftaKey key);
     IBulkSignBuilder AddDocument(IDocKey docId);
 }
 
@@ -26,14 +29,16 @@ public class BulkSignBuilder: IBulkSignBuilder
     private readonly IBulkSignDal _bulkSignDal;
     private readonly IBulkSignDocDal _bulkSignDocDal;
     private readonly IBulkSignDocSigneeDal _bulkSignDocSigneeDal;
+    private readonly IUserOftaDal _userOftaDal;
     private readonly IDocBuilder _docBuilder;
 
-    public BulkSignBuilder(ITglJamDal tglJamDal, IBulkSignDal bulkSignDal, IBulkSignDocDal bulkSignDocDal, IBulkSignDocSigneeDal bulkSignDocSigneeDal, IDocBuilder docBuilder)
+    public BulkSignBuilder(ITglJamDal tglJamDal, IBulkSignDal bulkSignDal, IBulkSignDocDal bulkSignDocDal, IBulkSignDocSigneeDal bulkSignDocSigneeDal, IUserOftaDal userOftaDal, IDocBuilder docBuilder)
     {
         _tglJamDal = tglJamDal;
         _bulkSignDal = bulkSignDal;
         _bulkSignDocDal = bulkSignDocDal;
         _bulkSignDocSigneeDal = bulkSignDocSigneeDal;
+        _userOftaDal = userOftaDal;
         _docBuilder = docBuilder;
     }
 
@@ -78,6 +83,15 @@ public class BulkSignBuilder: IBulkSignBuilder
         return this;
     }
 
+    public IBulkSignBuilder UserOfta(IUserOftaKey key)
+    {
+        var userOfta = _userOftaDal.GetData(key)
+            ?? throw new KeyNotFoundException($"User Ofta with id {key.UserOftaId} not found");
+        
+        _aggregate.UserOftaId = userOfta.UserOftaId;
+        return this;
+    }
+
     public IBulkSignBuilder AddDocument(IDocKey docId)
     {
         var document = _docBuilder
@@ -98,7 +112,8 @@ public class BulkSignBuilder: IBulkSignBuilder
                     Email = x.Email,
                     SignTag = x.SignTag,
                     SignPosition = x.SignPosition,
-                    SignPositionDesc = x.SignPositionDesc
+                    SignPositionDesc = x.SignPositionDesc,
+                    SignUrl = x.SignUrl,
                 }
             ).ToList() ?? new List<BulkSignDocSigneeModel>()
         };
@@ -125,6 +140,7 @@ public class BulkSignBuilderTest
     private readonly Mock<IBulkSignDal> _bulkSignDal;
     private readonly Mock<IBulkSignDocDal> _bulkSignDocDal;
     private readonly Mock<IBulkSignDocSigneeDal> _bulkSignDocSigneeDal;
+    private readonly Mock<IUserOftaDal> _userOftaDal;
     private readonly Mock<IDocBuilder> _docBuilder;
     private readonly BulkSignBuilder _sut;
 
@@ -134,8 +150,9 @@ public class BulkSignBuilderTest
         _bulkSignDal = new Mock<IBulkSignDal>();
         _bulkSignDocDal = new Mock<IBulkSignDocDal>();
         _bulkSignDocSigneeDal = new Mock<IBulkSignDocSigneeDal>();
+        _userOftaDal = new Mock<IUserOftaDal>();
         _docBuilder = new Mock<IDocBuilder>();
-        _sut = new BulkSignBuilder(_tglJamDal.Object, _bulkSignDal.Object, _bulkSignDocDal.Object, _bulkSignDocSigneeDal.Object, _docBuilder.Object);
+        _sut = new BulkSignBuilder(_tglJamDal.Object, _bulkSignDal.Object, _bulkSignDocDal.Object, _bulkSignDocSigneeDal.Object, _userOftaDal.Object, _docBuilder.Object);
     }
 
     [Fact]

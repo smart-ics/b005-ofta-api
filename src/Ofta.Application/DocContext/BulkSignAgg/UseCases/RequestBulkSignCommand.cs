@@ -44,6 +44,7 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand>
         // BUILD
         _aggregate = _builder
             .Create()
+            .UserOfta(request)
             .Build();
         
         request.ListDocId.ForEach(docId 
@@ -53,14 +54,14 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand>
                 .Build());
         
         // WRITE
-        // _aggregate = _writer.Save(_aggregate);
+        _aggregate = _writer.Save(_aggregate);
         var requestSign = _service.Execute(new ReqBulkSignRequest(_aggregate));
         if (!requestSign.Success)
             throw new ArgumentException(requestSign.Message);
         
-        // requestSign.BulkSign.ListDoc.ForEach(UpdateSignUrl);
-        // _ = _writer.Save(_aggregate);
-        // _mediator.Publish(new RequestBulkSignSuccessEvent(_aggregate, request), CancellationToken.None);
+        requestSign.BulkSign.ListDoc.ForEach(UpdateSignUrl);
+        _ = _writer.Save(_aggregate);
+        _mediator.Publish(new RequestBulkSignSuccessEvent(_aggregate, request), CancellationToken.None);
         return Task.FromResult(Unit.Value);
     }
 

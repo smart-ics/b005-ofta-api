@@ -1,6 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using iText.Layout.Element;
 using Microsoft.Extensions.Options;
 using Ofta.Application.DocContext.BulkSignAgg.Contracts;
 using Ofta.Application.UserContext.TilakaAgg.Workers;
@@ -26,21 +24,22 @@ public class RequestBulkSignService: IRequestBulkSignService
 
     public ReqBulkSignResponse Execute(ReqBulkSignRequest req)
     {
-        throw new NotImplementedException();
+        var result = ExecuteAsync(req).GetAwaiter().GetResult();
+        if (result?.AuthUrls is not null)
+            req.BulkSign.ListDoc = UpdateAuthUrl(req, result);
+        
+        return new ReqBulkSignResponse(result?.Success == true, result?.Message ?? string.Empty, req.BulkSign);
     }
 
-    private async Task<RequestBulkSignDto?> ExecuteAsync(ReqBulkSignRequest request)
+    private async Task<RequestBulkSignResponseDto?> ExecuteAsync(ReqBulkSignRequest request)
     {
-        var payload = GenerateRequestBulkSignPayload(request.BulkSign);
-        var jsonPaylaod = JsonSerializer.Serialize(payload);
-        
         // BUILD
         var token = await _token.Execute(TilakaProviderOptions.SECTION_NAME);
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
         
-        // var payload = GenerateRequestBulkSignPayload(request.BulkSign);
-        // var jsonPaylaod = JsonSerializer.Serialize(payload);
+        var payload = GenerateRequestBulkSignPayload(request.BulkSign);
+        var jsonPaylaod = JsonSerializer.Serialize(payload);
         
         var endpoint = _opt.UploadEndpoint + "/requestsign";
         var client = new RestClient(endpoint);
@@ -60,13 +59,13 @@ public class RequestBulkSignService: IRequestBulkSignService
         };
         
         // RETURN
-        var result = JsonSerializer.Deserialize<RequestBulkSignDto>(response.Content ?? string.Empty, jsonOptions);
+        var result = JsonSerializer.Deserialize<RequestBulkSignResponseDto>(response.Content ?? string.Empty, jsonOptions);
         return result;
     }
 
     private RequestBulkSignPayload GenerateRequestBulkSignPayload(BulkSignModel bulkSign)
     {
-        var listAllSignee = new List<SignatureDto>();
+        var listAllSignee = new List<SignatureEachDocDto>();
         var listPdf = new List<FileDto>();
         bulkSign.ListDoc.ForEach(doc =>
         {
@@ -75,7 +74,7 @@ public class RequestBulkSignService: IRequestBulkSignService
                 .Select(signee =>
                 {
                     var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
-                    var newSignee = new SignatureDto
+                    var newSignee = new SignatureEachDocDto
                     {
                         UserIdentifier = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty,
                         Reason = _opt.Reason,
@@ -95,69 +94,59 @@ public class RequestBulkSignService: IRequestBulkSignService
                     newSignee.UserIdentifier = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
                     return newSignee;
                 }).ToList();
+
             
-            listPdf.Add(new FileDto(doc.UploadedDocId, listSigneeEachDoc));
+            listPdf.Add(new FileDto
+            {
+                Filename = doc.UploadedDocId,
+                Signatures = listSigneeEachDoc,
+            });
+            
             listAllSignee.AddRange(listSigneeEachDoc);
         });
 
-        return new RequestBulkSignPayload(bulkSign.BulkSignId, listAllSignee, listPdf);
-    }
-    
-    private record RequestBulkSignPayload(string RequestId, List<SignatureDto> Signatures, List<FileDto> ListPdf);
+        var signatures = listAllSignee
+            .GroupBy(s => s.UserIdentifier)
+            .Select((signee, index) => new SignaturesDto
+            {
+                UserIdentifier = signee.First().UserIdentifier,
+                SignatureImage = string.Empty,
+                Sequence = index + 1,
+            }).ToList();
 
-    private record FileDto(string Filename, List<SignatureDto> Signatures);
-
-    private class SignatureDto
-    {
-        [JsonPropertyName("user_identifier")]
-        public string UserIdentifier { get; set; }
-        
-        [JsonPropertyName("reason")]
-        public string Reason { get; set; }
-        
-        [JsonPropertyName("location")]
-        public string Location { get; set; }
-        
-        [JsonPropertyName("width")]
-        public double Width { get; set; }
-        
-        [JsonPropertyName("height")]
-        public double Height { get; set; }
-            
-        [JsonPropertyName("coordinate_x")]
-        public double CoordinateX { get; set; }
-        
-        [JsonPropertyName("coordinate_y")]
-        public double CoordinateY { get; set; }
-        
-        [JsonPropertyName("page_number")]
-        public int PageNumber { get; set; }
-        
-        [JsonPropertyName("qr_option")]
-        public string QrOption { get; set; }
-    }
-    
-    private class RequestBulkSignDto
-    {
-        [JsonPropertyName("status")]
-        public bool Status { get; set; }
-        
-        [JsonPropertyName("message")]
-        public string Message { get; set; }
-        
-        [JsonPropertyName("auth_urls")]
-        public List<AuthUrlDto> AuthUrls { get; set; }
-        
-        [JsonPropertyName("failed_doc_name")]
-        public List<string> FailedDocName { get; set; }
+        return new RequestBulkSignPayload
+        {
+            RequestId = bulkSign.BulkSignId,
+            Signatures = signatures,
+            ListPdf = listPdf,
+        };
     }
 
-    private class AuthUrlDto
+    private List<BulkSignDocModel> UpdateAuthUrl(ReqBulkSignRequest req, RequestBulkSignResponseDto res)
     {
-        [JsonPropertyName("url")]
-        public string Url { get; set; }
-        
-        [JsonPropertyName("user_identifier")]
-        public string UserIdentifier { get; set; }
+        req.BulkSign.ListDoc.ForEach(doc =>
+        {
+            doc.ListSignee = doc.ListSignee.Select(signee =>
+            {
+                var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
+                var userIdentifierFromDesc = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
+                    
+                var tilakaUser = _tilakaUserBuilder
+                    .Load(userIdentifierFromDesc)
+                    .Build();
+                    
+                var userProvider = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
+
+                var authUrl = res.AuthUrls
+                    .FirstOrDefault(auth => auth.UserIdentifier == userProvider);
+
+                if (authUrl is not null)
+                    signee.SignUrl = authUrl.Url;
+
+                return signee;
+            }).ToList();
+        });
+
+        return req.BulkSign.ListDoc;
     }
 }
