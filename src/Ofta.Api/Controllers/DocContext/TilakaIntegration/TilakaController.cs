@@ -90,7 +90,7 @@ public class TilakaController : Controller
         return Ok(new JSendOk(result));
     }
     
-    [HttpPost]
+    [HttpPost("RequestBulkSign")]
     public async Task<IActionResult> RequestBulkSign(RequestBulkSignCommand cmd)
     {
         var result = await _mediator.Send(cmd);
