@@ -18,7 +18,7 @@ public record RequestBulkSignSuccessEvent(
 
 public record RequestBulkSignCommand(string UserOftaId, List<string> ListDocId): IRequest<RequestBulkSignResponse>, IUserOftaKey;
 
-public record RequestBulkSignResponse(string BulkSignId);
+public record RequestBulkSignResponse(string BulkSignId, string SignUrl);
 
 public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, RequestBulkSignResponse>
 {
@@ -65,7 +65,11 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, Req
         requestSign.BulkSign.ListDoc.ForEach(UpdateSignUrl);
         _ = _writer.Save(_aggregate);
         _mediator.Publish(new RequestBulkSignSuccessEvent(_aggregate, request), CancellationToken.None);
-        return Task.FromResult(new RequestBulkSignResponse(_aggregate.BulkSignId));
+        
+        // kasus khusus sementara baru support untuk 1 user saja
+        var signUrl = _aggregate.ListDoc.First().ListSignee.First().SignUrl;
+        var response = new RequestBulkSignResponse(_aggregate.BulkSignId, signUrl);
+        return Task.FromResult(response);
     }
 
     private void UpdateSignUrl(BulkSignDocModel updatedSignUrl)
