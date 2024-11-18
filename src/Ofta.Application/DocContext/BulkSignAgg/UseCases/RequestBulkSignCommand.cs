@@ -4,6 +4,7 @@ using MediatR;
 using Moq;
 using Ofta.Application.DocContext.BulkSignAgg.Contracts;
 using Ofta.Application.DocContext.BulkSignAgg.Workers;
+using Ofta.Application.UserContext.TilakaAgg.Workers;
 using Ofta.Domain.DocContext.BulkSignAgg;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
@@ -18,18 +19,21 @@ public record RequestBulkSignSuccessEvent(
 
 public record RequestBulkSignCommand(string UserOftaId, List<string> ListDocId): IRequest<RequestBulkSignResponse>, IUserOftaKey;
 
-public record RequestBulkSignResponse(string BulkSignId, string SignUrl);
+public record SigneeResponse(string UserOftaId, string Email, string TilakaName, string SignUrl);
+public record RequestBulkSignResponse(string BulkSignId, IEnumerable<SigneeResponse> Signees);
 
 public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, RequestBulkSignResponse>
 {
     private BulkSignModel _aggregate = new();
+    private readonly ITilakaUserBuilder _tilakaUserBuilder;
     private readonly IBulkSignBuilder _builder;
     private readonly IBulkSignWriter _writer;
     private readonly IRequestBulkSignService _service;
     private readonly IMediator _mediator;
 
-    public RequestBulkSignHandler(IBulkSignBuilder builder, IBulkSignWriter writer, IRequestBulkSignService service, IMediator mediator)
+    public RequestBulkSignHandler(ITilakaUserBuilder tilakaUserBuilder, IBulkSignBuilder builder, IBulkSignWriter writer, IRequestBulkSignService service, IMediator mediator)
     {
+        _tilakaUserBuilder = tilakaUserBuilder;
         _builder = builder;
         _writer = writer;
         _service = service;
@@ -66,9 +70,7 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, Req
         _ = _writer.Save(_aggregate);
         _mediator.Publish(new RequestBulkSignSuccessEvent(_aggregate, request), CancellationToken.None);
         
-        // kasus khusus sementara baru support untuk 1 user saja
-        var signUrl = _aggregate.ListDoc.First().ListSignee.First().SignUrl;
-        var response = new RequestBulkSignResponse(_aggregate.BulkSignId, signUrl);
+        var response = BuildResponse(_aggregate);
         return Task.FromResult(response);
     }
 
@@ -87,10 +89,47 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, Req
             });
         }
     }
+    
+    private RequestBulkSignResponse BuildResponse(BulkSignModel bulkSign)
+    {
+        var listAllSignee = new List<SigneeResponse>();
+        bulkSign.ListDoc.ForEach(doc =>
+        {
+            var listSigneeEachDoc = doc.ListSignee
+                .Select(x =>
+                {
+                    var tilakaUser = _tilakaUserBuilder
+                        .Load(x.Email)
+                        .Build();
+
+                    var tilakaName = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
+                    var signee = new SigneeResponse(x.UserOftaId, x.Email, tilakaName, x.SignUrl);
+                    
+                    return signee;
+                }).ToList();
+            
+            listAllSignee.AddRange(listSigneeEachDoc);
+        });
+
+        var signatures = listAllSignee
+            .GroupBy(s => s.Email)
+            .Select(signee => new SigneeResponse(
+                signee.First().UserOftaId,
+                signee.First().Email,
+                signee.First().TilakaName,
+                signee.First().SignUrl
+            )).ToList();
+
+        return new RequestBulkSignResponse(
+            bulkSign.BulkSignId,
+            signatures
+        );
+    }
 }
 
 public class RequestBulkSignCommandHandlerTest
 {
+    private readonly Mock<ITilakaUserBuilder> _tilakaUserBuilder;
     private readonly Mock<IBulkSignBuilder> _builder;
     private readonly Mock<IBulkSignWriter> _writer;
     private readonly Mock<IRequestBulkSignService> _service;
@@ -99,11 +138,12 @@ public class RequestBulkSignCommandHandlerTest
 
     public RequestBulkSignCommandHandlerTest()
     {
+        _tilakaUserBuilder = new Mock<ITilakaUserBuilder>();
         _builder = new Mock<IBulkSignBuilder>();
         _writer = new Mock<IBulkSignWriter>();
         _service = new Mock<IRequestBulkSignService>();
         _mediator = new Mock<IMediator>();
-        _sut = new RequestBulkSignHandler(_builder.Object, _writer.Object, _service.Object, _mediator.Object);
+        _sut = new RequestBulkSignHandler(_tilakaUserBuilder.Object, _builder.Object, _writer.Object, _service.Object, _mediator.Object);
     }
 
     [Fact]
