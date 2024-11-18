@@ -7,6 +7,11 @@ using Ofta.Domain.DocContext.BulkSignAgg;
 
 namespace Ofta.Application.DocContext.BulkSignAgg.UseCases;
 
+public record ExecuteBulkSignSuccessEvent(
+    BulkSignModel Agg,
+    ExecuteBulkSignCommand Command
+) : INotification;
+
 public record ExecuteBulkSignCommand (string BulkSignId, string Email): IRequest, IBulkSignKey;
 
 public class ExecuteBulkSignHandler: IRequestHandler<ExecuteBulkSignCommand>
@@ -15,13 +20,15 @@ public class ExecuteBulkSignHandler: IRequestHandler<ExecuteBulkSignCommand>
     private readonly ITilakaUserBuilder _tilakaUserBuilder;
     private readonly IBulkSignWriter _writer;
     private readonly IExecuteBulkSignService _service;
+    private readonly IMediator _mediator;
 
-    public ExecuteBulkSignHandler(IBulkSignBuilder builder, ITilakaUserBuilder tilakaUserBuilder, IBulkSignWriter writer, IExecuteBulkSignService service)
+    public ExecuteBulkSignHandler(IBulkSignBuilder builder, ITilakaUserBuilder tilakaUserBuilder, IBulkSignWriter writer, IExecuteBulkSignService service, IMediator mediator)
     {
         _builder = builder;
         _tilakaUserBuilder = tilakaUserBuilder;
         _writer = writer;
         _service = service;
+        _mediator = mediator;
     }
 
     public Task<Unit> Handle(ExecuteBulkSignCommand request, CancellationToken cancellationToken)
@@ -54,6 +61,7 @@ public class ExecuteBulkSignHandler: IRequestHandler<ExecuteBulkSignCommand>
         
         // WRITE
         _writer.Save(aggregate);
+        _mediator.Publish(new ExecuteBulkSignSuccessEvent(aggregate, request), CancellationToken.None);
         return Task.FromResult(Unit.Value);
     }
 }

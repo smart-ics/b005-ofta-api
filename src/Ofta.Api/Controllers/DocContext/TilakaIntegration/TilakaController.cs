@@ -103,6 +103,13 @@ public class TilakaController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
     }
+    
+    [HttpPost("DownloadDocBulkSign")]
+    public async Task<IActionResult> DownloadDocBulkSign(DownloadDocBulkSignCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
 
     [HttpGet("GetSignatureInfo/{documentId}")]
     public async Task<IActionResult> GetSignatureInfo(string documentId)
