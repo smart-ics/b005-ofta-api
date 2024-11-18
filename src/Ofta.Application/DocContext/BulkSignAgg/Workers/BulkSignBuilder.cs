@@ -98,6 +98,9 @@ public class BulkSignBuilder: IBulkSignBuilder
             .Load(docId)
             .Build();
 
+        if (document.DocState != DocStateEnum.Uploaded)
+            return this;
+
         var newBulkSignDoc = new BulkSignDocModel
         {
             BulkSignId = _aggregate.BulkSignId,
@@ -129,7 +132,6 @@ public class BulkSignBuilder: IBulkSignBuilder
         });
         
         _aggregate.DocCount = _aggregate.ListDoc.Count;
-
         return this;
     }
 }
