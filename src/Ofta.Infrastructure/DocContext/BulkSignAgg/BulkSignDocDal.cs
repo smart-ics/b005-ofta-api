@@ -30,6 +30,7 @@ public class BulkSignDocDal: IBulkSignDocDal
         bcp.AddMap("BulkSignId", "BulkSignId");
         bcp.AddMap("DocId", "DocId");
         bcp.AddMap("UploadedDocId", "UploadedDocId");
+        bcp.AddMap("RequestBulkSignState", "RequestBulkSignState");
         bcp.AddMap("NoUrut", "NoUrut");
 
         var fetched = listModel.ToList();
@@ -58,7 +59,7 @@ public class BulkSignDocDal: IBulkSignDocDal
     {
         const string sql = @"
             SELECT 
-                BulkSignId, DocId, UploadedDocId, NoUrut
+                BulkSignId, DocId, UploadedDocId, RequestBulkSignState, NoUrut
             FROM 
                 OFTA_BulkSignDoc
             WHERE 
@@ -91,6 +92,7 @@ public class BulkSignDocDalTest
             BulkSignId = "A",
             DocId = "DOC-1",
             UploadedDocId = "UPLOADED-DOC-1",
+            RequestBulkSignState = RequestBulkSignStateEnum.Success,
             NoUrut = 1,
         };
         
@@ -122,6 +124,7 @@ public class BulkSignDocDalTest
             BulkSignId = "A",
             DocId = "DOC-1",
             UploadedDocId = "UPLOADED-DOC-1",
+            RequestBulkSignState = RequestBulkSignStateEnum.Success,
             NoUrut = 1,
         };
         _sut.Insert(new List<BulkSignDocModel>() { expected });

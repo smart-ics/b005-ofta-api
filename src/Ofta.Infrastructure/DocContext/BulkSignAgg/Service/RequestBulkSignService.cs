@@ -27,6 +27,9 @@ public class RequestBulkSignService: IRequestBulkSignService
         var result = ExecuteAsync(req).GetAwaiter().GetResult();
         if (result?.AuthUrls is not null)
             req.BulkSign.ListDoc = UpdateAuthUrl(req, result);
+
+        if (result?.FailedDocName is not null)
+            req.BulkSign.ListDoc = UpdateRequestBulkSignState(req, result);
         
         return new ReqBulkSignResponse(result?.Success == true, result?.Message ?? string.Empty, req.BulkSign);
     }
@@ -145,6 +148,18 @@ public class RequestBulkSignService: IRequestBulkSignService
 
                 return signee;
             }).ToList();
+        });
+
+        return req.BulkSign.ListDoc;
+    }
+    
+    private List<BulkSignDocModel> UpdateRequestBulkSignState(ReqBulkSignRequest req, RequestBulkSignResponseDto res)
+    {
+        res.FailedDocName.ForEach(failedDoc =>
+        {
+            var originalDoc = req.BulkSign.ListDoc.FirstOrDefault(x => x.UploadedDocId == failedDoc);
+            if (originalDoc is not null)
+                originalDoc.RequestBulkSignState = RequestBulkSignStateEnum.Failed;
         });
 
         return req.BulkSign.ListDoc;
