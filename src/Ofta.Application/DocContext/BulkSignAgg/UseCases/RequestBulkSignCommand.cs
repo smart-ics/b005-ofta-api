@@ -16,9 +16,11 @@ public record RequestBulkSignSuccessEvent(
     RequestBulkSignCommand Command
 ) : INotification;
 
-public record RequestBulkSignCommand(string UserOftaId, List<string> ListDocId): IRequest, IUserOftaKey;
+public record RequestBulkSignCommand(string UserOftaId, List<string> ListDocId): IRequest<RequestBulkSignResponse>, IUserOftaKey;
 
-public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand>
+public record RequestBulkSignResponse(string BulkSignId);
+
+public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, RequestBulkSignResponse>
 {
     private BulkSignModel _aggregate = new();
     private readonly IBulkSignBuilder _builder;
@@ -34,7 +36,7 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand>
         _mediator = mediator;
     }
 
-    public Task<Unit> Handle(RequestBulkSignCommand request, CancellationToken cancellationToken)
+    public Task<RequestBulkSignResponse> Handle(RequestBulkSignCommand request, CancellationToken cancellationToken)
     {
         // GUARD
         Guard.Argument(request).NotNull()
@@ -45,6 +47,7 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand>
         _aggregate = _builder
             .Create()
             .UserOfta(request)
+            .UpdateState(BulkSignStateEnum.Requested)
             .Build();
         
         request.ListDocId.ForEach(docId 
@@ -62,7 +65,7 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand>
         requestSign.BulkSign.ListDoc.ForEach(UpdateSignUrl);
         _ = _writer.Save(_aggregate);
         _mediator.Publish(new RequestBulkSignSuccessEvent(_aggregate, request), CancellationToken.None);
-        return Task.FromResult(Unit.Value);
+        return Task.FromResult(new RequestBulkSignResponse(_aggregate.BulkSignId));
     }
 
     private void UpdateSignUrl(BulkSignDocModel updatedSignUrl)

@@ -8,7 +8,15 @@ public class BulkSignModel: IBulkSignKey, IUserOftaKey
     public DateTime BulkSignDate { get; set; }
     public string UserOftaId { get; set; }
     public int DocCount { get; set; }
+    public BulkSignStateEnum BulkSignState { get; set; }
     public List<BulkSignDocModel> ListDoc { get; set; }
 
     public void SyncId() => ListDoc.ForEach(x => x.BulkSignId = BulkSignId);
+}
+
+public enum BulkSignStateEnum
+{
+    Requested,
+    FailedSign,
+    SuccessSign,
 }

@@ -24,14 +24,15 @@ public class BulkSignDal: IBulkSignDal
     public void Insert(BulkSignModel model)
     {
         const string sql = @"
-            INSERT INTO OFTA_BulkSign (BulkSignId, BulkSignDate, UserOftaId, DocCount)
-            VALUES (@BulkSignId, @BulkSignDate, @UserOftaId, @DocCount)";
+            INSERT INTO OFTA_BulkSign (BulkSignId, BulkSignDate, UserOftaId, DocCount, BulkSignState)
+            VALUES (@BulkSignId, @BulkSignDate, @UserOftaId, @DocCount, @BulkSignState);";
 
         var dp = new DynamicParameters();
         dp.AddParam("@BulkSignId", model.BulkSignId, SqlDbType.VarChar);
         dp.AddParam("@BulkSignDate", model.BulkSignDate.ToString("yyyy-MM-dd"), SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@DocCount", model.DocCount, SqlDbType.Int);
+        dp.AddParam("@BulkSignState", model.BulkSignState, SqlDbType.Bit);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -43,7 +44,8 @@ public class BulkSignDal: IBulkSignDal
             UPDATE OFTA_BulkSign
                 SET BulkSignDate = @BulkSignDate,
                     UserOftaId = @UserOftaId,
-                    DocCount = @DocCount
+                    DocCount = @DocCount,
+                    BulkSignState = @BulkSignState
             WHERE BulkSignId = @BulkSignId";
 
         var dp = new DynamicParameters();
@@ -51,6 +53,7 @@ public class BulkSignDal: IBulkSignDal
         dp.AddParam("@BulkSignDate", model.BulkSignDate.ToString("yyyy-MM-dd"), SqlDbType.VarChar);
         dp.AddParam("@UserOftaId", model.UserOftaId, SqlDbType.VarChar);
         dp.AddParam("@DocCount", model.DocCount, SqlDbType.Int);
+        dp.AddParam("@BulkSignState", model.BulkSignState, SqlDbType.Bit);
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -59,7 +62,7 @@ public class BulkSignDal: IBulkSignDal
     public BulkSignModel GetData(IBulkSignKey key)
     {
         const string sql = @"
-            SELECT BulkSignId, BulkSignDate, UserOftaId, DocCount 
+            SELECT BulkSignId, BulkSignDate, UserOftaId, DocCount, BulkSignState
                 FROM OFTA_BulkSign
             WHERE 
                 BulkSignId = @BulkSignId";
@@ -92,6 +95,7 @@ public class BulkSignDalTest
             BulkSignDate = DateTime.Now,
             UserOftaId = "B",
             DocCount = 1,
+            BulkSignState = BulkSignStateEnum.SuccessSign,
         };
         
         // ACT & ASSERT
@@ -109,6 +113,7 @@ public class BulkSignDalTest
             BulkSignDate = DateTime.Now,
             UserOftaId = "B",
             DocCount = 1,
+            BulkSignState = BulkSignStateEnum.SuccessSign,
         };
         
         // ACT & ASSERT
@@ -126,6 +131,7 @@ public class BulkSignDalTest
             BulkSignDate = DateTime.Now,
             UserOftaId = "B",
             DocCount = 1,
+            BulkSignState = BulkSignStateEnum.SuccessSign,
         };
         var expected = new BulkSignModel
         {
@@ -133,6 +139,7 @@ public class BulkSignDalTest
             BulkSignDate = DateTime.Now.Date,
             UserOftaId = "B",
             DocCount = 1,
+            BulkSignState = BulkSignStateEnum.SuccessSign,
         };
         _sut.Insert(faker);
         

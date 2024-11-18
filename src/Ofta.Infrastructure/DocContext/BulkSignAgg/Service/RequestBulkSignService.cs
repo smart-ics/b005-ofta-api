@@ -24,7 +24,7 @@ public class RequestBulkSignService: IRequestBulkSignService
 
     public ReqBulkSignResponse Execute(ReqBulkSignRequest req)
     {
-        var result = ExecuteAsync(req).GetAwaiter().GetResult();
+        var result = Task.Run(() => ExecuteAsync(req)).GetAwaiter().GetResult();
         if (result?.AuthUrls is not null)
             req.BulkSign.ListDoc = UpdateAuthUrl(req, result);
 

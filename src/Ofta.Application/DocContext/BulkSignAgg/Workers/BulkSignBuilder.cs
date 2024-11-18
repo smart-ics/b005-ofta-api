@@ -19,6 +19,7 @@ public interface IBulkSignBuilder : INunaBuilder<BulkSignModel>
     IBulkSignBuilder Attach(BulkSignModel model);
     IBulkSignBuilder Load(IBulkSignKey key);
     IBulkSignBuilder UserOfta(IUserOftaKey key);
+    IBulkSignBuilder UpdateState(BulkSignStateEnum state);
     IBulkSignBuilder AddDocument(IDocKey docId);
 }
 
@@ -89,6 +90,12 @@ public class BulkSignBuilder: IBulkSignBuilder
             ?? throw new KeyNotFoundException($"User Ofta with id {key.UserOftaId} not found");
         
         _aggregate.UserOftaId = userOfta.UserOftaId;
+        return this;
+    }
+
+    public IBulkSignBuilder UpdateState(BulkSignStateEnum state)
+    {
+        _aggregate.BulkSignState = state;
         return this;
     }
 
