@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocAgg.Workers;
+using Ofta.Application.Helpers;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
@@ -13,23 +14,25 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
 public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler 
     : INotificationHandler<FinishedPrintDocKlaimBpjsEvent>
 {
+    private readonly IAppSettingService _appSetting;
     private readonly IDocBuilder _docBuilder;
     private readonly IDocWriter _docWriter;
     private readonly IKlaimBpjsWriter _klaimBpjsWriter;
     private readonly IWriteFileService _writeFileService;
+    private readonly IUserOftaDal _userOftaDal;
     private readonly IUserOftaMappingDal _userOftaMappingDal;
 
-    public CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler(IDocBuilder docBuilder, 
-        IDocWriter docWriter, 
-        IKlaimBpjsWriter klaimBpjsWriter, 
-        IWriteFileService writeFileService, IUserOftaMappingDal userOftaMappingDal)
+    public CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler(IAppSettingService appSetting, IDocBuilder docBuilder, IDocWriter docWriter, IKlaimBpjsWriter klaimBpjsWriter, IWriteFileService writeFileService, IUserOftaDal userOftaDal, IUserOftaMappingDal userOftaMappingDal)
     {
+        _appSetting = appSetting;
         _docBuilder = docBuilder;
         _docWriter = docWriter;
         _klaimBpjsWriter = klaimBpjsWriter;
         _writeFileService = writeFileService;
+        _userOftaDal = userOftaDal;
         _userOftaMappingDal = userOftaMappingDal;
     }
+
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
@@ -93,16 +96,56 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
 
     private DocModel AddSigneeAndScope(DocModel doc, string user, SignPositionEnum signPosition)
     {
-        var userOfta = _userOftaMappingDal
+        var userOftaMapping = _userOftaMappingDal
             .ListData(user)
             .First();
+        
+        var userOfta = _userOftaDal.GetData(userOftaMapping);
 
         if (userOfta is null)
             return doc;
+
+        var signPositionDesc = new SignPositionDesc
+        {
+            UserIdentifier = userOfta.Email,
+            Width = 0,
+            Height = 0,
+            CoordinateX = 0,
+            CoordinateY = 0,
+            PageNumber = 0,
+            QrOption = "QRONLY"
+        };
+        
+        switch (signPosition)
+        {
+            case SignPositionEnum.SignLeft:
+                signPositionDesc.Width = _appSetting.SignPositionLeft.Width;
+                signPositionDesc.Height = _appSetting.SignPositionLeft.Height;
+                signPositionDesc.CoordinateX = _appSetting.SignPositionLeft.CoordinateX;
+                signPositionDesc.CoordinateY = _appSetting.SignPositionLeft.CoordinateY;
+                signPositionDesc.PageNumber = _appSetting.SignPositionLeft.PageNumber;
+                break;
+            case SignPositionEnum.SignCenter:
+                signPositionDesc.Width = _appSetting.SignPositionCenter.Width;
+                signPositionDesc.Height = _appSetting.SignPositionCenter.Height;
+                signPositionDesc.CoordinateX = _appSetting.SignPositionCenter.CoordinateX;
+                signPositionDesc.CoordinateY = _appSetting.SignPositionCenter.CoordinateY;
+                signPositionDesc.PageNumber = _appSetting.SignPositionCenter.PageNumber;
+                break;
+            case SignPositionEnum.SignRight:
+                signPositionDesc.Width = _appSetting.SignPositionRight.Width;
+                signPositionDesc.Height = _appSetting.SignPositionRight.Height;
+                signPositionDesc.CoordinateX = _appSetting.SignPositionRight.CoordinateX;
+                signPositionDesc.CoordinateY = _appSetting.SignPositionRight.CoordinateY;
+                signPositionDesc.PageNumber = _appSetting.SignPositionRight.PageNumber;
+                break;
+        }
+
+        var signPositionDescJson = JsonConvert.SerializeObject(signPositionDesc);
             
         return _docBuilder
             .Attach(doc)
-            .AddSignee(userOfta, "", signPosition, "", "")
+            .AddSignee(userOfta, "Mengetahui", signPosition, signPositionDescJson, "")
             .AddScope(userOfta)
             .Build();
     }
@@ -113,4 +156,28 @@ public class UserSignee
     public string UserSign1 { get; set; }
     public string UserSign2 { get; set; }
     public string UserSign3 { get; set; }
+}
+
+internal class SignPositionDesc
+{
+    [JsonProperty("user_identifier")]
+    public string UserIdentifier { get; set; }
+        
+    [JsonProperty("width")]
+    public int Width { get; set; }
+        
+    [JsonProperty("height")]
+    public int Height { get; set; }
+            
+    [JsonProperty("coordinate_x")]
+    public int CoordinateX { get; set; }
+        
+    [JsonProperty("coordinate_y")]
+    public int CoordinateY { get; set; }
+        
+    [JsonProperty("page_number")]
+    public int PageNumber { get; set; }
+        
+    [JsonProperty("qr_option")]
+    public string QrOption { get; set; }
 }

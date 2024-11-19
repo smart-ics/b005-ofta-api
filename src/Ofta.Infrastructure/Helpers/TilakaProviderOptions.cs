@@ -20,4 +20,15 @@ public class TilakaProviderOptions
     public string CompanyName { get; set; }
     public string ConsentText { get; set; }
     public string Version { get; set; }
+    public IEnumerable<SignPositionLayout> SignPositionLayout { get; set; }
+}
+
+public class SignPositionLayout
+{
+    public int SignPosition { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int CoordinateX { get; set; }
+    public int CoordinateY { get; set; }
+    public int PageNumber { get; set; }
 }
