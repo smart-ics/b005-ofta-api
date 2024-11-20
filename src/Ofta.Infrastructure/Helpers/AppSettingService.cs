@@ -20,25 +20,39 @@ public class AppSettingService : IAppSettingService
     public string OftaMyDocWebUrl => _oftaOptions.MyDocWebUrl;
     public int UserExpirationTime => _tilakaOptions.YearExpiration;
 
-    public TilakaSignPosition SignPositionLeft => GetSignPositionLeft();
-    public TilakaSignPosition SignPositionCenter => GetSignPositionCenter();
-    public TilakaSignPosition SignPositionRight => GetSignPositionRight();
-
-    private TilakaSignPosition GetSignPositionLeft() 
+    public TilakaSignPosition SignPositionLeft
     {
-        var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 0);
-        return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 0);
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
     }
 
-    private TilakaSignPosition GetSignPositionCenter()
+    public TilakaSignPosition SignPositionCenter
     {
-        var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 1);
-        return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 1);
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
     }
 
-    private TilakaSignPosition GetSignPositionRight()
+    public TilakaSignPosition SignPositionRight
     {
-        var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 2);
-        return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 2);
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
+    }
+
+    public TilakaSignPosition SignPositionResep
+    {
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayoutResep;
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
     }
 }
