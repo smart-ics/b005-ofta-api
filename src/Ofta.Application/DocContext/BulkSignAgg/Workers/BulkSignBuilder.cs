@@ -98,7 +98,7 @@ public class BulkSignBuilder: IBulkSignBuilder
             .Load(docId)
             .Build();
 
-        if (document.DocState < DocStateEnum.Signed)
+        if (document.DocState < DocStateEnum.Uploaded)
             return this;
 
         var signee = document.ListSignees.FirstOrDefault(x => x.UserOftaId == _aggregate.UserOftaId) ?? new DocSigneeModel();
