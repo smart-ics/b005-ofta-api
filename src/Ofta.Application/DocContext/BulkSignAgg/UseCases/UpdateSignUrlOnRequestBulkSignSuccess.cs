@@ -29,7 +29,7 @@ public class UpdateSignUrlOnRequestBulkSignSuccess : INotificationHandler<Reques
                 .Build();
             
             var tilakaUser =  _tilakaUserBuilder
-                .Load(bulkSign.UserOftaId)
+                .Load(bulkSign.Email)
                 .Build();
             
             var originalDoc = _builder
