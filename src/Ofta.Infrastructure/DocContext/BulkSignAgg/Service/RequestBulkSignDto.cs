@@ -27,12 +27,6 @@ internal class SignaturesDto
 {
     [JsonPropertyName("user_identifier")]
     public string UserIdentifier { get; set; }
-        
-    [JsonPropertyName("signature_image")]
-    public string SignatureImage { get; set; }
-        
-    [JsonPropertyName("sequence")]
-    public int Sequence { get; set; }
 }
 
 internal class SignatureDto

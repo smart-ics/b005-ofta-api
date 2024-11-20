@@ -68,7 +68,6 @@ public class RequestBulkSignService: IRequestBulkSignService
 
     private RequestBulkSignPayload GenerateRequestBulkSignPayload(BulkSignModel bulkSign)
     {
-        // var listAllSignee = new List<SignatureEachDocDto>();
         var listPdf = new List<FileDto>();
         var listAllSignee = bulkSign.ListDoc.Select(doc =>
         {
