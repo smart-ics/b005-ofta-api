@@ -7,6 +7,7 @@ using Ofta.Application.DocContext.BulkSignAgg.Workers;
 using Ofta.Application.UserContext.TilakaAgg.Workers;
 using Ofta.Domain.DocContext.BulkSignAgg;
 using Ofta.Domain.DocContext.DocAgg;
+using Ofta.Domain.UserContext.TilakaAgg;
 using Ofta.Domain.UserContext.UserOftaAgg;
 using Xunit;
 
@@ -20,7 +21,7 @@ public record RequestBulkSignSuccessEvent(
 public record RequestBulkSignCommand(string UserOftaId, List<string> ListDocId): IRequest<RequestBulkSignResponse>, IUserOftaKey;
 
 public record SigneeResponse(string UserOftaId, string Email, string TilakaName, string SignUrl);
-public record RequestBulkSignResponse(string BulkSignId, IEnumerable<SigneeResponse> Signees);
+public record RequestBulkSignResponse(string BulkSignId, SigneeResponse Signee);
 
 public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, RequestBulkSignResponse>
 {
@@ -78,51 +79,22 @@ public class RequestBulkSignHandler: IRequestHandler<RequestBulkSignCommand, Req
     {
         var originalDoc = _aggregate.ListDoc.FirstOrDefault(x => x.DocId == updatedSignUrl.DocId);
         if (originalDoc is not null)
-        {
-            updatedSignUrl.ListSignee.ForEach(updatedSignee =>
-            {
-                var originalSignee = originalDoc.ListSignee
-                    .FirstOrDefault(x => x.UserOftaId == updatedSignee.UserOftaId || x.Email == updatedSignee.Email);
-
-                if (originalSignee is not null)
-                    originalSignee.SignUrl = updatedSignee.SignUrl;
-            });
-        }
+            originalDoc.SignUrl = updatedSignUrl.SignUrl;
     }
     
     private RequestBulkSignResponse BuildResponse(BulkSignModel bulkSign)
     {
-        var listAllSignee = new List<SigneeResponse>();
-        bulkSign.ListDoc.ForEach(doc =>
-        {
-            var listSigneeEachDoc = doc.ListSignee
-                .Select(x =>
-                {
-                    var tilakaUser = _tilakaUserBuilder
-                        .Load(x.Email)
-                        .Build();
-
-                    var tilakaName = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
-                    var signee = new SigneeResponse(x.UserOftaId, x.Email, tilakaName, x.SignUrl);
-                    
-                    return signee;
-                }).ToList();
-            
-            listAllSignee.AddRange(listSigneeEachDoc);
-        });
-
-        var signatures = listAllSignee
-            .GroupBy(s => s.Email)
-            .Select(signee => new SigneeResponse(
-                signee.First().UserOftaId,
-                signee.First().Email,
-                signee.First().TilakaName,
-                signee.First().SignUrl
-            )).ToList();
-
+        var signee = bulkSign.ListDoc.First();
+        var tilakaUser = _tilakaUserBuilder
+            .Load(bulkSign.Email)
+            .Build();
+        
+        var tilakaName = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
+        var signeeResponse = new SigneeResponse(bulkSign.UserOftaId, tilakaUser?.Email ?? string.Empty, tilakaName, signee.SignUrl);
+        
         return new RequestBulkSignResponse(
             bulkSign.BulkSignId,
-            signatures
+            signeeResponse
         );
     }
 }
@@ -196,10 +168,11 @@ public class RequestBulkSignCommandHandlerTest
             BulkSignDate = fakerDateTime,
             UserOftaId = "A",
             DocCount = 0,
+            BulkSignState = BulkSignStateEnum.Requested,
             ListDoc = new List<BulkSignDocModel>()
         };
 
-        _builder.Setup(x => x.Create().Build())
+        _builder.Setup(x => x.Create().UserOfta(It.IsAny<IUserOftaKey>()).UpdateState(It.IsAny<BulkSignStateEnum>()).Build())
             .Returns(fakerBulkSign);
         
         var fakerDocument1 = new BulkSignDocModel
@@ -208,15 +181,22 @@ public class RequestBulkSignCommandHandlerTest
             DocId = "DOC1",
             UploadedDocId = "DOC1",
             NoUrut = 1,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "",
+            SignUrl = ""
         };
+        
         var fakerDocument2 = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC2",
             UploadedDocId = "DOC2",
             NoUrut = 2,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "",
+            SignUrl = ""
         };
 
         fakerBulkSign.DocCount = 1;
@@ -265,49 +245,37 @@ public class RequestBulkSignCommandHandlerTest
         {
             BulkSignDate = fakerDateTime,
             UserOftaId = "A",
+            Email = "B",
             DocCount = 0,
+            BulkSignState = BulkSignStateEnum.Requested,
             ListDoc = new List<BulkSignDocModel>()
         };
 
-        _builder.Setup(x => x.Create().Build())
+        _builder.Setup(x => x.Create().UserOfta(It.IsAny<IUserOftaKey>()).UpdateState(It.IsAny<BulkSignStateEnum>()).Build())
             .Returns(fakerBulkSign);
-
-        var fakerSignee1 = new BulkSignDocSigneeModel
-        {
-            DocId = "DOC1",
-            UserOftaId = "USER-001",
-            Email = "signee1@email.com",
-            SignTag = "Mengetahui",
-            SignPosition = SignPositionEnum.SignLeft,
-            SignPositionDesc = "",
-            SignUrl = ""
-        };
+        
         var fakerDocument1 = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC1",
             UploadedDocId = "DOC1",
             NoUrut = 1,
-            ListSignee = new List<BulkSignDocSigneeModel>{ fakerSignee1 },
-        };
-        
-        var fakerSignee2 = new BulkSignDocSigneeModel
-        {
-            DocId = "DOC2",
-            UserOftaId = "USER-002",
-            Email = "signee2@email.com",
             SignTag = "Mengetahui",
             SignPosition = SignPositionEnum.SignLeft,
             SignPositionDesc = "",
             SignUrl = ""
         };
+        
         var fakerDocument2 = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC2",
             UploadedDocId = "DOC2",
             NoUrut = 2,
-            ListSignee = new List<BulkSignDocSigneeModel>{ fakerSignee2 },
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "",
+            SignUrl = ""
         };
 
         fakerBulkSign.DocCount = 1;
@@ -325,30 +293,43 @@ public class RequestBulkSignCommandHandlerTest
             BulkSignId = "BULK-001",
             BulkSignDate = fakerDateTime,
             UserOftaId = "A",
+            Email = "B",
             DocCount = 2,
             ListDoc = new List<BulkSignDocModel>{fakerDocument1, fakerDocument2}
         };
         
-        BulkSignModel actual = null;
+        BulkSignModel actualBulkSign = null;
         fakerBulkSign.BulkSignId = "BULK-001";
         _writer.Setup(x => x.Save(It.IsAny<BulkSignModel>()))
-            .Callback<BulkSignModel>(bulkSign => actual = bulkSign)
+            .Callback<BulkSignModel>(bulkSign => actualBulkSign = bulkSign)
             .Returns(fakerBulkSign);
 
-        fakerBulkSign.ListDoc[0].ListSignee.First().SignUrl = "signUrl1";
-        fakerBulkSign.ListDoc[1].ListSignee.First().SignUrl = "signUrl2";
+        fakerBulkSign.ListDoc[0].SignUrl = "signUrl1";
+        fakerBulkSign.ListDoc[1].SignUrl = "signUrl2";
         _service.Setup(x => x.Execute(It.IsAny<ReqBulkSignRequest>()))
             .Returns(new ReqBulkSignResponse(true, "A", fakerBulkSign));
         
         _writer.Setup(x => x.Save(It.IsAny<BulkSignModel>()))
-            .Callback<BulkSignModel>(bulkSign => actual = bulkSign)
+            .Callback<BulkSignModel>(bulkSign => actualBulkSign = bulkSign)
             .Returns(fakerBulkSign);
+
+        var fakerTilakaUser = new TilakaUserModel
+        {
+            UserOftaId = "A",
+            Email = "B",
+            TilakaName = "C",
+        };
+        _tilakaUserBuilder.Setup(x => x.Load(It.IsAny<string>()).Build())
+            .Returns(fakerTilakaUser);
+        
+        var expectedResponse = new RequestBulkSignResponse("BULK-001", new SigneeResponse("A", "B", "C", "signUrl1"));
         
         // ACT
-        await _sut.Handle(request, CancellationToken.None);
+        var actual = await _sut.Handle(request, CancellationToken.None);
 
         // ASSERT
         _mediator.Verify(x => x.Publish(It.IsAny<RequestBulkSignSuccessEvent>(), It.IsAny<CancellationToken>()), Times.Once());
-        actual.Should().BeEquivalentTo(expectedBulkSign);
+        actual.Should().BeEquivalentTo(expectedResponse);
+        actualBulkSign.Should().BeEquivalentTo(expectedBulkSign);
     }
 }

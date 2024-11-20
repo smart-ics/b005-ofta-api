@@ -7,6 +7,7 @@ public class BulkSignModel: IBulkSignKey, IUserOftaKey
     public string BulkSignId { get; set; }
     public DateTime BulkSignDate { get; set; }
     public string UserOftaId { get; set; }
+    public string Email { get; set; }
     public int DocCount { get; set; }
     public BulkSignStateEnum BulkSignState { get; set; }
     public List<BulkSignDocModel> ListDoc { get; set; }

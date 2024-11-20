@@ -68,44 +68,37 @@ public class RequestBulkSignService: IRequestBulkSignService
 
     private RequestBulkSignPayload GenerateRequestBulkSignPayload(BulkSignModel bulkSign)
     {
-        var listAllSignee = new List<SignatureEachDocDto>();
+        // var listAllSignee = new List<SignatureEachDocDto>();
         var listPdf = new List<FileDto>();
-        bulkSign.ListDoc.ForEach(doc =>
+        var listAllSignee = bulkSign.ListDoc.Select(doc =>
         {
-            var listSigneeEachDoc = doc.ListSignee
-                .Where(signee => !string.IsNullOrWhiteSpace(signee.SignPositionDesc))
-                .Select(signee =>
-                {
-                    var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
-                    var newSignee = new SignatureEachDocDto
-                    {
-                        UserIdentifier = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty,
-                        Reason = _opt.Reason,
-                        Location = _opt.Location,
-                        Width = signPositionDescJson?.GetValueOrDefault("width").GetDouble() ?? 0,
-                        Height = signPositionDescJson?.GetValueOrDefault("height").GetDouble() ?? 0,
-                        CoordinateX = signPositionDescJson?.GetValueOrDefault("coordinate_x").GetDouble() ?? 0,
-                        CoordinateY = signPositionDescJson?.GetValueOrDefault("coordinate_y").GetDouble() ?? 0,
-                        PageNumber = signPositionDescJson?.GetValueOrDefault("page_number").GetInt32() ?? 0,
-                        QrOption = signPositionDescJson?.GetValueOrDefault("qr_option").GetString() ?? string.Empty
-                    };
+            var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(doc.SignPositionDesc);
+            var signee = new SignatureDto
+            {
+                UserIdentifier = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty,
+                Reason = _opt.Reason,
+                Location = _opt.Location,
+                Width = signPositionDescJson?.GetValueOrDefault("width").GetDouble() ?? 0,
+                Height = signPositionDescJson?.GetValueOrDefault("height").GetDouble() ?? 0,
+                CoordinateX = signPositionDescJson?.GetValueOrDefault("coordinate_x").GetDouble() ?? 0,
+                CoordinateY = signPositionDescJson?.GetValueOrDefault("coordinate_y").GetDouble() ?? 0,
+                PageNumber = signPositionDescJson?.GetValueOrDefault("page_number").GetInt32() ?? 0,
+                QrOption = signPositionDescJson?.GetValueOrDefault("qr_option").GetString() ?? string.Empty
+            };
 
-                    var tilakaUser = _tilakaUserBuilder
-                        .Load(newSignee.UserIdentifier)
-                        .Build();
+            var tilakaUser = _tilakaUserBuilder
+                .Load(signee.UserIdentifier)
+                .Build();
 
-                    newSignee.UserIdentifier = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
-                    return newSignee;
-                }).ToList();
-
+            signee.UserIdentifier = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
             
             listPdf.Add(new FileDto
             {
                 Filename = doc.UploadedDocId,
-                Signatures = listSigneeEachDoc,
+                Signatures = signee,
             });
             
-            listAllSignee.AddRange(listSigneeEachDoc);
+            return signee;
         });
 
         var signatures = listAllSignee
@@ -113,8 +106,6 @@ public class RequestBulkSignService: IRequestBulkSignService
             .Select((signee, index) => new SignaturesDto
             {
                 UserIdentifier = signee.First().UserIdentifier,
-                SignatureImage = string.Empty,
-                Sequence = index + 1,
             }).ToList();
 
         return new RequestBulkSignPayload
@@ -127,30 +118,25 @@ public class RequestBulkSignService: IRequestBulkSignService
 
     private List<BulkSignDocModel> UpdateAuthUrl(ReqBulkSignRequest req, RequestBulkSignResponseDto res)
     {
-        req.BulkSign.ListDoc.ForEach(doc =>
+        return req.BulkSign.ListDoc.Select(doc =>
         {
-            doc.ListSignee = doc.ListSignee.Select(signee =>
-            {
-                var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
-                var userIdentifierFromDesc = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
+            var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(doc.SignPositionDesc);
+            var userIdentifierFromDesc = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
                     
-                var tilakaUser = _tilakaUserBuilder
-                    .Load(userIdentifierFromDesc)
-                    .Build();
+            var tilakaUser = _tilakaUserBuilder
+                .Load(userIdentifierFromDesc)
+                .Build();
                     
-                var userProvider = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
+            var userProvider = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
 
-                var authUrl = res.AuthUrls
-                    .FirstOrDefault(auth => auth.UserIdentifier == userProvider);
+            var authUrl = res.AuthUrls
+                .FirstOrDefault(auth => auth.UserIdentifier == userProvider);
 
-                if (authUrl is not null)
-                    signee.SignUrl = authUrl.Url;
+            if (authUrl is not null)
+                doc.SignUrl = authUrl.Url;
 
-                return signee;
-            }).ToList();
-        });
-
-        return req.BulkSign.ListDoc;
+            return doc;
+        }).ToList();
     }
     
     private List<BulkSignDocModel> UpdateRequestBulkSignState(ReqBulkSignRequest req, RequestBulkSignResponseDto res)

@@ -16,15 +16,13 @@ public class BulkSignWriter: IBulkSignWriter
 {
     private readonly IBulkSignDal _bulkSignDal;
     private readonly IBulkSignDocDal _bulkSignDocDal;
-    private readonly IBulkSignDocSigneeDal _bulkSignDocSigneeDal;
     private readonly IValidator<BulkSignModel> _validator;
     private readonly INunaCounterBL _counter;
 
-    public BulkSignWriter(IBulkSignDal bulkSignDal, IBulkSignDocDal bulkSignDocDal, IBulkSignDocSigneeDal bulkSignDocSigneeDal, IValidator<BulkSignModel> validator, INunaCounterBL counter)
+    public BulkSignWriter(IBulkSignDal bulkSignDal, IBulkSignDocDal bulkSignDocDal, IValidator<BulkSignModel> validator, INunaCounterBL counter)
     {
         _bulkSignDal = bulkSignDal;
         _bulkSignDocDal = bulkSignDocDal;
-        _bulkSignDocSigneeDal = bulkSignDocSigneeDal;
         _validator = validator;
         _counter = counter;
     }
@@ -35,8 +33,7 @@ public class BulkSignWriter: IBulkSignWriter
         model.BulkSignId = model.BulkSignId.IsNullOrEmpty()
             ? _counter.Generate("BULK", IDFormatEnum.PREFYYMnnnnnC)
             : model.BulkSignId;
-
-        model.ListDoc.ForEach(x => x.SyncId());
+        
         model.SyncId();
 
         var db = _bulkSignDal.GetData(model);
@@ -49,12 +46,6 @@ public class BulkSignWriter: IBulkSignWriter
         
         _bulkSignDocDal.Delete(model);
         _bulkSignDocDal.Insert(model.ListDoc);
-
-        model.ListDoc.ForEach(x =>
-        {
-            _bulkSignDocSigneeDal.Delete(x);
-            _bulkSignDocSigneeDal.Insert(x.ListSignee);
-        });
         
         trans.Complete();
         return model;

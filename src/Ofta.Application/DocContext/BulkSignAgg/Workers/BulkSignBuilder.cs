@@ -29,16 +29,14 @@ public class BulkSignBuilder: IBulkSignBuilder
     private readonly ITglJamDal _tglJamDal;
     private readonly IBulkSignDal _bulkSignDal;
     private readonly IBulkSignDocDal _bulkSignDocDal;
-    private readonly IBulkSignDocSigneeDal _bulkSignDocSigneeDal;
     private readonly IUserOftaDal _userOftaDal;
     private readonly IDocBuilder _docBuilder;
 
-    public BulkSignBuilder(ITglJamDal tglJamDal, IBulkSignDal bulkSignDal, IBulkSignDocDal bulkSignDocDal, IBulkSignDocSigneeDal bulkSignDocSigneeDal, IUserOftaDal userOftaDal, IDocBuilder docBuilder)
+    public BulkSignBuilder(ITglJamDal tglJamDal, IBulkSignDal bulkSignDal, IBulkSignDocDal bulkSignDocDal, IUserOftaDal userOftaDal, IDocBuilder docBuilder)
     {
         _tglJamDal = tglJamDal;
         _bulkSignDal = bulkSignDal;
         _bulkSignDocDal = bulkSignDocDal;
-        _bulkSignDocSigneeDal = bulkSignDocSigneeDal;
         _userOftaDal = userOftaDal;
         _docBuilder = docBuilder;
     }
@@ -75,12 +73,6 @@ public class BulkSignBuilder: IBulkSignBuilder
         _aggregate.ListDoc = _bulkSignDocDal.ListData(key)?.ToList()
             ?? new List<BulkSignDocModel>();
 
-        _aggregate.ListDoc.ForEach(x =>
-        {
-            x.ListSignee = _bulkSignDocSigneeDal.ListData(x)?.ToList() 
-                ?? new List<BulkSignDocSigneeModel>();
-        });
-
         return this;
     }
 
@@ -90,6 +82,7 @@ public class BulkSignBuilder: IBulkSignBuilder
             ?? throw new KeyNotFoundException($"User Ofta with id {key.UserOftaId} not found");
         
         _aggregate.UserOftaId = userOfta.UserOftaId;
+        _aggregate.Email = userOfta.Email;
         return this;
     }
 
@@ -108,24 +101,17 @@ public class BulkSignBuilder: IBulkSignBuilder
         if (document.DocState != DocStateEnum.Uploaded)
             return this;
 
+        var signee = document.ListSignees.FirstOrDefault(x => x.UserOftaId == _aggregate.UserOftaId) ?? new DocSigneeModel();
         var newBulkSignDoc = new BulkSignDocModel
         {
             BulkSignId = _aggregate.BulkSignId,
             DocId = document.DocId,
             UploadedDocId = document.UploadedDocId,
             NoUrut = 0,
-            ListSignee = document.ListSignees?.Select(x 
-                => new BulkSignDocSigneeModel
-                {
-                    DocId = x.DocId,
-                    UserOftaId = x.UserOftaId,
-                    Email = x.Email,
-                    SignTag = x.SignTag,
-                    SignPosition = x.SignPosition,
-                    SignPositionDesc = x.SignPositionDesc,
-                    SignUrl = x.SignUrl,
-                }
-            ).ToList() ?? new List<BulkSignDocSigneeModel>()
+            SignTag = signee.SignTag,
+            SignPosition = signee.SignPosition,
+            SignPositionDesc = signee.SignPositionDesc,
+            SignUrl = signee.SignUrl
         };
         
         _aggregate.ListDoc.RemoveAll(x => x.DocId == docId.DocId);
@@ -148,7 +134,6 @@ public class BulkSignBuilderTest
     private readonly Mock<ITglJamDal> _tglJamDal;
     private readonly Mock<IBulkSignDal> _bulkSignDal;
     private readonly Mock<IBulkSignDocDal> _bulkSignDocDal;
-    private readonly Mock<IBulkSignDocSigneeDal> _bulkSignDocSigneeDal;
     private readonly Mock<IUserOftaDal> _userOftaDal;
     private readonly Mock<IDocBuilder> _docBuilder;
     private readonly BulkSignBuilder _sut;
@@ -158,10 +143,9 @@ public class BulkSignBuilderTest
         _tglJamDal = new Mock<ITglJamDal>();
         _bulkSignDal = new Mock<IBulkSignDal>();
         _bulkSignDocDal = new Mock<IBulkSignDocDal>();
-        _bulkSignDocSigneeDal = new Mock<IBulkSignDocSigneeDal>();
         _userOftaDal = new Mock<IUserOftaDal>();
         _docBuilder = new Mock<IDocBuilder>();
-        _sut = new BulkSignBuilder(_tglJamDal.Object, _bulkSignDal.Object, _bulkSignDocDal.Object, _bulkSignDocSigneeDal.Object, _userOftaDal.Object, _docBuilder.Object);
+        _sut = new BulkSignBuilder(_tglJamDal.Object, _bulkSignDal.Object, _bulkSignDocDal.Object, _userOftaDal.Object, _docBuilder.Object);
     }
 
     [Fact]
@@ -191,26 +175,18 @@ public class BulkSignBuilderTest
     public void GivenValidRequest_ThenLoadBulkSignObject()
     {
         // ARRANGE
-        var fakerSignee = new BulkSignDocSigneeModel
-        {
-            DocId = "DOC1",
-            UserOftaId = "USER-001",
-            Email = "user@email.com",
-            SignTag = "Mengetahun",
-            SignPosition = SignPositionEnum.SignLeft,
-            SignPositionDesc = "Desc"
-        };
-        
         var fakerDocument = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC1",
             UploadedDocId = "DOC1",
             NoUrut = 1,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
         
-        var fakerListSignee = new List<BulkSignDocSigneeModel>{fakerSignee};
         var fakerBulkSignListDoc = new List<BulkSignDocModel>{fakerDocument};
         var fakerBulkSign = new BulkSignModel
         {
@@ -224,8 +200,6 @@ public class BulkSignBuilderTest
             .Returns(fakerBulkSign);
         _bulkSignDocDal.Setup(x => x.ListData(It.IsAny<IBulkSignKey>()))
             .Returns(fakerBulkSignListDoc);
-        _bulkSignDocSigneeDal.Setup(x => x.ListData(It.IsAny<IDocKey>()))
-            .Returns(fakerListSignee);
 
         var expectedBulkSignDoc = new BulkSignDocModel
         {
@@ -233,7 +207,10 @@ public class BulkSignBuilderTest
             DocId = "DOC1",
             UploadedDocId = "DOC1",
             NoUrut = 1,
-            ListSignee = fakerListSignee,
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
         
         var expectedBulkSignListDoc = new List<BulkSignDocModel>{expectedBulkSignDoc};
@@ -254,33 +231,52 @@ public class BulkSignBuilderTest
         // ASSERT
         actual.Should().BeEquivalentTo(expectedBulkSign);
         actual.ListDoc.Should().BeEquivalentTo(expectedBulkSignListDoc);
-        actual.ListDoc.First().ListSignee.Should().BeEquivalentTo(fakerListSignee);
+        actual.ListDoc.First().Should().BeEquivalentTo(expectedBulkSignDoc);
     }
 
     [Fact]
     public void GivenNewDocument_ThenAddToListDoc_AndAdjustNoUrut()
     {
         // ARRANGE
+        var fakerDocSigneee = new DocSigneeModel
+        {
+            DocId = "DOC3",
+            UserOftaId = "USER-001",
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
+        };
         var fakerNewDocument = new DocModel
         {
             DocId = "DOC3",
             UploadedDocId = "DOC3",
+            DocState = DocStateEnum.Uploaded,
+            ListSignees = new List<DocSigneeModel>() { fakerDocSigneee }
         };
+        
         var fakerDocument1 = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC1",
             UploadedDocId = "DOC1",
             NoUrut = 1,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
+        
         var fakerDocument2 = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC2",
             UploadedDocId = "DOC2",
             NoUrut = 2,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
         
         var fakerBulkSignListDoc = new List<BulkSignDocModel>{fakerDocument1, fakerDocument2};
@@ -288,7 +284,7 @@ public class BulkSignBuilderTest
         {
             BulkSignId = "A",
             BulkSignDate = DateTime.Now,
-            UserOftaId = "B",
+            UserOftaId = "USER-001",
             DocCount = 2,
         };
         
@@ -305,7 +301,10 @@ public class BulkSignBuilderTest
             DocId = "DOC3",
             UploadedDocId = "DOC3",
             NoUrut = 3,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
         
         var expectedBulkSignListDoc = new List<BulkSignDocModel>{fakerDocument1, fakerDocument2, expectedNewDocument};
@@ -313,7 +312,7 @@ public class BulkSignBuilderTest
         {
             BulkSignId = "A",
             BulkSignDate = fakerBulkSign.BulkSignDate,
-            UserOftaId = "B",
+            UserOftaId = "USER-001",
             DocCount = 3,
             ListDoc = expectedBulkSignListDoc,
         };
@@ -344,23 +343,34 @@ public class BulkSignBuilderTest
             DocId = "DOC1",
             UploadedDocId = "DOC1",
             NoUrut = 1,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
+        
         var fakerDocument2 = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC2",
             UploadedDocId = "DOC2",
             NoUrut = 2,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
+        
         var fakerDocument3 = new BulkSignDocModel
         {
             BulkSignId = "A",
             DocId = "DOC3",
             UploadedDocId = "DOC3",
             NoUrut = 3,
-            ListSignee = new List<BulkSignDocSigneeModel>(),
+            SignTag = "Mengetahui",
+            SignPosition = SignPositionEnum.SignLeft,
+            SignPositionDesc = "Desc",
+            SignUrl = ""
         };
         
         var fakerBulkSignListDoc = new List<BulkSignDocModel>{fakerDocument1, fakerDocument2, fakerDocument3};

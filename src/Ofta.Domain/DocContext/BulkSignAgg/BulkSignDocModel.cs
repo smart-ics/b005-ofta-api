@@ -9,9 +9,10 @@ public class BulkSignDocModel: IBulkSignKey, IDocKey
     public string UploadedDocId { get; set; }
     public RequestBulkSignStateEnum RequestBulkSignState { get; set; }
     public int NoUrut { get; set; }
-    public List<BulkSignDocSigneeModel> ListSignee { get; set; }
-
-    public void SyncId() => ListSignee.ForEach(x => x.DocId = DocId);
+    public string SignTag { get; set; }
+    public SignPositionEnum SignPosition { get; set; }
+    public string SignPositionDesc { get; set; }
+    public string SignUrl { get; set; }
 }
 
 public enum RequestBulkSignStateEnum

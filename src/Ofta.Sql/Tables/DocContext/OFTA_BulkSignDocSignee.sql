@@ -1,6 +1,5 @@
 CREATE TABLE OFTA_BulkSignDocSignee(
-    DocId VARCHAR(13) NOT NULL CONSTRAINT OFTA_BulkSignDocSignee_DocId DEFAULT(''),
-    UserOftaId VARCHAR(13) NOT NULL CONSTRAINT OFTA_BulkSignDocSignee_UserOftaId DEFAULT(''),
+
     Email VARCHAR(50) NOT NULL CONSTRAINT OFTA_BulkSignDocSignee_Email DEFAULT(''),
     SignTag VARCHAR(50) NOT NULL CONSTRAINT OFTA_BulkSignDocSignee_SignTag DEFAULT(''),
     SignPosition INT NOT NULL CONSTRAINT OFTA_BulkSignDocSignee_SignPosition DEFAULT(0),
