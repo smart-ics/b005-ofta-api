@@ -98,9 +98,8 @@ public class BulkSignBuilder: IBulkSignBuilder
             .Load(docId)
             .Build();
 
-        if (document.DocState < DocStateEnum.Uploaded)
-            return this;
-
+        if (document.DocState != DocStateEnum.Uploaded) return this;
+        
         var signee = document.ListSignees.FirstOrDefault(x => x.UserOftaId == _aggregate.UserOftaId) ?? new DocSigneeModel();
         var newBulkSignDoc = new BulkSignDocModel
         {
@@ -113,7 +112,7 @@ public class BulkSignBuilder: IBulkSignBuilder
             SignPositionDesc = signee.SignPositionDesc,
             SignUrl = signee.SignUrl
         };
-        
+
         _aggregate.ListDoc.RemoveAll(x => x.DocId == docId.DocId);
         _aggregate.ListDoc.Add(newBulkSignDoc);
 
@@ -123,7 +122,7 @@ public class BulkSignBuilder: IBulkSignBuilder
             x.NoUrut = noUrut;
             noUrut++;
         });
-        
+
         _aggregate.DocCount = _aggregate.ListDoc.Count;
         return this;
     }

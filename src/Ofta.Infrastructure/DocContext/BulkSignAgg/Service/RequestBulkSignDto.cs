@@ -20,7 +20,7 @@ internal class FileDto
     public string Filename { get; set; }
     
     [JsonPropertyName("signatures")]
-    public SignatureDto Signatures { get; set; }
+    public List<SignatureDto> Signatures { get; set; }
 };
 
 internal class SignaturesDto

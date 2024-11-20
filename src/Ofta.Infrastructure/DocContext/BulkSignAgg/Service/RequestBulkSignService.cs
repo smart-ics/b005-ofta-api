@@ -42,7 +42,7 @@ public class RequestBulkSignService: IRequestBulkSignService
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
         
         var payload = GenerateRequestBulkSignPayload(request.BulkSign);
-        var jsonPaylaod = JsonSerializer.Serialize(payload);
+        var jsonPayload = JsonSerializer.Serialize(payload);
         
         var endpoint = _opt.UploadEndpoint + "/requestsign";
         var client = new RestClient(endpoint);
@@ -52,7 +52,7 @@ public class RequestBulkSignService: IRequestBulkSignService
         {
             Method = Method.Post,
         };
-        req.AddJsonBody(jsonPaylaod);
+        req.AddJsonBody(jsonPayload);
         
         // EXECUTE
         var response = await client.ExecuteAsync(req);
@@ -94,7 +94,7 @@ public class RequestBulkSignService: IRequestBulkSignService
             listPdf.Add(new FileDto
             {
                 Filename = doc.UploadedDocId,
-                Signatures = signee,
+                Signatures = new List<SignatureDto>() { signee },
             });
             
             return signee;
