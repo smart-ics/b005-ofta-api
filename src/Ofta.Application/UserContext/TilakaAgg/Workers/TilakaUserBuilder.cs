@@ -56,7 +56,7 @@ public class TilakaUserBuilder: ITilakaUserBuilder
     {
         _aggregate = new TilakaUserModel
         {
-            ExpiredDate = _tglJamDal.Now.AddDays(_appSettingService.UserRegistrationExpiration),
+            ExpiredDate = _tglJamDal.Now.AddDays(_appSettingService.UserRegistrationExpirationTime),
             UserState = TilakaUserState.Created,
             CertificateState = TilakaCertificateState.NoCertificate
         };
