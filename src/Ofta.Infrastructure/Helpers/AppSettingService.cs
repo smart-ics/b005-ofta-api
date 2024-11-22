@@ -18,7 +18,7 @@ public class AppSettingService : IAppSettingService
 
     public string RemoteCetakAddress => _remoteCetakOptions.RemoteAddr;
     public string OftaMyDocWebUrl => _oftaOptions.MyDocWebUrl;
-    public int UserExpirationTime => _tilakaOptions.YearExpiration;
+    public int UserRegistrationExpiration => _tilakaOptions.DaysExpirationRegistration;
 
     public TilakaSignPosition SignPositionLeft
     {

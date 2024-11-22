@@ -4,7 +4,7 @@ public interface IAppSettingService
 {
     string RemoteCetakAddress { get; }
     string OftaMyDocWebUrl { get; }
-    int UserExpirationTime { get; }
+    int UserRegistrationExpiration { get; }
     TilakaSignPosition SignPositionLeft { get; }
     TilakaSignPosition SignPositionCenter { get; }
     TilakaSignPosition SignPositionRight { get; }

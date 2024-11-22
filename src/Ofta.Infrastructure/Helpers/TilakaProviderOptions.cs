@@ -16,7 +16,7 @@ public class TilakaProviderOptions
     public string SecretKey { get; set; }
     public string Reason { get; set; }
     public string Location { get; set; }
-    public int YearExpiration { get; set; }
+    public int DaysExpirationRegistration { get; set; }
     public string CompanyName { get; set; }
     public string ConsentText { get; set; }
     public string Version { get; set; }
