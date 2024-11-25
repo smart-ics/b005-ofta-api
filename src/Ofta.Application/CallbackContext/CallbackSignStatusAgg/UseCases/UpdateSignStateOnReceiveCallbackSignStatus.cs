@@ -25,11 +25,14 @@ public class UpdateSignStateOnReceiveCallbackSignStatus: INotificationHandler<Re
 
             var signee = doc.ListSignees.FirstOrDefault(x => x.UserOftaId == notification.Agg.UserOftaId);
             if (signee is not null)
+            {
+                signee.SignedDate = notification.Agg.CallbackDate;
+                signee.SignState = callbackDoc.UserSignState;
                 doc = _docBuilder
                     .Attach(doc)
-                    .Sign(signee.Email)
                     .AddJurnal(DocStateEnum.Signed, signee.Email)
                     .Build();
+            }
 
             _ = _docWriter.Save(doc);
         });
