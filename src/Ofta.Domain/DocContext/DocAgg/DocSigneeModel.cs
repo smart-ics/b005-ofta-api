@@ -10,8 +10,9 @@ public class DocSigneeModel : IDocKey
     public int Level { get; set; }
     public SignStateEnum SignState { get; set; }
     public DateTime SignedDate { get; set; }
-    public string SignPositionDesc { get; set;}
-    public string SignUrl { get; set;}
+    public string SignPositionDesc { get; set; }
+    public string SignUrl { get; set; }
+    public bool IsHidden { get; set; }
 }
 
 public enum SignStateEnum

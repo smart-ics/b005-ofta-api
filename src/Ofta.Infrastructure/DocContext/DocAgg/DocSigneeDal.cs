@@ -34,6 +34,7 @@ public class DocSigneeDal : IDocSigneeDal
         bcp.AddMap("SignedDate", "SignedDate");
         bcp.AddMap("SignPositionDesc", "SignPositionDesc");
         bcp.AddMap("SignUrl", "SignUrl");
+        bcp.AddMap("IsHidden", "IsHidden");
 
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
@@ -63,7 +64,7 @@ public class DocSigneeDal : IDocSigneeDal
             SELECT
                 DocId, UserOftaId, Email, SignTag, 
                 SignPosition, Level, SignState, SignedDate,
-                SignPositionDesc, SignUrl
+                SignPositionDesc, SignUrl, IsHidden
             FROM
                 OFTA_DocSignee
             WHERE

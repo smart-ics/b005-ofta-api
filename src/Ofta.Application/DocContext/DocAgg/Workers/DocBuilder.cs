@@ -214,7 +214,8 @@ public class DocBuilder : IDocBuilder
             SignState = SignStateEnum.NotSigned,
             Level = 1,
             SignPositionDesc = signPositionDesc,
-            SignUrl = signUrl
+            SignUrl = signUrl,
+            IsHidden = true
         });
         return this;
     }

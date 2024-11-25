@@ -155,11 +155,16 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
 
         var signPositionDescJson = JsonConvert.SerializeObject(signPositionDesc);
             
-        return _docBuilder
+        doc = _docBuilder
             .Attach(doc)
             .AddSignee(userOfta, "Mengetahui", signPosition, signPositionDescJson, "")
             .AddScope(userOfta)
             .Build();
+        
+        if (doc.ListSignees.Count > 1)
+            doc.ListSignees.First().IsHidden = false;
+
+        return doc;
     }
 }
 
