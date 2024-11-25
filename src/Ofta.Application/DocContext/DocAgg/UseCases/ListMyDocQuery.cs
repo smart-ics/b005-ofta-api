@@ -27,6 +27,7 @@ public record DocSigneeResponse(
     string UserOftaId,
     string Email,
     string SignPosition,
+    SignStateEnum SignState,
     bool IsHidden
 );
 
@@ -82,7 +83,7 @@ public class ListMyDocHandler : IRequestHandler<ListMyDocQuery, IEnumerable<List
             .Build();
 
         var signees =
-            docDetail.ListSignees.Select(x => new DocSigneeResponse(x.UserOftaId, x.Email, x.SignPosition.ToString(), x.IsHidden));
+            docDetail.ListSignees.Select(x => new DocSigneeResponse(x.UserOftaId, x.Email, x.SignPosition.ToString(), x.SignState, x.IsHidden));
         
         var newListMyDocResponse = new ListMyDocResponse(
             doc.DocId,

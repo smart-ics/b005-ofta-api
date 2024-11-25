@@ -28,7 +28,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder GenRequestedMergedDocUrl(string mergerName);
     IDocBuilder GenPublishedDocUrl();
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum, 
-                          string signPositionDesc,string signUrl);
+                          string signPositionDesc,string signUrl, bool isHidden = true);
     IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
     IDocBuilder UploadedDocId(string uploadedDocId);
     IDocBuilder Sign(string email);
@@ -205,7 +205,7 @@ public class DocBuilder : IDocBuilder
 
 
     public IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPosition, 
-                                 string signPositionDesc, string signUrl )
+                                 string signPositionDesc, string signUrl, bool isHidden = true)
     {
         var userOfta = _userOftaDal.GetData(userOftaKey)
                        ?? throw new KeyNotFoundException("User Ofta not found");

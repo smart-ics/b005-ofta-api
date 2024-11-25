@@ -66,7 +66,8 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand, UploadDocRespo
                     signee.SignTag,
                     signee.SignPosition,
                     signee.SignPositionDesc,
-                    ""
+                    "",
+                    signee.IsHidden
                 )
                 .Build();
         });
