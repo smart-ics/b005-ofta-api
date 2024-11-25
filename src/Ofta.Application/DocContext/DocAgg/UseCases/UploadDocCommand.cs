@@ -46,8 +46,13 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
             .DocDate(oldDoc.DocDate)
             .DocType(new DocTypeModel(oldDoc.DocTypeId))
             .User(oldDoc)
-            .GenRequestedDocUrl()
             .AddJurnal(oldDoc.DocState, string.Empty)
+            .Build();
+        newDoc = _writer.Save(newDoc);
+
+        newDoc = _builder
+            .Attach(newDoc)
+            .GenRequestedDocUrl()
             .Build();
         newDoc = _writer.Save(newDoc);
 
