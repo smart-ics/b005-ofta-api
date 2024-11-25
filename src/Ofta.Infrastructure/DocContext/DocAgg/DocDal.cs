@@ -89,8 +89,8 @@ public class DocDal : IDocDal
     public void Delete(IDocKey key)
     {
         const string sql = @"
-            UPDATE
-                OFTA_Doc
+            DELETE 
+                FROM OFTA_Doc
             WHERE
                 DocId = @DocId";
 
