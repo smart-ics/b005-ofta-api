@@ -10,9 +10,11 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
 // public record UploadDocCommand(string DocId) : IRequest, IDocKey;
-public record UploadDocCommand(string DocId, string Email) : IRequest, IDocKey;
+public record UploadDocCommand(string DocId, string Email) : IRequest<UploadDocResponse>, IDocKey;
 
-public class UploadDocHandler : IRequestHandler<UploadDocCommand>
+public record UploadDocResponse(string DocId);
+
+public class UploadDocHandler : IRequestHandler<UploadDocCommand, UploadDocResponse>
 {
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
@@ -29,7 +31,7 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
         _reqSignToSignProviderService = reqSignToSignProviderService;
     }
 
-    public Task<Unit> Handle(UploadDocCommand request, CancellationToken cancellationToken)
+    public Task<UploadDocResponse> Handle(UploadDocCommand request, CancellationToken cancellationToken)
     {
         // GUARD
         Guard.Argument(() => request).NotNull()
@@ -128,6 +130,6 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand>
 
         //  WRITE
         _writer.Save(newDoc);
-        return Task.FromResult(Unit.Value);
+        return Task.FromResult(new UploadDocResponse(newDoc.DocId));
     }
 }
