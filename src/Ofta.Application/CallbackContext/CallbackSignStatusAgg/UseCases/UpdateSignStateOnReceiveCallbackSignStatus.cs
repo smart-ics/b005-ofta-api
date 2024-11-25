@@ -32,6 +32,13 @@ public class UpdateSignStateOnReceiveCallbackSignStatus: INotificationHandler<Re
                     .Attach(doc)
                     .AddJurnal(DocStateEnum.Signed, signee.Email)
                     .Build();
+                
+                if (doc.ListSignees.Count > 1)
+                {
+                    var index = doc.ListSignees.FindIndex(x => x.Email == signee.Email);
+                    if (index is >= 0 and < 2)
+                        doc.ListSignees.ElementAt(index + 1).IsHidden = false;
+                }
             }
 
             _ = _docWriter.Save(doc);
