@@ -67,11 +67,11 @@ public class SignDocHandler : IRequestHandler<SignDocCommand>
             .AddJurnal(DocStateEnum.Signed, request.Email)
             .Build();
 
-        if (aggregate.ListSignees.Count > 1)
+        if (doc.ListSignees.Count > 1)
         {
-            var index = aggregate.ListSignees.FindIndex(x => x.Email == request.Email);
-            if (index is >= 0 and < 2)
-                aggregate.ListSignees.ElementAt(index + 1).IsHidden = false;
+            var index = doc.ListSignees.FindIndex(x => x.Email == signee.Email);
+            if (index >= 0 && index != doc.ListSignees.Count - 1)
+                doc.ListSignees.ElementAt(index + 1).IsHidden = false;
         }
 
         //  WRITE

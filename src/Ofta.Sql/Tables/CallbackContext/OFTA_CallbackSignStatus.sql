@@ -1,5 +1,5 @@
 CREATE TABLE OFTA_CallbackSignStatus(
-  RequestId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_CallbackSignStatus_RequestId DEFAULT(''),
+  RequestId VARCHAR(20) NOT NULL CONSTRAINT DF_OFTA_CallbackSignStatus_RequestId DEFAULT(''),
   UserOftaId VARCHAR(13) NOT NULL CONSTRAINT DF_OFTA_CallbackSignStatus_UserOftaId DEFAULT(''),
   Email VARCHAR(50) NOT NULL CONSTRAINT DF_OFTA_CallbackSignStatus_Email DEFAULT(''),
   TilakaName VARCHAR(50) NOT NULL CONSTRAINT DF_OFTA_CallbackSignStatus_TilakaName DEFAULT (''),
