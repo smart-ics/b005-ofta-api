@@ -92,7 +92,7 @@ public class DocDal : IDocDal
             UPDATE
                 OFTA_Doc
             WHERE
-                DocId = @DocId ";
+                DocId = @DocId";
 
         var dp = new DynamicParameters();
         dp.AddParam("@DocId", key.DocId, SqlDbType.VarChar);
