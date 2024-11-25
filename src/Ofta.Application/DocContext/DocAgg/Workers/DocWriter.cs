@@ -10,7 +10,6 @@ namespace Ofta.Application.DocContext.DocAgg.Workers;
 
 public interface IDocWriter : INunaWriterWithReturn<DocModel>
 {
-    void Delete(DocModel doc);
 }
 public class DocWriter : IDocWriter
 {
@@ -42,10 +41,15 @@ public class DocWriter : IDocWriter
         model.DocId = model.DocId.IsNullOrEmpty() 
             ? _counter.Generate("DOCU", IDFormatEnum.PREFYYMnnnnnC) 
             : model.DocId;
-        model.ListSignees.ForEach(x => x.DocId = model.DocId);
         model.ListJurnal.ForEach(x => x.DocId = model.DocId);
         model.ListScope.ForEach(x => x.DocId = model.DocId);
-
+        model.ListSignees = model.ListSignees.Select((signee, index) =>
+        {
+            signee.DocId = model.DocId;
+            signee.DocSigneeId = $"{model.DocId}-{(index + 1):D2}";
+            return signee;
+        }).ToList();
+        
         var db = _docDal.GetData((IDocKey)model);
 
         using var trans = TransHelper.NewScope();
@@ -65,20 +69,5 @@ public class DocWriter : IDocWriter
         
         trans.Complete();
         return model;
-    }
-
-    public void Delete(DocModel model)
-    {
-        var db = _docDal.GetData((IDocKey)model);
-
-        using var trans = TransHelper.NewScope();
-        if (db is not null)
-            _docDal.Delete(model);
-
-        _docSigneeDal.Delete(model);
-        _docJurnalDal.Delete(model);
-        _docScopeDal.Delete(model);
-        
-        trans.Complete();
     }
 }

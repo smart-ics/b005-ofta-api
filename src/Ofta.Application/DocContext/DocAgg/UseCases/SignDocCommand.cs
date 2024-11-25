@@ -41,13 +41,9 @@ public class SignDocHandler : IRequestHandler<SignDocCommand>
             .Member(x => x.Email, y => y.NotEmpty());
 
         //  BUILD
-        IDocKey docKey = new DocModel { DocId = request.DocId };
-        var doc = _docDal.GetData(docKey);
-
-        if (doc == null)
-        {
-            throw new KeyNotFoundException("UploadedDocId or DocId not found");
-        }
+        var doc = _builder
+            .Load(new DocModel(request.DocId))
+            .Build();
 
         var tilakaUser = _tilakaUserBuilder
             .Load(request.Email)
@@ -55,7 +51,8 @@ public class SignDocHandler : IRequestHandler<SignDocCommand>
 
         var userProvider = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
 
-        var executeSignToSignProviderRequest = new ExecuteSignToSignProviderRequest(doc, userProvider);
+        var signee = doc.ListSignees.FirstOrDefault(x => x.Email == request.Email) ?? new DocSigneeModel();
+        var executeSignToSignProviderRequest = new ExecuteSignToSignProviderRequest(doc, signee, userProvider);
         var executesignToSignProviderResponse =
             _executeSignToSignProviderService.Execute(executeSignToSignProviderRequest);
 

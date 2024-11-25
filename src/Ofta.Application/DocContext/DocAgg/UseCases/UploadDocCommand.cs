@@ -9,12 +9,9 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.UseCases;
 
-// public record UploadDocCommand(string DocId) : IRequest, IDocKey;
-public record UploadDocCommand(string DocId, string Email) : IRequest<UploadDocResponse>, IDocKey;
+public record UploadDocCommand(string DocId, string Email) : IRequest, IDocKey;
 
-public record UploadDocResponse(string DocId);
-
-public class UploadDocHandler : IRequestHandler<UploadDocCommand, UploadDocResponse>
+public class UploadDocHandler : IRequestHandler<UploadDocCommand>
 {
     private readonly IDocBuilder _builder;
     private readonly IDocWriter _writer;
@@ -31,7 +28,7 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand, UploadDocRespo
         _reqSignToSignProviderService = reqSignToSignProviderService;
     }
 
-    public Task<UploadDocResponse> Handle(UploadDocCommand request, CancellationToken cancellationToken)
+    public Task<Unit> Handle(UploadDocCommand request, CancellationToken cancellationToken)
     {
         // GUARD
         Guard.Argument(() => request).NotNull()
@@ -39,71 +36,17 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand, UploadDocRespo
             .Member(x => x.Email, y => y.NotEmpty());
         
         // BUILD
-        var oldDoc = _builder
+        var aggregate = _builder
             .Load(request)
             .Build();
         
-        var newDoc = _builder
-            .Create()
-            .DocDate(oldDoc.DocDate)
-            .DocType(new DocTypeModel(oldDoc.DocTypeId))
-            .User(oldDoc)
-            .AddJurnal(oldDoc.DocState, string.Empty)
-            .Build();
-        newDoc = _writer.Save(newDoc);
-
-        newDoc = _builder
-            .Attach(newDoc)
-            .GenRequestedDocUrl()
-            .Build();
-        newDoc = _writer.Save(newDoc);
-
-        oldDoc.ListSignees.ForEach(signee =>
-        {
-            newDoc = _builder
-                .Attach(newDoc)
-                .AddSignee(new UserOftaModel(signee.UserOftaId),
-                    signee.SignTag,
-                    signee.SignPosition,
-                    signee.SignPositionDesc,
-                    "",
-                    signee.IsHidden
-                )
-                .Build();
-        });
-        newDoc = _writer.Save(newDoc);
-
-        oldDoc.ListScope.ForEach(scope =>
-        {
-            newDoc = _builder
-                .Attach(newDoc)
-                .AddScope((IScope)scope)
-                .Build();
-        });
-        newDoc = _writer.Save(newDoc);
-        
-        var copyFileRequest = new CopyFileRequest(newDoc.RequestedDocUrl, oldDoc.RequestedDocUrl);
-        _ = _copyFileService.Execute(copyFileRequest);
-        
-        _writer.Delete(oldDoc);
-        
         //  BUILD
-        // var uploadedDocId = aggregate.UploadedDocId;
-        //
-        // if (uploadedDocId.IsNullOrEmpty())
-        // {
-        //     var sendToSignProviderRequest = new SendToSignProviderRequest(aggregate);
-        //     var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
-        //     uploadedDocId = sendToSignProviderResponse.UploadedDocId ?? string.Empty;
-        // }
-        
-        var sendToSignProviderRequest = new SendToSignProviderRequest(newDoc);
+        var sendToSignProviderRequest = new SendToSignProviderRequest(aggregate);
         var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
         var uploadedDocId = sendToSignProviderResponse.UploadedDocId;
         
-        // var reqSignToSignProviderRequest = new ReqSignToSignProviderRequest(aggregate, uploadedDocId);
-        var signee = newDoc.ListSignees.FirstOrDefault(x => x.Email == request.Email) ?? new DocSigneeModel();
-        var reqSignToSignProviderRequest = new ReqSignToSignProviderRequest(newDoc, signee, uploadedDocId);
+        var signee = aggregate.ListSignees.FirstOrDefault(x => x.Email == request.Email) ?? new DocSigneeModel();
+        var reqSignToSignProviderRequest = new ReqSignToSignProviderRequest(aggregate, signee, uploadedDocId);
         var reqSignToSignProviderResponse = _reqSignToSignProviderService.Execute(reqSignToSignProviderRequest);
 
         if (!reqSignToSignProviderResponse.Success)
@@ -113,7 +56,7 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand, UploadDocRespo
         {
             foreach (var updatedSignee in reqSignToSignProviderResponse.Signees)
             {
-                var originalSignee = newDoc.ListSignees
+                var originalSignee = aggregate.ListSignees
                     .FirstOrDefault(s => s.UserOftaId == updatedSignee.UserOftaId || s.Email == updatedSignee.Email);
 
                 if (originalSignee != null)
@@ -121,16 +64,15 @@ public class UploadDocHandler : IRequestHandler<UploadDocCommand, UploadDocRespo
             }
         }
 
-        if (newDoc.DocState != DocStateEnum.Uploaded) 
-            newDoc = _builder
-                .Attach(newDoc)
-                .AddJurnal(DocStateEnum.Uploaded, string.Empty)
+        if (aggregate.DocState != DocStateEnum.Uploaded) 
+            aggregate = _builder
+                .Attach(aggregate)
+                .AddJurnal(DocStateEnum.Uploaded, request.Email)
                 .UploadedDocId(uploadedDocId)
                 .Build();
-
-
+        
         //  WRITE
-        _writer.Save(newDoc);
-        return Task.FromResult(new UploadDocResponse(newDoc.DocId));
+        _writer.Save(aggregate);
+        return Task.FromResult(Unit.Value);
     }
 }

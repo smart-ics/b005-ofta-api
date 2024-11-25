@@ -62,47 +62,11 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
     private async Task<ReqSignToTilakaResponse?> GetUrlSignTilaka(ReqSignToSignProviderRequest request, string docIdTilaka)
     {
         // BUILD REQUEST
-        var token = await _token.Execute("TilakaProvider");
+        var token = await _token.Execute(TilakaProviderOptions.SECTION_NAME);
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
 
-        var requestId = request.Doc.DocId;
-
-        // var listSignee = request.Doc.ListSignees
-        //     .Where(signee => !string.IsNullOrWhiteSpace(signee.SignPositionDesc))
-        //     .Select(signee =>
-        //     {
-        //         var signPositionDescJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(signee.SignPositionDesc);
-        //
-        //         var userIdentifier = signPositionDescJson?.GetValueOrDefault("user_identifier").GetString() ?? string.Empty;
-        //         var reason = _opt.Reason ;
-        //         var location = _opt.Location;
-        //         var width = signPositionDescJson?.GetValueOrDefault("width").GetDouble();
-        //         var height = signPositionDescJson?.GetValueOrDefault("height").GetDouble();
-        //         var coordinateX = signPositionDescJson?.GetValueOrDefault("coordinate_x").GetDouble();
-        //         var coordinateY = signPositionDescJson?.GetValueOrDefault("coordinate_y").GetDouble();
-        //         var pageNumber = signPositionDescJson?.GetValueOrDefault("page_number").GetInt32();
-        //         var qrOption = signPositionDescJson?.GetValueOrDefault("qr_option").GetString();
-        //
-        //         var tilakaUser = _tilakaUserBuilder
-        //            .Load(userIdentifier)
-        //            .Build();
-        //
-        //         var userProvider = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
-        //
-        //         return new
-        //         {
-        //             user_identifier = userProvider,
-        //             reason,
-        //             location,
-        //             width,
-        //             height,
-        //             coordinate_x = coordinateX,
-        //             coordinate_y = coordinateY,
-        //             page_number = pageNumber,
-        //             qr_option = qrOption
-        //         };
-        //     }).ToList();
+        var requestId = request.Signee.DocSigneeId;
         
         var listSignee = request.Doc.ListSignees
             .Where(signee => !string.IsNullOrWhiteSpace(signee.SignPositionDesc) && signee.Email == request.Signee.Email)
@@ -129,38 +93,6 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
                 reqSignee.UserIdentifier = tilakaUser is not null ? tilakaUser.TilakaName : string.Empty;
                 return reqSignee;
             }).ToList();
-
-        // var payload = new
-        // {
-        //     request_id = requestId,
-        //     signatures = listSignee
-        //     .GroupBy(p => p.user_identifier)
-        //     .Select((group, index) => new
-        //     {
-        //         group.First().user_identifier,
-        //         signature_base64 = "",
-        //         sequence = index + 1
-        //     }).ToList(),
-        //     list_pdf = new List<object>
-        // {
-        //     new
-        //     {
-        //         filename = docIdTilaka,
-        //         signatures = listSignee.Select(signee => new
-        //         {
-        //             signee.user_identifier,
-        //             signee.reason,
-        //             signee.location,
-        //             signee.width,
-        //             signee.height,
-        //             signee.coordinate_x,
-        //             signee.coordinate_y,
-        //             signee.page_number,
-        //             signee.qr_option
-        //         }).ToList()
-        //     }
-        // }
-        // };
         
         var signatures = listSignee
             .GroupBy(s => s.UserIdentifier)

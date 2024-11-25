@@ -17,7 +17,6 @@ namespace Ofta.Application.DocContext.DocAgg.Workers;
 public interface IDocBuilder : INunaBuilder<DocModel>
 {
     IDocBuilder Create();
-    IDocBuilder DocDate(DateTime date);
     IDocBuilder Load(IDocKey key);
     IDocBuilder Load(string uploadedDocId);
     IDocBuilder Attach(DocModel model);
@@ -28,7 +27,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder GenRequestedMergedDocUrl(string mergerName);
     IDocBuilder GenPublishedDocUrl();
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum, 
-                          string signPositionDesc,string signUrl, bool isHidden = true);
+                          string signPositionDesc,string signUrl);
     IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
     IDocBuilder UploadedDocId(string uploadedDocId);
     IDocBuilder Sign(string email);
@@ -98,12 +97,6 @@ public class DocBuilder : IDocBuilder
             JurnalDesc = "Doc Created"
         };
         _aggregate.ListJurnal.Add(jurnal);
-        return this;
-    }
-
-    public IDocBuilder DocDate(DateTime date)
-    {
-        _aggregate.DocDate = date;
         return this;
     }
 
@@ -205,7 +198,7 @@ public class DocBuilder : IDocBuilder
 
 
     public IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPosition, 
-                                 string signPositionDesc, string signUrl, bool isHidden = true)
+                                 string signPositionDesc, string signUrl)
     {
         var userOfta = _userOftaDal.GetData(userOftaKey)
                        ?? throw new KeyNotFoundException("User Ofta not found");
