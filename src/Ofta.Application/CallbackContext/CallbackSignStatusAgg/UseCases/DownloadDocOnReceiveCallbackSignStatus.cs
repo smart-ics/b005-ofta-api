@@ -11,10 +11,11 @@ public class DownloadDocOnReceiveCallbackSignStatus: INotificationHandler<Receiv
     private readonly IDocWriter _docWriter;
     private readonly IDownloadPublishedDocFromProviderService _downloadService;
 
-    public DownloadDocOnReceiveCallbackSignStatus(IDocBuilder docBuilder, IDocWriter docWriter)
+    public DownloadDocOnReceiveCallbackSignStatus(IDocBuilder docBuilder, IDocWriter docWriter, IDownloadPublishedDocFromProviderService downloadService)
     {
         _docBuilder = docBuilder;
         _docWriter = docWriter;
+        _downloadService = downloadService;
     }
 
     public Task Handle(ReceiveCallbackSignStatusEvent notification, CancellationToken cancellationToken)
