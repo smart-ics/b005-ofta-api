@@ -35,7 +35,6 @@ public class DownloadDocOnReceiveCallbackSignStatus: INotificationHandler<Receiv
             if (signee is not null)
                 doc = _docBuilder
                     .Attach(doc)
-                    .AddJurnal(DocStateEnum.Published, signee.Email)
                     .UploadedDocUrl(callbackDoc.DownloadDocUrl)
                     .Build();
 
