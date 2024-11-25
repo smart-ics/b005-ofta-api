@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Ofta.Infrastructure.DocContext.BulkSignAgg.Service;
 
-internal class RequestBulkSignPayload
+internal class RequestSignPayload
 {
     [JsonPropertyName("request_id")]
     public string RequestId { get; set; }

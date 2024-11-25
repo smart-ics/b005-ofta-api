@@ -66,7 +66,7 @@ public class RequestBulkSignService: IRequestBulkSignService
         return result;
     }
 
-    private RequestBulkSignPayload GenerateRequestBulkSignPayload(BulkSignModel bulkSign)
+    private RequestSignPayload GenerateRequestBulkSignPayload(BulkSignModel bulkSign)
     {
         var listPdf = new List<FileDto>();
         var listAllSignee = bulkSign.ListDoc.Select(doc =>
@@ -107,7 +107,7 @@ public class RequestBulkSignService: IRequestBulkSignService
                 UserIdentifier = signee.First().UserIdentifier,
             }).ToList();
 
-        return new RequestBulkSignPayload
+        return new RequestSignPayload
         {
             RequestId = bulkSign.BulkSignId,
             Signatures = signatures,

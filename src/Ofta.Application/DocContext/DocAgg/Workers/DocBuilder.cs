@@ -17,6 +17,7 @@ namespace Ofta.Application.DocContext.DocAgg.Workers;
 public interface IDocBuilder : INunaBuilder<DocModel>
 {
     IDocBuilder Create();
+    IDocBuilder DocDate(DateTime date);
     IDocBuilder Load(IDocKey key);
     IDocBuilder Load(string uploadedDocId);
     IDocBuilder Attach(DocModel model);
@@ -97,6 +98,12 @@ public class DocBuilder : IDocBuilder
             JurnalDesc = "Doc Created"
         };
         _aggregate.ListJurnal.Add(jurnal);
+        return this;
+    }
+
+    public IDocBuilder DocDate(DateTime date)
+    {
+        _aggregate.DocDate = date;
         return this;
     }
 
