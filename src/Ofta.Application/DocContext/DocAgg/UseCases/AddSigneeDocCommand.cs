@@ -45,8 +45,7 @@ public class AddSigneeDocHandler : IRequestHandler<AddSigneeDocCommand>
             .AddScope(request)
             .Build();
 
-        if (aggregate.ListSignees.Count > 1)
-            aggregate.ListSignees.First().IsHidden = false;
+        aggregate.ListSignees.First().IsHidden = false;
         
         //  WRITE
         _writer.Save(aggregate);

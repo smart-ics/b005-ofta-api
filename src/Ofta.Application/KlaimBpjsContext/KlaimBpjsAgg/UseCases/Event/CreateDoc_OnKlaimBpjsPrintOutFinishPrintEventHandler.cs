@@ -161,9 +161,7 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             .AddScope(userOfta)
             .Build();
         
-        if (doc.ListSignees.Count > 1)
-            doc.ListSignees.First().IsHidden = false;
-
+        doc.ListSignees.First().IsHidden = false;
         return doc;
     }
 }
