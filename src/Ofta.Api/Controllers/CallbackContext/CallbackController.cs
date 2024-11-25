@@ -17,9 +17,8 @@ public class CallbackController : ControllerBase
     }
     
     [HttpPost("signstatus")]
-    public async Task<IActionResult> ReceiveCallbackSignStatus([FromBody] dynamic Data)
+    public async Task<IActionResult> ReceiveCallbackSignStatus(ReceiveCallbackSignStatusCommand cmd)
     {
-        var cmd = new ReceiveCallbackSignStatusCommand(Data);
         await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
     }

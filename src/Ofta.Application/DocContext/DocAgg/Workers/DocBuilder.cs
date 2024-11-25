@@ -18,6 +18,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
 {
     IDocBuilder Create();
     IDocBuilder Load(IDocKey key);
+    IDocBuilder Load(string uploadedDocId);
     IDocBuilder Attach(DocModel model);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
@@ -108,6 +109,24 @@ public class DocBuilder : IDocBuilder
         _aggregate.ListJurnal = _docJurnalDal.ListData(key)?.ToList()
             ?? new List<DocJurnalModel>();
         _aggregate.ListScope = _docScopeDal.ListData(key)?.ToList()
+            ?? new List<AbstractDocScopeModel>();
+        return this;
+    }
+
+    public IDocBuilder Load(string uploadedDocId)
+    {
+        var key = new DocModel
+        {
+            UploadedDocId = uploadedDocId
+        };
+        
+        _aggregate = _docDal.GetData((IUploadedDocKey) key)
+            ?? throw new KeyNotFoundException("DocId not found");
+        _aggregate.ListSignees = _docSigneeDal.ListData(new DocModel(_aggregate.DocId))?.ToList()
+            ?? new List<DocSigneeModel>();
+        _aggregate.ListJurnal = _docJurnalDal.ListData(new DocModel(_aggregate.DocId))?.ToList()
+            ?? new List<DocJurnalModel>();
+        _aggregate.ListScope = _docScopeDal.ListData(new DocModel(_aggregate.DocId))?.ToList()
             ?? new List<AbstractDocScopeModel>();
         return this;
     }
