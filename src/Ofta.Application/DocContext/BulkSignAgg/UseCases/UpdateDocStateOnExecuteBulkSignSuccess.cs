@@ -25,6 +25,13 @@ public class UpdateDocStateOnExecuteBulkSignSuccess: INotificationHandler<Execut
                 .AddJurnal(DocStateEnum.Signed, notification.Command.Email)
                 .Build();
             
+            if (originalDoc.ListSignees.Count > 1)
+            {
+                var index = originalDoc.ListSignees.FindIndex(x => x.Email == notification.Command.Email);
+                if (index >= 0 && index != originalDoc.ListSignees.Count - 1)
+                    originalDoc.ListSignees.ElementAt(index + 1).IsHidden = false;
+            }
+            
             _ = _writer.Save(originalDoc);
         });
         return Task.CompletedTask;

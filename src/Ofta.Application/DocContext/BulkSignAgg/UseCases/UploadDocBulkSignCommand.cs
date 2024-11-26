@@ -30,24 +30,22 @@ public class UploadDocHandler : IRequestHandler<UploadDocBulkSignCommand>
         // GUARD
         Guard.Argument(() => request).NotNull()
             .Member(x => x.DocId, y => y.NotEmpty());
+
+        // BUILD
         var aggregate = _builder
             .Load(request)
             .Build();
+        
+        var sendToSignProviderRequest = new SendToSignProviderRequest(aggregate);
+        var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
+        var uploadedDocId = sendToSignProviderResponse.UploadedDocId;
 
-        // BUILD
-        var uploadedDocId = aggregate.UploadedDocId;
-        if (uploadedDocId.IsNullOrEmpty())
-        {
-            var sendToSignProviderRequest = new SendToSignProviderRequest(aggregate);
-            var sendToSignProviderResponse = _sendToSignProviderService.Execute(sendToSignProviderRequest);
-            uploadedDocId = sendToSignProviderResponse.UploadedDocId;
-        }
-
-        aggregate = _builder
-            .Attach(aggregate)
-            .AddJurnal(DocStateEnum.Uploaded, string.Empty)
-            .UploadedDocId(uploadedDocId)
-            .Build();
+        if (aggregate.DocState != DocStateEnum.Uploaded)
+            aggregate = _builder
+                .Attach(aggregate)
+                .AddJurnal(DocStateEnum.Uploaded, string.Empty)
+                .UploadedDocId(uploadedDocId)
+                .Build();
         
         // WRITE
         _writer.Save(aggregate);
