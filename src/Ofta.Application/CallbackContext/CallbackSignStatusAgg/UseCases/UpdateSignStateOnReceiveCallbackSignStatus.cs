@@ -37,7 +37,7 @@ public class UpdateSignStateOnReceiveCallbackSignStatus: INotificationHandler<Re
                 {
                     var index = doc.ListSignees.FindIndex(x => x.Email == signee.Email);
                     if (index >= 0 && index != doc.ListSignees.Count - 1)
-                        doc.ListSignees.ElementAt(index + 1).IsHidden = false;
+                        doc.ListSignees.ElementAt(index + 1).IsHidden = signee.SignState != SignStateEnum.Signed;
                 }
             }
 
