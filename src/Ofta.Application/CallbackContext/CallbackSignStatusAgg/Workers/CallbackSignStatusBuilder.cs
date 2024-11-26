@@ -11,7 +11,7 @@ namespace Ofta.Application.CallbackContext.CallbackSignStatusAgg.Workers;
 
 public interface ICallbackSignStatusBuilder : INunaBuilder<CallbackSignStatusModel>
 {
-    ICallbackSignStatusBuilder Create(string requestId);
+    ICallbackSignStatusBuilder Create(string requestId, string jsonPayload);
     ICallbackSignStatusBuilder Attach(CallbackSignStatusModel model);
     ICallbackSignStatusBuilder Load(ICallbackSignStatusKey key);
     ICallbackSignStatusBuilder CallbackDate();
@@ -41,12 +41,13 @@ public class CallbackSignStatusBuilder: ICallbackSignStatusBuilder
         return _aggregate;
     }
 
-    public ICallbackSignStatusBuilder Create(string requestId)
+    public ICallbackSignStatusBuilder Create(string requestId, string jsonPayload)
     {
         _aggregate = new CallbackSignStatusModel
         {
             RequestId = requestId,
             CallbackDate = _tglJamDal.Now,
+            JsonPayload = jsonPayload,
             ListDoc = new List<CallbackSignStatusDocModel>()
         };
 

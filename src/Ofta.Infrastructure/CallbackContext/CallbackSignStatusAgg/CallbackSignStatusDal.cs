@@ -30,14 +30,16 @@ public class CallbackSignStatusDal: ICallbackSignStatusDal
                 UserOftaId,
                 Email,
                 TilakaName,
-                CallbackDate
+                CallbackDate,
+                JsonPayload
             )
             VALUES (
                 @RequestId,
                 @UserOftaId,
                 @Email,
                 @TilakaName,
-                @CallbackDate
+                @CallbackDate,
+                @JsonPayload
             )";
 
         var dp = new DynamicParameters();
@@ -46,6 +48,7 @@ public class CallbackSignStatusDal: ICallbackSignStatusDal
         dp.AddParam("@Email", model.Email, SqlDbType.VarChar);
         dp.AddParam("@TilakaName", model.TilakaName, SqlDbType.VarChar);
         dp.AddParam("@CallbackDate", model.CallbackDate.ToString(DateFormatEnum.YMD_HMS), SqlDbType.VarChar);
+        dp.AddParam("@JsonPayload", model.JsonPayload, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -57,7 +60,8 @@ public class CallbackSignStatusDal: ICallbackSignStatusDal
             UPDATE OFTA_CallbackSignStatus
             SET UserOftaId = @UserOftaId,
                 Email = @Email,
-                CallbackDate = @CallbackDate
+                CallbackDate = @CallbackDate,
+                JsonPayload = @JsonPayload
             WHERE
                 RequestId = @RequestId
             AND
@@ -69,6 +73,7 @@ public class CallbackSignStatusDal: ICallbackSignStatusDal
         dp.AddParam("@CallbackDate", model.CallbackDate.ToString(DateFormatEnum.YMD_HMS), SqlDbType.VarChar);
         dp.AddParam("@RequestId", model.RequestId, SqlDbType.VarChar);
         dp.AddParam("@TilakaName", model.TilakaName, SqlDbType.VarChar);
+        dp.AddParam("@JsonPayload", model.JsonPayload, SqlDbType.VarChar);
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -82,7 +87,8 @@ public class CallbackSignStatusDal: ICallbackSignStatusDal
                 UserOftaId,
                 Email,
                 TilakaName,
-                CallbackDate
+                CallbackDate,
+                JsonPayload
             FROM
                 OFTA_CallbackSignStatus
             WHERE

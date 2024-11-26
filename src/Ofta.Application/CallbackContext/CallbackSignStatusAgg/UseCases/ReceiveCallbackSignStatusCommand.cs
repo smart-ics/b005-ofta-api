@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using MediatR;
 using Nuna.Lib.DataTypeExtension;
@@ -75,7 +76,7 @@ public class ReceiveCallbackSignStatusHandler: IRequestHandler<ReceiveCallbackSi
         var fallback = Policy<CallbackSignStatusModel>
             .Handle<KeyNotFoundException>()
             .Fallback(() => _builder
-                .Create(request.RequestId)
+                .Create(request.RequestId, JsonSerializer.Serialize(request))
                 .UserInfo(new TilakaUserModel(request.UserInfo.UserIdentifier))
                 .Build());
         

@@ -15,6 +15,7 @@ public class CallbackSignStatusModel: ICallbackSignStatusKey
     public string Email { get; set; }
     public string TilakaName { get; set; }
     public DateTime CallbackDate { get; set; }
+    public string JsonPayload { get; set; }
     public List<CallbackSignStatusDocModel> ListDoc { get; set; }
 
     public void SyncId() => ListDoc.ForEach(x =>
