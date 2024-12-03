@@ -7,10 +7,10 @@ using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.UseCase;
 
-public record ListWorkListBpjsQuery(string regId, string pasienId, string pasienName,
-                                    string layananName, string dokterName, 
-                                    string rajalRanap, string workState, 
-                                    int pageNo) : IRequest<IEnumerable<ListWorkListBpjsResponse>>;
+public record ListWorkListBpjsQuery(string? RegId, string? PasienId, string? PasienName,
+                                    string? LayananName, string? DokterName, 
+                                    string? RajalRanap, string? WorkState, 
+                                    int PageNo) : IRequest<IEnumerable<ListWorkListBpjsResponse>>;
 
 public record ListWorkListBpjsResponse(
     string OrderKlaimBpjsId,
@@ -27,6 +27,7 @@ public record ListWorkListBpjsResponse(
 
 public class ListWorkListBpjsHandler : IRequestHandler<ListWorkListBpjsQuery, IEnumerable<ListWorkListBpjsResponse>>
 {
+    private List<WorkListBpjsModel> _resultList = new List<WorkListBpjsModel>();
     private readonly IWorkListBpjsDal _workListBpjsDal;
 
     public ListWorkListBpjsHandler(IWorkListBpjsDal workListBpjsDal)
@@ -36,55 +37,22 @@ public class ListWorkListBpjsHandler : IRequestHandler<ListWorkListBpjsQuery, IE
 
     public Task<IEnumerable<ListWorkListBpjsResponse>> Handle(ListWorkListBpjsQuery request, CancellationToken cancellationToken)
     {
-        //  GUARD
+        // GUARD
         Guard.Argument(() => request).NotNull()
-            .Member(x => x.pasienName, y => y.NotEmpty())
-            .Member(x => x.layananName, y => y.NotEmpty())
-            .Member(x => x.dokterName, y => y.NotEmpty());
+            .Member(x => x.PageNo, y => y.NotZero());
+        
+        // QUERY
+        if (IsFilterApplied(request))
+            _resultList = _workListBpjsDal.ListData()?.ToList()
+                ?? new List<WorkListBpjsModel>();
+        else
+            _resultList = _workListBpjsDal.ListData(request.PageNo)?.ToList()
+                ?? new List<WorkListBpjsModel>();
 
-
-        //  QUERY
-        var result = _workListBpjsDal.ListData(request.pageNo)?.ToList()
-        ?? new List<WorkListBpjsModel>();
-
-
-        if (request.regId != null)
-            result = (from lr in result
-                      where lr.RegId.ToString().Trim() == request.regId.Trim()
-                      select lr).ToList();
-
-        if (request.pasienId != null)
-            result = (from lr in result
-                      where lr.PasienId.ToString().Trim() == request.pasienId.Trim()
-                      select lr).ToList();
-
-        if (request.pasienName != null)
-            result = (from lr in result
-                      where lr.PasienName.ToLower().Trim().Contains(request.pasienName.ToLower().Trim())
-                      select lr).ToList();
-
-        if (request.layananName != null)
-            result = (from lr in result
-                      where lr.LayananName.ToLower().Trim().Contains(request.layananName.ToLower().Trim())
-                      select lr).ToList();
-
-        if (request.dokterName != null)
-            result = (from lr in result
-                      where lr.DokterName.ToLower().Trim().Contains(request.dokterName.ToLower().Trim())
-                      select lr).ToList();
-
-        if (request.rajalRanap != null)
-            result = (from lr in result
-                      where lr.RajalRanap.ToString().Trim() == request.rajalRanap.Trim()
-                      select lr).ToList();
-
-        if (request.workState != null)
-            result = (from lr in result
-                      where lr.WorkState.ToString().Trim() == request.workState.Trim()
-                      select lr).ToList();
+        _resultList = FilterData(request);
 
         //  RESPONSE
-        var response = result.Select(x => new ListWorkListBpjsResponse
+        var response = _resultList.Select(x => new ListWorkListBpjsResponse
         (
             x.OrderKlaimBpjsId,
             x.OrderKlaimBpjsDate.ToString("yyyy-MM-dd"),
@@ -99,5 +67,55 @@ public class ListWorkListBpjsHandler : IRequestHandler<ListWorkListBpjsQuery, IE
             x.RajalRanap.ToString()
         ));
         return Task.FromResult(response);
+    }
+
+    private bool IsFilterApplied(ListWorkListBpjsQuery filter)
+    {
+        return filter.RegId is { Length: >= 3 } ||
+               filter.PasienId is { Length: >= 3 } ||
+               filter.PasienName is { Length: >= 3 } ||
+               filter.LayananName is { Length: >= 3 } ||
+               filter.DokterName is { Length: >= 3 } ||
+               filter.RajalRanap != null || filter.WorkState != null;
+    }
+
+    private List<WorkListBpjsModel> FilterData(ListWorkListBpjsQuery filter)
+    {
+        if (filter.RegId is { Length: >= 3 })
+            _resultList = (from lr in _resultList
+                where lr.RegId.ToString().Trim() == filter.RegId.Trim()
+                select lr).ToList();
+
+        if (filter.PasienId is { Length: >= 3 })
+            _resultList = (from lr in _resultList
+                where lr.PasienId.ToString().Trim() == filter.PasienId.Trim()
+                select lr).ToList();
+
+        if (filter.PasienName is { Length: >= 3 })
+            _resultList = (from lr in _resultList
+                where lr.PasienName.ToLower().Trim().Contains(filter.PasienName.ToLower().Trim())
+                select lr).ToList();
+
+        if (filter.LayananName is { Length: >= 3 })
+            _resultList = (from lr in _resultList
+                where lr.LayananName.ToLower().Trim().Contains(filter.LayananName.ToLower().Trim())
+                select lr).ToList();
+
+        if (filter.DokterName is { Length: >= 3 })
+            _resultList = (from lr in _resultList
+                where lr.DokterName.ToLower().Trim().Contains(filter.DokterName.ToLower().Trim())
+                select lr).ToList();
+
+        if (filter.RajalRanap != null)
+            _resultList = (from lr in _resultList
+                where lr.RajalRanap.ToString().Trim() == filter.RajalRanap.Trim()
+                select lr).ToList();
+
+        if (filter.WorkState != null)
+            _resultList = (from lr in _resultList
+                where lr.WorkState.ToString().Trim() == filter.WorkState.Trim()
+                select lr).ToList();
+
+        return _resultList;
     }
 }

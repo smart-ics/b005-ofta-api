@@ -26,8 +26,8 @@ public class WorkListBpjsController : Controller
                                                   [FromQuery] string? rajalRanap = null,
                                                   [FromQuery] string? workState = null)
     {
-        var cmd = new ListWorkListBpjsQuery(regId!, pasienId!, pasienName!, layananName!, dokterName!, 
-                                            rajalRanap!, workState!,pageNo);
+        var cmd = new ListWorkListBpjsQuery(regId, pasienId, pasienName, layananName, dokterName, 
+                                            rajalRanap, workState,pageNo);
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }

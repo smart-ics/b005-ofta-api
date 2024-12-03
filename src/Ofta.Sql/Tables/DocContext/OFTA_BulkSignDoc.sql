@@ -7,7 +7,7 @@ CREATE TABLE OFTA_BulkSignDoc(
     SignTag VARCHAR(50) NOT NULL CONSTRAINT OFTA_BulkSignDoc_SignTag DEFAULT(''),
     SignPosition INT NOT NULL CONSTRAINT OFTA_BulkSignDoc_SignPosition DEFAULT(0),
     SignPositionDesc VARCHAR(200) NOT NULL CONSTRAINT OFTA_BulkSignDoc_SignPositionDesc DEFAULT(''), 
-    SignUrl VARCHAR(200) NOT NULL CONSTRAINT OFTA_BulkSignDoc_SignUrl DEFAULT(''),
+    SignUrl VARCHAR(MAX) NOT NULL CONSTRAINT OFTA_BulkSignDoc_SignUrl DEFAULT(''),
 )
 GO
 
