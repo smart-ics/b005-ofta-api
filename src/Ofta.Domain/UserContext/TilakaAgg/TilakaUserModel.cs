@@ -2,9 +2,10 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Domain.UserContext.TilakaAgg;
 
-public class TilakaUserModel: ITilakaRegistrationKey, IUserOftaKey
+public class TilakaUserModel: ITilakaRegistrationKey, ITilakaNameKey, IUserOftaKey
 {
     public TilakaUserModel() { }
+    public TilakaUserModel(string tilakaName) => TilakaName = tilakaName;
     
     public string RegistrationId { get; set; }
     public string UserOftaId { get; set; }

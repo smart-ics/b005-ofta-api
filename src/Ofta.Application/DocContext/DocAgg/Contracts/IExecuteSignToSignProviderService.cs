@@ -4,7 +4,7 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.Contracts;
 
-public record ExecuteSignToSignProviderRequest(DocModel Doc, String UserProvider );
+public record ExecuteSignToSignProviderRequest(DocModel Doc, DocSigneeModel Signee, String UserProvider );
 
 public class ExecuteSignToSignProviderResponse
 {

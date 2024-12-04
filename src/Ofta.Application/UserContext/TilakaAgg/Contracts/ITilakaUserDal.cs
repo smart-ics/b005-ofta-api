@@ -9,6 +9,6 @@ public interface ITilakaUserDal:
     IUpdate<TilakaUserModel>,
     IGetData<TilakaUserModel, IUserOftaKey>,
     IGetData<TilakaUserModel, ITilakaRegistrationKey>,
-    IGetData<TilakaUserModel, string>
+    IGetData<TilakaUserModel, ITilakaNameKey>
 {
 }

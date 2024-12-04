@@ -1,4 +1,4 @@
-using MediatR;
+/*using MediatR;
 using Newtonsoft.Json;
 using Ofta.Application.DocContext.DocAgg.Workers;
 using Ofta.Application.Helpers;
@@ -95,4 +95,4 @@ public class SendNotifToEmrOnKlaimBpjsPrintOutFinishPrintEventHandler: INotifica
         var reqObj = new EmrNotificationModel(userOftaMapping.UserMappingId, messageJsonString, reffId);
         _sendNotifToEmrService.Execute(reqObj);
     }
-}
+}*/
