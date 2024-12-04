@@ -7,6 +7,7 @@ using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
 using Ofta.Domain.DocContext.DocTypeAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
 using Polly;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases.Event;
@@ -36,7 +37,7 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
 
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
-        //  create Document atas file yg sudah di-print
+        // BUILD
         var agg = notification.Agg;
         var cmd = notification.Command;
 
@@ -59,8 +60,8 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         var doc = fallback.Execute(() => 
             _docBuilder.Load(new DocModel(printOut.DocId)).Build());
 
-        //  WRITE
-        //  doc
+        // WRITE
+        // doc
         doc = _docBuilder
             .Attach(doc)
             .AddJurnal(DocStateEnum.Submited, string.Empty)
@@ -82,12 +83,12 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             .Build();
         doc = _docWriter.Save(doc);
 
-        //  klaim
+        // klaim
         printOut.DocId = doc.DocId;
         printOut.DocUrl = doc.RequestedDocUrl;
         _klaimBpjsWriter.Save(agg);
         
-        //  save fisik file;
+        // save fisik file;
         var writeFileRequest = new WriteFileRequest(doc.RequestedDocUrl, cmd.Base64Content);
         _ = _writeFileService.Execute(writeFileRequest);
 
@@ -96,9 +97,11 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
 
     private DocModel AddSigneeAndScope(DocModel doc, string user, SignPositionEnum signPosition)
     {
-        var userOftaMapping = _userOftaMappingDal
-            .ListData(user)
-            .First();
+        var listUserOftaMapping = _userOftaMappingDal.ListData(user) ?? new List<UserOftaMappingModel>();
+        var userOftaMapping = listUserOftaMapping.FirstOrDefault();
+
+        if (userOftaMapping is null)
+            return doc;
         
         var userOfta = _userOftaDal.GetData(userOftaMapping);
 
