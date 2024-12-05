@@ -195,4 +195,28 @@ public class DocDal : IDocDal
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<DocModel>(sql, dp);
     }
+
+    public IEnumerable<DocModel> ListData(IEnumerable<string> filter)
+    {
+        const string sql = @"
+            SELECT DISTINCT
+                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
+                aa.DocState,aa.DocName, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.UploadedDocUrl, aa.PublishedDocUrl,
+                ISNULL(bb.DocTypeName, '') AS DocTypeName
+            FROM    
+                OFTA_Doc aa
+                LEFT JOIN OFTA_DocType bb ON aa.DocTypeId = bb.DocTypeId
+                LEFT JOIN OFTA_DocScope cc ON aa.DocId = cc.DocId
+            WHERE
+                cc.ScopeReffId IN @ScopeReffIds
+            ORDER BY
+                aa.DocId DESC";
+
+        var dp = new DynamicParameters();
+        dp.Add("@ScopeReffIds", filter.Select(x => x).ToArray());
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Read<DocModel>(sql, dp);
+    }
 }
