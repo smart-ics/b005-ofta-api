@@ -63,8 +63,9 @@ public class MyDocNotSignedListHandler: IRequestHandler<MyDocNotSignedListQuery,
         
         // RESPONSE
         var response = listDoc
-            .Where(x => x.ListSignees.IsNotEmpty() && x.ListSignees.Any(
-                y => y.UserOftaId == request.UserOftaId && y.SignState == SignStateEnum.NotSigned))
+            .Select(doc => _docBuilder.Load(doc).Build())
+            .Where(doc => doc.ListSignees.IsNotEmpty() && doc.ListSignees.Any(
+                signee => signee.UserOftaId == request.UserOftaId && signee.SignState == SignStateEnum.NotSigned))
             .Select(BuildResponse);
         
         return Task.FromResult(response);
@@ -72,12 +73,8 @@ public class MyDocNotSignedListHandler: IRequestHandler<MyDocNotSignedListQuery,
     
     private MyDocNotSignedListResponse BuildResponse(DocModel doc)
     {
-        var docDetail = _docBuilder
-            .Load(doc)
-            .Build();
-
-        var signees =
-            docDetail.ListSignees.Select(x => new MyDocNotSignedSigneeResponse(x.UserOftaId, x.Email, x.SignPosition.ToString(), x.SignState, x.IsHidden));
+        var signees = doc.ListSignees.Select(x 
+            => new MyDocNotSignedSigneeResponse(x.UserOftaId, x.Email, x.SignPosition.ToString(), x.SignState, x.IsHidden));
         
         var newListMyDocResponse = new MyDocNotSignedListResponse(
             doc.DocId,
