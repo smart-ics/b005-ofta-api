@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
+using Ofta.Application.DocContext.BulkSignAgg.UseCases;
 using Ofta.Application.DocContext.DocAgg.UseCases;
 
 namespace Ofta.Api.Controllers.DocContext;
@@ -43,11 +44,19 @@ public class DocController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+    
     [HttpPut("upload")]
     public async Task<IActionResult> UploadDoc(UploadDocCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
+    }
+    
+    [HttpPut("uploadDocBulkSign")]
+    public async Task<IActionResult> UploadDocForBulkSign(UploadDocBulkSignCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
     }
 
     [HttpPost("repeatSign")]
@@ -86,6 +95,14 @@ public class DocController : Controller
     public async Task<IActionResult> ListMyDoc(string userOftaId, int pageNo)
     {
         var query = new ListMyDocQuery(userOftaId, pageNo);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpGet("notSigned/{userOftaId}")]
+    public async Task<IActionResult> ListMyDocNotSigned(string userOftaId)
+    {
+        var query = new MyDocNotSignedListQuery(userOftaId);
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }

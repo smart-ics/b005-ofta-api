@@ -89,10 +89,10 @@ public class DocDal : IDocDal
     public void Delete(IDocKey key)
     {
         const string sql = @"
-            UPDATE
-                OFTA_Doc
+            DELETE 
+                FROM OFTA_Doc
             WHERE
-                DocId = @DocId ";
+                DocId = @DocId";
 
         var dp = new DynamicParameters();
         dp.AddParam("@DocId", key.DocId, SqlDbType.VarChar);
@@ -191,6 +191,30 @@ public class DocDal : IDocDal
         var dp = new DynamicParameters();
         dp.Add("@ScopeReffIds", filter1.Select(x => x).ToArray());
         dp.AddParam("@pageNumber", pageNo, SqlDbType.Int);
+        
+        using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
+        return conn.Read<DocModel>(sql, dp);
+    }
+
+    public IEnumerable<DocModel> ListData(IEnumerable<string> filter)
+    {
+        const string sql = @"
+            SELECT DISTINCT
+                aa.DocId, aa.DocDate, aa.DocTypeId, aa.UserOftaId, aa.Email,
+                aa.DocState,aa.DocName, aa.RequestedDocUrl, aa.UploadedDocId,
+                aa.UploadedDocUrl, aa.PublishedDocUrl,
+                ISNULL(bb.DocTypeName, '') AS DocTypeName
+            FROM    
+                OFTA_Doc aa
+                LEFT JOIN OFTA_DocType bb ON aa.DocTypeId = bb.DocTypeId
+                LEFT JOIN OFTA_DocScope cc ON aa.DocId = cc.DocId
+            WHERE
+                cc.ScopeReffId IN @ScopeReffIds
+            ORDER BY
+                aa.DocId DESC";
+
+        var dp = new DynamicParameters();
+        dp.Add("@ScopeReffIds", filter.Select(x => x).ToArray());
         
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.Read<DocModel>(sql, dp);
