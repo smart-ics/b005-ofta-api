@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
@@ -26,11 +27,11 @@ public class CheckUserRegistrationService: ICheckUserRegistrationService
         var response = new CheckUserRegistrationResponse(
             result?.Success == true,
             result?.Message ?? string.Empty,
-            result?.Data.TilakaName ?? string.Empty,
-            result?.Data.Status ?? string.Empty,
-            result?.Data.ManualRegistrationStatus ?? string.Empty,
-            result?.Data.PhotoSelfie ?? string.Empty,
-            result?.Data.ReasonCode ?? string.Empty
+            result?.Data?.TilakaName ?? string.Empty,
+            result?.Data?.Status ?? string.Empty,
+            result?.Data?.ManualRegistrationStatus ?? string.Empty,
+            result?.Data?.PhotoSelfie ?? string.Empty,
+            result?.Data?.ReasonCode ?? string.Empty
         );
         return response;
     }
@@ -58,11 +59,14 @@ public class CheckUserRegistrationService: ICheckUserRegistrationService
         };
 
         // RETURN
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return new CheckUserRegistrationDto(false, "Forbidden access to Tilaka", null);
+        
         var result = JsonSerializer.Deserialize<CheckUserRegistrationDto>(response.Content ?? string.Empty, jsonOptions);
         return result;
     }
 
-    private record CheckUserRegistrationDto(bool Success, string Message, CheckUserRegistrationData Data);
+    private record CheckUserRegistrationDto(bool Success, string Message, CheckUserRegistrationData? Data);
 
     private class CheckUserRegistrationData
     {

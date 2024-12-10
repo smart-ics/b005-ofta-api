@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
@@ -54,6 +55,14 @@ public class CheckExistingAccountService : ICheckExistingAccountService
         var response = await client.ExecutePostAsync(req);
 
         // RETURN
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return new CheckExistingAccountDto
+            {
+                TilakaId = string.Empty, 
+                Message = "Forbidden access to Tilaka",
+                Status = false
+            };
+        
         var result = JsonConvert.DeserializeObject<CheckExistingAccountDto>(response.Content ?? string.Empty);
         return result;
     }

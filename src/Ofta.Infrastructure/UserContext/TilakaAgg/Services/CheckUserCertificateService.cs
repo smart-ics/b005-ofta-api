@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
@@ -54,6 +55,9 @@ public class CheckUserCertificateService: ICheckUserCertificateService
         };
 
         // RETURN
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return new CheckUserCertificateDto(false, 0, new MessageDto("Forbidden access to Tilaka"), null);
+        
         var result = JsonSerializer.Deserialize<CheckUserCertificateDto>(response.Content ?? string.Empty, jsonOptions);
         return result;
     }

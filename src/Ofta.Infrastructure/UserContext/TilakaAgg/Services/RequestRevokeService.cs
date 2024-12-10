@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
@@ -60,6 +61,9 @@ public class RequestRevokeService: IRequestRevokeService
         };
 
         // RETURN
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return new RequestRevokeDto(false, "Forbidden access to Tilaka", null);
+        
         var result = JsonSerializer.Deserialize<RequestRevokeDto>(response.Content ?? string.Empty, jsonOptions);
         return result;
     }
