@@ -18,6 +18,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
 {
     IDocBuilder Create();
     IDocBuilder Load(IDocKey key);
+    IDocBuilder Load(string uploadedDocId);
     IDocBuilder Attach(DocModel model);
     IDocBuilder DocType(IDocTypeKey key);
     IDocBuilder User(IUserOftaKey oftaKey);
@@ -112,6 +113,24 @@ public class DocBuilder : IDocBuilder
         return this;
     }
 
+    public IDocBuilder Load(string uploadedDocId)
+    {
+        var key = new DocModel
+        {
+            UploadedDocId = uploadedDocId
+        };
+        
+        _aggregate = _docDal.GetData((IUploadedDocKey) key)
+            ?? throw new KeyNotFoundException("DocId not found");
+        _aggregate.ListSignees = _docSigneeDal.ListData(new DocModel(_aggregate.DocId))?.ToList()
+            ?? new List<DocSigneeModel>();
+        _aggregate.ListJurnal = _docJurnalDal.ListData(new DocModel(_aggregate.DocId))?.ToList()
+            ?? new List<DocJurnalModel>();
+        _aggregate.ListScope = _docScopeDal.ListData(new DocModel(_aggregate.DocId))?.ToList()
+            ?? new List<AbstractDocScopeModel>();
+        return this;
+    }
+
     public IDocBuilder Attach(DocModel model)
     {
         _aggregate = model;
@@ -179,7 +198,7 @@ public class DocBuilder : IDocBuilder
 
 
     public IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPosition, 
-                                 string signPositionDesc, string signUrl )
+                                 string signPositionDesc, string signUrl)
     {
         var userOfta = _userOftaDal.GetData(userOftaKey)
                        ?? throw new KeyNotFoundException("User Ofta not found");
@@ -195,7 +214,8 @@ public class DocBuilder : IDocBuilder
             SignState = SignStateEnum.NotSigned,
             Level = 1,
             SignPositionDesc = signPositionDesc,
-            SignUrl = signUrl
+            SignUrl = signUrl,
+            IsHidden = true
         });
         return this;
     }

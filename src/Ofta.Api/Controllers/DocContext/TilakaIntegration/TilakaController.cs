@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
+using Ofta.Application.DocContext.BulkSignAgg.UseCases;
 using Ofta.Application.DocContext.DocAgg.UseCases;
 using Ofta.Application.UserContext.TilakaAgg.UseCases;
 
@@ -87,6 +88,27 @@ public class TilakaController : Controller
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
+    }
+    
+    [HttpPost("RequestBulkSign")]
+    public async Task<IActionResult> RequestBulkSign(RequestBulkSignCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk(result));
+    }
+    
+    [HttpPost("ExecuteBulkSign")]
+    public async Task<IActionResult> ExecuteBulkSign(ExecuteBulkSignCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
+    
+    [HttpPost("DownloadDocBulkSign")]
+    public async Task<IActionResult> DownloadDocBulkSign(DownloadDocBulkSignCommand cmd)
+    {
+        var result = await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
     }
 
     [HttpGet("GetSignatureInfo/{documentId}")]

@@ -44,6 +44,8 @@ public class AddSigneeDocHandler : IRequestHandler<AddSigneeDocCommand>
             .AddSignee(request, request.SignTag, signPosition, request.SignPositionDesc, request.SignUrl)
             .AddScope(request)
             .Build();
+
+        aggregate.ListSignees.First().IsHidden = false;
         
         //  WRITE
         _writer.Save(aggregate);

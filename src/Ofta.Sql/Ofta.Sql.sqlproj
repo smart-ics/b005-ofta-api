@@ -57,6 +57,7 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Database\" />
+    <Folder Include="Tables\CallbackContext" />
     <Folder Include="Tables\ParamContext\" />
     <Folder Include="Tables\UserContext\" />
     <Folder Include="DataSeed\" />
@@ -71,6 +72,10 @@
     <Build Include="DataSeed\OFTA_Blueprint.sql" />
     <Build Include="DataSeed\OFTA_BlueprintDocType.sql" />
     <Build Include="DataSeed\OFTA_DocTypeDataSeed.sql" />
+    <Build Include="Tables\CallbackContext\OFTA_CallbackSignStatus.sql" />
+    <Build Include="Tables\CallbackContext\OFTA_CallbackSignStatusDoc.sql" />
+    <Build Include="Tables\DocContext\OFTA_BulkSign.sql" />
+    <Build Include="Tables\DocContext\OFTA_BulkSignDoc.sql" />
     <Build Include="Tables\DocContext\OFTA_Doc.sql" />
     <Build Include="Tables\DocContext\OFTA_DocJurnal.sql" />
     <Build Include="Tables\DocContext\OFTA_DocScope.sql" />

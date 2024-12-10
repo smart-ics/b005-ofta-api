@@ -39,7 +39,7 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
 
         var payload = new
         {
-            request_id = request.Doc.DocId,
+            request_id = request.Signee.DocSigneeId,
             user_identifier = request.UserProvider
         };
 

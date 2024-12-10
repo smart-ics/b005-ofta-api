@@ -1,4 +1,5 @@
 using Nuna.Lib.CleanArchHelper;
+using Ofta.Domain.UserContext.TilakaAgg;
 
 namespace Ofta.Application.DocContext.DocAgg.Contracts;
 
@@ -15,4 +16,4 @@ public record GetSignatureInfoResponse(
     List<SignerResponse> Signers
 );
 
-public record SignerResponse(string TilakaName, string DateTime, string Reason, string Location);
+public record SignerResponse(string TilakaName, string DateTime, string Reason, string Location): ITilakaNameKey;

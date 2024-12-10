@@ -1,4 +1,4 @@
-using MediatR;
+/*using MediatR;
 using Newtonsoft.Json;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
@@ -45,4 +45,4 @@ public class AddQueueICasterOnKlaimBpjsPrintOutFinishPrintEventHandler: INotific
         var reqObj = new ICasterEmrModel(userOfta.UserOftaId, userOfta.UserMappingId);
         _sendToICasterService.Execute(reqObj);
     }
-}
+}*/

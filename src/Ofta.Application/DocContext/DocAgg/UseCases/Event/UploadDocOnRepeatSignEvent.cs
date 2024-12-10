@@ -49,7 +49,8 @@ public class  UploadDocOnRepeatSignEventHandler
             uploadedDocId = uploadDocResponse.UploadedDocId ?? string.Empty;
         }
 
-        var getSignUrlReq = new ReqSignToSignProviderRequest(agg, uploadedDocId);
+        var signee = agg.ListSignees.FirstOrDefault(x => x.UserOftaId == notification.Command.UserOftaId) ?? new DocSigneeModel();
+        var getSignUrlReq = new ReqSignToSignProviderRequest(agg, signee, uploadedDocId);
         var getSignUrlResponse = _getSignUrlService.Execute(getSignUrlReq);
 
         if (getSignUrlResponse?.Signees != null)

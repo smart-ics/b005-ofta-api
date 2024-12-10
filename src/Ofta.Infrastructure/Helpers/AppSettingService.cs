@@ -18,5 +18,41 @@ public class AppSettingService : IAppSettingService
 
     public string RemoteCetakAddress => _remoteCetakOptions.RemoteAddr;
     public string OftaMyDocWebUrl => _oftaOptions.MyDocWebUrl;
-    public int UserExpirationTime => _tilakaOptions.YearExpiration;
+    public int UserRegistrationExpirationTime => _tilakaOptions.DaysExpirationRegistration;
+
+    public TilakaSignPosition SignPositionLeft
+    {
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 0);
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
+    }
+
+    public TilakaSignPosition SignPositionCenter
+    {
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 1);
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
+    }
+
+    public TilakaSignPosition SignPositionRight
+    {
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayout.First(x => x.SignPosition == 2);
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
+    }
+
+    public TilakaSignPosition SignPositionResep
+    {
+        get
+        {
+            var signPosition = _tilakaOptions.SignPositionLayoutResep;
+            return new TilakaSignPosition(signPosition.Width, signPosition.Height, signPosition.CoordinateX, signPosition.CoordinateY, signPosition.PageNumber);
+        }
+    }
 }

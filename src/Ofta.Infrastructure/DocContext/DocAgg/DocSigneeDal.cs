@@ -25,6 +25,7 @@ public class DocSigneeDal : IDocSigneeDal
 
         conn.Open();
         bcp.AddMap("DocId", "DocId");
+        bcp.AddMap("DocSigneeId", "DocSigneeId");
         bcp.AddMap("UserOftaId", "UserOftaId");
         bcp.AddMap("Email", "Email");
         bcp.AddMap("SignTag", "SignTag");
@@ -34,6 +35,7 @@ public class DocSigneeDal : IDocSigneeDal
         bcp.AddMap("SignedDate", "SignedDate");
         bcp.AddMap("SignPositionDesc", "SignPositionDesc");
         bcp.AddMap("SignUrl", "SignUrl");
+        bcp.AddMap("IsHidden", "IsHidden");
 
         var fetched = listModel.ToList();
         bcp.BatchSize = fetched.Count;
@@ -61,9 +63,9 @@ public class DocSigneeDal : IDocSigneeDal
     {
         const string sql = @"
             SELECT
-                DocId, UserOftaId, Email, SignTag, 
+                DocId, DocSigneeId, UserOftaId, Email, SignTag, 
                 SignPosition, Level, SignState, SignedDate,
-                SignPositionDesc, SignUrl
+                SignPositionDesc, SignUrl, IsHidden
             FROM
                 OFTA_DocSignee
             WHERE

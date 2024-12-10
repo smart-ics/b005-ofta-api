@@ -97,11 +97,11 @@ public class TilakaUserDal: ITilakaUserDal
         return conn.ReadSingle<TilakaUserModel>(sql, dp);
     }
 
-    public TilakaUserModel GetData(string key)
+    public TilakaUserModel GetData(ITilakaNameKey key)
     {
         var sql = $@"{SelectFromClause()} WHERE aa.TilakaName = @TilakaName";
         var dp = new DynamicParameters();
-        dp.AddParam("@TilakaName", key, SqlDbType.VarChar);
+        dp.AddParam("@TilakaName", key.TilakaName, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         return conn.ReadSingle<TilakaUserModel>(sql, dp);
