@@ -4,7 +4,8 @@ using Ofta.Domain.DocContext.DocAgg;
 namespace Ofta.Application.DocContext.DocAgg.Contracts;
 
 
-public record ReqSignToSignProviderRequest(DocModel Doc, string DocIdTilaka);
+// public record ReqSignToSignProviderRequest(DocModel Doc, string DocIdTilaka);
+public record ReqSignToSignProviderRequest(DocModel Doc, DocSigneeModel Signee, string DocIdTilaka);
 
 public class ReqSignToSignProviderResponse
 {

@@ -39,7 +39,7 @@ public class SignatureInfoGetHandler: IRequestHandler<SignatureInfoGetQuery, Sig
 
     private SignerGetResponse BuildSignerItemResponse(SignerResponse signer)
     {
-        var tilakaUser = _tilakaUserDal.GetData(signer.TilakaName) 
+        var tilakaUser = _tilakaUserDal.GetData(signer)
             ?? throw new KeyNotFoundException($"Tilaka user with tilaka name: {signer.TilakaName} not found");
 
         return new SignerGetResponse(tilakaUser.UserOftaName, signer.DateTime, signer.Reason, signer.Location);

@@ -13,6 +13,7 @@ public interface ITilakaUserBuilder : INunaBuilder<TilakaUserModel>
     ITilakaUserBuilder Attach(TilakaUserModel model);
     ITilakaUserBuilder Create();
     ITilakaUserBuilder Load(ITilakaRegistrationKey key);
+    ITilakaUserBuilder Load(ITilakaNameKey key);
     ITilakaUserBuilder Load(string email);
     ITilakaUserBuilder RegistrationId(ITilakaRegistrationKey key);
     ITilakaUserBuilder UserOfta(IUserOftaKey key);
@@ -56,8 +57,7 @@ public class TilakaUserBuilder: ITilakaUserBuilder
     {
         _aggregate = new TilakaUserModel
         {
-            ExpiredDate = _tglJamDal.Now.AddDays(7), // khusus sandbox, saat live ganti ke baris code dibawa
-            // ExpiredDate = _tglJamDal.Now.AddYears(_appSettingService.UserExpirationTime),
+            ExpiredDate = _tglJamDal.Now.AddDays(_appSettingService.UserRegistrationExpirationTime),
             UserState = TilakaUserState.Created,
             CertificateState = TilakaCertificateState.NoCertificate
         };
@@ -69,6 +69,13 @@ public class TilakaUserBuilder: ITilakaUserBuilder
     {
         _aggregate = _tilakaUserDal.GetData(key)
             ?? throw new KeyNotFoundException($"Tilaka Registration with id {key.RegistrationId} not found");
+        return this;
+    }
+    
+    public ITilakaUserBuilder Load(ITilakaNameKey key)
+    {
+        _aggregate = _tilakaUserDal.GetData(key)
+                     ?? throw new KeyNotFoundException($"Tilaka User with name: {key.TilakaName} not found");
         return this;
     }
 
