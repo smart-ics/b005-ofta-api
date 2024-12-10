@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -76,6 +77,9 @@ public class RegisterUserTilakaService: IRegisterUserTilakaService
         };
 
         // RETURN
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return new RegisterUserTilakaDto(false, "Forbidden access to Tilaka", null);
+        
         var result = JsonSerializer.Deserialize<RegisterUserTilakaDto>(response.Content ?? string.Empty, jsonOptions);
         return result;
     }
