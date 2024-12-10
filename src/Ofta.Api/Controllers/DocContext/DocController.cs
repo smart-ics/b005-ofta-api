@@ -98,6 +98,14 @@ public class DocController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpGet("notSigned/{userOftaId}")]
+    public async Task<IActionResult> ListMyDocNotSigned(string userOftaId)
+    {
+        var query = new MyDocNotSignedListQuery(userOftaId);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 
     [HttpPatch("addScope")]
     public async Task<IActionResult> AddScope(AddScopeDocCommand cmd)
