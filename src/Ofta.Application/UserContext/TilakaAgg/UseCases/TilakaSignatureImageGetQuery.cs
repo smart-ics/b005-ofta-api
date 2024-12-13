@@ -32,7 +32,10 @@ public class SignatureImageGetHandler: IRequestHandler<TilakaSignatureImageGetQu
         var tilakaUser = _builder
             .Load(request.Email)
             .Build();
+        
         var signatureImage = _getSignatureImage.Execute(new GetSignatureImageRequest(tilakaUser.TilakaName));
+        if (!signatureImage.Success)
+            throw new KeyNotFoundException(signatureImage.Message);
         
         // RESPONSE
         var response = new TilakaSignatureImageGetResponse(tilakaUser.TilakaName, signatureImage.Message);

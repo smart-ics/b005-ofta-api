@@ -46,7 +46,7 @@ public class GetSignatureImageService: IGetSignatureImageService
             .AddQueryParameter("user_identifier", request.TilakaName);
         
         // EXECUTE
-        var response = await client.ExecutePostAsync(req);
+        var response = await client.ExecuteGetAsync(req);
         var jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
