@@ -7,11 +7,11 @@ using Ofta.Application.UserContext.TilakaAgg.Workers;
 
 namespace Ofta.Application.UserContext.TilakaAgg.UseCases;
 
-public record TilakaSignatureImageGetQuery(string Email): IRequest<SignatureImageGetResponse>;
+public record TilakaSignatureImageGetQuery(string Email): IRequest<TilakaSignatureImageGetResponse>;
 
-public record SignatureImageGetResponse(string TilakaName, string Message);
+public record TilakaSignatureImageGetResponse(string TilakaName, string Message);
 
-public class SignatureImageGetHandler: IRequestHandler<TilakaSignatureImageGetQuery, SignatureImageGetResponse>
+public class SignatureImageGetHandler: IRequestHandler<TilakaSignatureImageGetQuery, TilakaSignatureImageGetResponse>
 {
     private readonly IGetSignatureImageService _getSignatureImage;
     private readonly ITilakaUserBuilder _builder;
@@ -22,7 +22,7 @@ public class SignatureImageGetHandler: IRequestHandler<TilakaSignatureImageGetQu
         _builder = builder;
     }
 
-    public Task<SignatureImageGetResponse> Handle(TilakaSignatureImageGetQuery request, CancellationToken cancellationToken)
+    public Task<TilakaSignatureImageGetResponse> Handle(TilakaSignatureImageGetQuery request, CancellationToken cancellationToken)
     {
         // GUARD
         Guard.Argument(request).NotNull()
@@ -35,7 +35,7 @@ public class SignatureImageGetHandler: IRequestHandler<TilakaSignatureImageGetQu
         var signatureImage = _getSignatureImage.Execute(new GetSignatureImageRequest(tilakaUser.TilakaName));
         
         // RESPONSE
-        var response = new SignatureImageGetResponse(tilakaUser.TilakaName, signatureImage.Message);
+        var response = new TilakaSignatureImageGetResponse(tilakaUser.TilakaName, signatureImage.Message);
         return Task.FromResult(response);
     }
 }

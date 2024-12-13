@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
@@ -13,9 +14,9 @@ public class GetSignatureImageService: IGetSignatureImageService
     private readonly TilakaProviderOptions _opt;
     private readonly ITokenTilakaService _tokenService;
 
-    public GetSignatureImageService(TilakaProviderOptions opt, ITokenTilakaService tokenService)
+    public GetSignatureImageService(IOptions<TilakaProviderOptions> opt, ITokenTilakaService tokenService)
     {
-        _opt = opt;
+        _opt = opt.Value;
         _tokenService = tokenService;
     }
 
@@ -42,7 +43,7 @@ public class GetSignatureImageService: IGetSignatureImageService
         client.Authenticator = new JwtAuthenticator(tilakaToken);
 
         var req = new RestRequest()
-            .AddQueryParameter("id", request.TilakaName);
+            .AddQueryParameter("user_identifier", request.TilakaName);
         
         // EXECUTE
         var response = await client.ExecutePostAsync(req);
