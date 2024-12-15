@@ -68,7 +68,7 @@ public class TilakaUserBuilder: ITilakaUserBuilder
     public ITilakaUserBuilder Load(ITilakaRegistrationKey key)
     {
         _aggregate = _tilakaUserDal.GetData(key)
-            ?? throw new KeyNotFoundException($"Tilaka Registration with id {key.RegistrationId} not found");
+            ?? throw new KeyNotFoundException($"Tilaka User with id {key.RegistrationId} not found");
         return this;
     }
     
@@ -85,7 +85,7 @@ public class TilakaUserBuilder: ITilakaUserBuilder
             ?? throw new KeyNotFoundException($"User Ofta with email: {email} not found");
         
         _aggregate = _tilakaUserDal.GetData(userOfta)
-            ?? throw new KeyNotFoundException($"Tilaka Registration with UserOftaId: {userOfta.UserOftaId} not found");
+            ?? throw new KeyNotFoundException($"Tilaka User with UserOftaId: {userOfta.UserOftaId} not found");
 
         return this;
     }

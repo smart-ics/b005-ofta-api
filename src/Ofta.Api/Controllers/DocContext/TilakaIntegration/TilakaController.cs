@@ -118,4 +118,12 @@ public class TilakaController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpGet("GetSignatureImage/{email}")]
+    public async Task<IActionResult> GetSignatureImage(string email)
+    {
+        var query = new TilakaSignatureImageGetQuery(email);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 }

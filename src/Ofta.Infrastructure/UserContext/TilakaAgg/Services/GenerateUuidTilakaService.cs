@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Ofta.Application.UserContext.TilakaAgg.Contracts;
@@ -50,9 +51,12 @@ public class GenerateUuidTilakaService : IGenerateUuidTilakaService
         };
 
         // RETURN
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return new GenerateUuidTilakaDto(false, "Forbidden access to Tilaka", null);
+        
         var result = JsonSerializer.Deserialize<GenerateUuidTilakaDto>(response.Content ?? string.Empty, jsonOptions);
         return result;
     }
 
-    private record GenerateUuidTilakaDto(bool Success, string Message, List<string> Data);
+    private record GenerateUuidTilakaDto(bool Success, string Message, List<string>? Data);
 }
