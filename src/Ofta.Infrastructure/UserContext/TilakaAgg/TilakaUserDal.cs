@@ -79,7 +79,11 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(IUserOftaKey key)
     {
-        var sql = $@"{SelectFromClause()} WHERE aa.UserOftaId = @UserOftaId";
+        var sql = $@"{SelectFromClause()}
+            WHERE
+                aa.UserOftaId = @UserOftaId
+            ORDER BY
+                aa.ExpiredDate DESC";
         var dp = new DynamicParameters();
         dp.AddParam("@UserOftaId", key.UserOftaId, SqlDbType.VarChar);
 
@@ -89,7 +93,11 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(ITilakaRegistrationKey key)
     {
-        var sql = $@"{SelectFromClause()} WHERE aa.RegistrationId = @RegistrationId";
+        var sql = $@"{SelectFromClause()}
+            WHERE
+                aa.RegistrationId = @RegistrationId
+            ORDER BY
+                aa.ExpiredDate DESC";
         var dp = new DynamicParameters();
         dp.AddParam("@RegistrationId", key.RegistrationId, SqlDbType.VarChar);
 
@@ -99,7 +107,11 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(ITilakaNameKey key)
     {
-        var sql = $@"{SelectFromClause()} WHERE aa.TilakaName = @TilakaName";
+        var sql = $@"{SelectFromClause()}
+            WHERE
+                aa.TilakaName = @TilakaName
+            ORDER BY
+                aa.ExpiredDate DESC";
         var dp = new DynamicParameters();
         dp.AddParam("@TilakaName", key.TilakaName, SqlDbType.VarChar);
 
@@ -109,7 +121,7 @@ public class TilakaUserDal: ITilakaUserDal
 
     private static string SelectFromClause()
     {
-        return @"SELECT
+        return @"SELECT TOP 1
                 aa.RegistrationId,
                 aa.UserOftaId,
                 aa.TilakaId,
