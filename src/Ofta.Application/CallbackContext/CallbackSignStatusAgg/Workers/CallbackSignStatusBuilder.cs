@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.CallbackContext.CallbackSignStatusAgg.Contracts;
+using Ofta.Application.CallbackContext.CallbackSignStatusAgg.UseCases;
 using Ofta.Application.Helpers;
 using Ofta.Application.UserContext.TilakaAgg.Workers;
 using Ofta.Domain.CallbackContext.CallbackSignStatusAgg;
@@ -11,12 +13,13 @@ namespace Ofta.Application.CallbackContext.CallbackSignStatusAgg.Workers;
 
 public interface ICallbackSignStatusBuilder : INunaBuilder<CallbackSignStatusModel>
 {
-    ICallbackSignStatusBuilder Create(string requestId, string jsonPayload);
+    ICallbackSignStatusBuilder Create(string requestId);
     ICallbackSignStatusBuilder Attach(CallbackSignStatusModel model);
     ICallbackSignStatusBuilder Load(ICallbackSignStatusKey key);
     ICallbackSignStatusBuilder CallbackDate();
     ICallbackSignStatusBuilder UserInfo(ITilakaNameKey key);
     ICallbackSignStatusBuilder AddDocument(string docId, string downloadUrl, string signState);
+    ICallbackSignStatusBuilder JsonPayload(ReceiveCallbackSignStatusCommand payload);
 }
 
 public class CallbackSignStatusBuilder: ICallbackSignStatusBuilder
@@ -41,13 +44,12 @@ public class CallbackSignStatusBuilder: ICallbackSignStatusBuilder
         return _aggregate;
     }
 
-    public ICallbackSignStatusBuilder Create(string requestId, string jsonPayload)
+    public ICallbackSignStatusBuilder Create(string requestId)
     {
         _aggregate = new CallbackSignStatusModel
         {
             RequestId = requestId,
             CallbackDate = _tglJamDal.Now,
-            JsonPayload = jsonPayload,
             ListDoc = new List<CallbackSignStatusDocModel>()
         };
 
@@ -105,6 +107,12 @@ public class CallbackSignStatusBuilder: ICallbackSignStatusBuilder
         _aggregate.ListDoc.RemoveAll(x => x.UploadedDocId == docId);
         _aggregate.ListDoc.Add(newCallbackDoc);
 
+        return this;
+    }
+
+    public ICallbackSignStatusBuilder JsonPayload(ReceiveCallbackSignStatusCommand payload)
+    {
+        _aggregate.JsonPayload = JsonSerializer.Serialize(payload);
         return this;
     }
 }
