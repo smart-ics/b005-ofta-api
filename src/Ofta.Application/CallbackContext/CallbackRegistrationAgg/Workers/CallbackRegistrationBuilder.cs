@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.CallbackContext.CallbackRegistrationAgg.Contracts;
+using Ofta.Application.CallbackContext.CallbackRegistrationAgg.UseCases;
 using Ofta.Application.Helpers;
 using Ofta.Domain.CallbackContext.CallbackRegistrationAgg;
 using Ofta.Domain.UserContext.TilakaAgg;
@@ -10,11 +12,13 @@ namespace Ofta.Application.CallbackContext.CallbackRegistrationAgg.Workers;
 
 public interface ICallbackRegistrationBuilder : INunaBuilder<CallbackRegistrationModel>
 {
-    ICallbackRegistrationBuilder Create(string registerId, string tilakaName, string jsonPayload);
+    ICallbackRegistrationBuilder Create(string registerId);
     ICallbackRegistrationBuilder Attach(CallbackRegistrationModel model);
     ICallbackRegistrationBuilder Load(ITilakaRegistrationKey key);
     ICallbackRegistrationBuilder CallbackDate();
+    ICallbackRegistrationBuilder TilakaName(string name);
     ICallbackRegistrationBuilder Status(string registrationStatus, string reasonCode, string manualRegistrationStatus);
+    ICallbackRegistrationBuilder JsonPayload(ReceiveCallbackRegistrationCommand payload);
 }
 
 public class CallbackRegistrationBuilder: ICallbackRegistrationBuilder
@@ -35,14 +39,12 @@ public class CallbackRegistrationBuilder: ICallbackRegistrationBuilder
         return _aggregate;
     }
 
-    public ICallbackRegistrationBuilder Create(string registerId, string tilakaName, string jsonPayload)
+    public ICallbackRegistrationBuilder Create(string registerId)
     {
         _aggregate = new CallbackRegistrationModel
         {
             RegistrationId = registerId,
-            TilakaName = tilakaName,
-            CallbackDate = _tglJamDal.Now,
-            JsonPayload = jsonPayload,
+            CallbackDate = _tglJamDal.Now
         };
 
         return this;
@@ -67,12 +69,24 @@ public class CallbackRegistrationBuilder: ICallbackRegistrationBuilder
         return this;
     }
 
+    public ICallbackRegistrationBuilder TilakaName(string name)
+    {
+        _aggregate.TilakaName = name;
+        return this;
+    }
+
     public ICallbackRegistrationBuilder Status(string registrationStatus, string reasonCode, string manualRegistrationStatus)
     {
         _aggregate.RegistrationStatus = registrationStatus;
         _aggregate.RegistrationReasonCode = reasonCode;
         _aggregate.ManualRegistrationStatus = manualRegistrationStatus;
 
+        return this;
+    }
+
+    public ICallbackRegistrationBuilder JsonPayload(ReceiveCallbackRegistrationCommand payload)
+    {
+        _aggregate.JsonPayload = JsonSerializer.Serialize(payload);
         return this;
     }
 }

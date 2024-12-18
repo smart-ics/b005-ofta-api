@@ -84,7 +84,7 @@ public class ReceiveCallbackRegistrationHandler: IRequestHandler<ReceiveCallback
         var fallback = Policy<CallbackRegistrationModel>
             .Handle<KeyNotFoundException>()
             .Fallback(() => _builder
-                .Create(request.RegisterId, request.Data.TilakaName ?? string.Empty, JsonSerializer.Serialize(request))
+                .Create(request.RegisterId)
                 .Build());
         
         var agg = fallback.Execute(() =>
@@ -93,7 +93,9 @@ public class ReceiveCallbackRegistrationHandler: IRequestHandler<ReceiveCallback
         agg = _builder
             .Attach(agg)
             .CallbackDate()
+            .TilakaName(request.Data.TilakaName ?? string.Empty)
             .Status(request.Data.Status, request.Data.ReasonCode, request.Data.ManualRegistrationStatus ?? string.Empty)
+            .JsonPayload(request)
             .Build();
         
         // WRITE
