@@ -72,6 +72,7 @@
     <Build Include="DataSeed\OFTA_Blueprint.sql" />
     <Build Include="DataSeed\OFTA_BlueprintDocType.sql" />
     <Build Include="DataSeed\OFTA_DocTypeDataSeed.sql" />
+    <Build Include="Tables\CallbackContext\OFTA_CallbackCertificateStatus.sql" />
     <Build Include="Tables\CallbackContext\OFTA_CallbackRegistration.sql" />
     <Build Include="Tables\CallbackContext\OFTA_CallbackSignStatus.sql" />
     <Build Include="Tables\CallbackContext\OFTA_CallbackSignStatusDoc.sql" />

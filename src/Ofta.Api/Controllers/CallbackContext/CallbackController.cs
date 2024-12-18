@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nuna.Lib.ActionResultHelper;
+using Ofta.Application.CallbackContext.CallbackCertificateStatusAgg.UseCases;
 using Ofta.Application.CallbackContext.CallbackRegistrationAgg.UseCases;
 using Ofta.Application.CallbackContext.CallbackSignStatusAgg.UseCases;
 
@@ -19,6 +20,13 @@ public class CallbackController : ControllerBase
     
     [HttpPost("registration")]
     public async Task<IActionResult> ReceiveCallbackRegistration(ReceiveCallbackRegistrationCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
+    
+    [HttpPost("certstatus")]
+    public async Task<IActionResult> ReceiveCallbackCertStatus(ReceiveCallbackCertificateStatusCommand cmd)
     {
         await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
