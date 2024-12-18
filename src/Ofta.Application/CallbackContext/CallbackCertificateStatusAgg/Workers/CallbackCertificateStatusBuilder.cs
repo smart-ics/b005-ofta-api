@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.CallbackContext.CallbackCertificateStatusAgg.Contracts;
+using Ofta.Application.CallbackContext.CallbackCertificateStatusAgg.UseCases;
 using Ofta.Application.Helpers;
 using Ofta.Domain.CallbackContext.CallbackCertificateStatusAgg;
 using Ofta.Domain.UserContext.TilakaAgg;
@@ -9,11 +11,12 @@ namespace Ofta.Application.CallbackContext.CallbackCertificateStatusAgg.Workers;
 
 public interface ICallbackCertificateStatusBuilder : INunaBuilder<CallbackCertificateStatusModel>
 {
-    ICallbackCertificateStatusBuilder Create(string registerId, string tilakaName, string jsonPayload);
+    ICallbackCertificateStatusBuilder Create(string registerId, string tilakaName);
     ICallbackCertificateStatusBuilder Attach(CallbackCertificateStatusModel model);
     ICallbackCertificateStatusBuilder Load(ITilakaRegistrationKey key);
     ICallbackCertificateStatusBuilder CallbackDate();
     ICallbackCertificateStatusBuilder Status(string certificateStatus);
+    ICallbackCertificateStatusBuilder JsonPayload(ReceiveCallbackCertificateStatusCommand payload);
 }
 
 public class CallbackCertificateStatusBuilder: ICallbackCertificateStatusBuilder
@@ -34,14 +37,13 @@ public class CallbackCertificateStatusBuilder: ICallbackCertificateStatusBuilder
         return _aggregate;
     }
 
-    public ICallbackCertificateStatusBuilder Create(string registerId, string tilakaName, string jsonPayload)
+    public ICallbackCertificateStatusBuilder Create(string registerId, string tilakaName)
     {
         _aggregate = new CallbackCertificateStatusModel
         {
             RegistrationId = registerId,
             TilakaName = tilakaName,
             CallbackDate = _tglJamDal.Now,
-            JsonPayload = jsonPayload,
         };
 
         return this;
@@ -70,6 +72,12 @@ public class CallbackCertificateStatusBuilder: ICallbackCertificateStatusBuilder
     {
         _aggregate.CertificateStatus = certificateStatus;
 
+        return this;
+    }
+
+    public ICallbackCertificateStatusBuilder JsonPayload(ReceiveCallbackCertificateStatusCommand payload)
+    {
+        _aggregate.JsonPayload = JsonSerializer.Serialize(payload);
         return this;
     }
 }

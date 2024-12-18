@@ -42,7 +42,7 @@ public class ReceiveCallbackCertificateStatusHandler: IRequestHandler<ReceiveCal
         var fallback = Policy<CallbackCertificateStatusModel>
             .Handle<KeyNotFoundException>()
             .Fallback(() => _builder
-                .Create(request.RequestId, request.UserIdentifier, JsonSerializer.Serialize(request))
+                .Create(request.RequestId, request.UserIdentifier)
                 .Build());
         
         var agg = fallback.Execute(() =>
@@ -52,6 +52,7 @@ public class ReceiveCallbackCertificateStatusHandler: IRequestHandler<ReceiveCal
             .Attach(agg)
             .CallbackDate()
             .Status(request.Status)
+            .JsonPayload(request)
             .Build();
         
         // WRITE
