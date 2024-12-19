@@ -134,7 +134,7 @@ public class TilakaUserDal: ITilakaUserDal
                 aa.UserState,
                 aa.CertificateState,
                 aa.RevokeReason,
-                aa.NamaKTP
+                aa.NamaKTP,
                 ISNULL(bb.UserOftaName, '') AS UserOftaName,
                 ISNULL(bb.Email, '') AS Email
             FROM
