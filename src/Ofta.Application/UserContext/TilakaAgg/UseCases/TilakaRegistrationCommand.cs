@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Ofta.Application.UserContext.TilakaAgg.UseCases;
 
-public record TilakaRegistrationCommand(string UserOftaId, string NomorIdentitas, string FotoKtpBase64)
+public record TilakaRegistrationCommand(string UserOftaId, string NamaKTP, string NomorIdentitas, string FotoKtpBase64)
     : IRequest<TilakaRegistrationResponse>, IUserOftaKey;
 
 public record TilakaRegistrationResponse(string RegistrationId);
@@ -41,6 +41,7 @@ public class TilakaRegistrationHandler : IRequestHandler<TilakaRegistrationComma
         // GUARD
         Guard.Argument(request).NotNull()
             .Member(x => x.UserOftaId, y => y.NotEmpty())
+            .Member(x => x.NamaKTP, y => y.NotEmpty())
             .Member(x => x.NomorIdentitas, y => y.NotEmpty())
             .Member(x => x.FotoKtpBase64, y => y.NotEmpty());
 
@@ -53,7 +54,7 @@ public class TilakaRegistrationHandler : IRequestHandler<TilakaRegistrationComma
             .Create()
             .RegistrationId(uuid)
             .UserOfta(request)
-            .Identitas(request.NomorIdentitas, request.FotoKtpBase64)
+            .Identitas(request.NamaKTP, request.NomorIdentitas, request.FotoKtpBase64)
             .Build();
         
         var registerToTilaka = _registerUser.Execute(new RegisterUserTilakaRequest(_aggregate));
@@ -87,7 +88,7 @@ public class TilakaRegistrationHandlerTest
     public async Task GivenGenerateUuidFailed_ThenThrowArgumentException()
     {
         // ARRANGE
-        var request = new TilakaRegistrationCommand("A", "B", "C");
+        var request = new TilakaRegistrationCommand("A", "B", "C", "D");
         var expected = new GenerateUuidTilakaResponse(false, "", "");
         _generateUuid.Setup(x => x.Execute()).Returns(expected);
 
@@ -102,7 +103,7 @@ public class TilakaRegistrationHandlerTest
     public async Task GivenRegisterUserFailed_ThenThrowArgumentException()
     {
         // ARRANGE
-        var request = new TilakaRegistrationCommand("A", "B", "C");
+        var request = new TilakaRegistrationCommand("A", "B", "C", "D");
         
         var uuid = new GenerateUuidTilakaResponse(true, "", "D");
         _generateUuid.Setup(x => x.Execute()).Returns(uuid);
@@ -122,7 +123,7 @@ public class TilakaRegistrationHandlerTest
             => x.Create()
                 .RegistrationId(It.IsAny<ITilakaRegistrationKey>())
                 .UserOfta(It.IsAny<IUserOftaKey>())
-                .Identitas(It.IsAny<string>(), It.IsAny<string>())
+                .Identitas(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
                 .Build()
         ).Returns(newUser);
         
@@ -140,7 +141,7 @@ public class TilakaRegistrationHandlerTest
     public async Task GivenGenerateUuidAndRegisterSuccess_ThenCreateUserRegObject()
     {
         // ARRANGE
-        var request = new TilakaRegistrationCommand("A", "B", "C");
+        var request = new TilakaRegistrationCommand("A", "B", "C", "D");
         
         var uuid = new GenerateUuidTilakaResponse(true, "", "D");
         _generateUuid.Setup(x => x.Execute()).Returns(uuid);
@@ -160,7 +161,7 @@ public class TilakaRegistrationHandlerTest
             => x.Create()
                 .RegistrationId(It.IsAny<ITilakaRegistrationKey>())
                 .UserOfta(It.IsAny<IUserOftaKey>())
-                .Identitas(It.IsAny<string>(), It.IsAny<string>())
+                .Identitas(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
                 .Build()
             ).Returns(newUser);
         

@@ -24,11 +24,11 @@ public class TilakaUserDal: ITilakaUserDal
         const string sql = @"
             INSERT INTO OFTA_TilakaUserRegistration(
                 RegistrationId, UserOftaId, TilakaId, TilakaName, NomorIdentitas, 
-                ExpiredDate, UserState, CertificateState, RevokeReason
+                ExpiredDate, UserState, CertificateState, RevokeReason, NamaKTP
             )
             VALUES (
                 @RegistrationId, @UserOftaId, @TilakaId, @TilakaName, @NomorIdentitas,
-                @ExpiredDate, @UserState, @CertificateState, @RevokeReason
+                @ExpiredDate, @UserState, @CertificateState, @RevokeReason, @NamaKTP
             )";
 
         var dp = new DynamicParameters();
@@ -41,6 +41,7 @@ public class TilakaUserDal: ITilakaUserDal
         dp.AddParam("@UserState", model.UserState, SqlDbType.Int);
         dp.AddParam("@CertificateState", model.CertificateState, SqlDbType.Int);
         dp.AddParam("@RevokeReason", model.RevokeReason, SqlDbType.VarChar);
+        dp.AddParam("@NamaKTP", model.NamaKTP, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -58,7 +59,8 @@ public class TilakaUserDal: ITilakaUserDal
                     ExpiredDate = @ExpiredDate,
                     UserState = @UserState,
                     CertificateState = @CertificateState,
-                    RevokeReason = @RevokeReason
+                    RevokeReason = @RevokeReason,
+                    NamaKTP = @NamaKTP
                 WHERE 
                     RegistrationId = @RegistrationId";
 
@@ -72,6 +74,7 @@ public class TilakaUserDal: ITilakaUserDal
         dp.AddParam("@UserState", model.UserState, SqlDbType.Int);
         dp.AddParam("@CertificateState", model.CertificateState, SqlDbType.Int);
         dp.AddParam("@RevokeReason", model.RevokeReason, SqlDbType.VarChar);
+        dp.AddParam("@NamaKTP", model.NamaKTP, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -79,7 +82,11 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(IUserOftaKey key)
     {
-        var sql = $@"{SelectFromClause()} WHERE aa.UserOftaId = @UserOftaId";
+        var sql = $@"{SelectFromClause()}
+            WHERE
+                aa.UserOftaId = @UserOftaId
+            ORDER BY
+                aa.ExpiredDate DESC";
         var dp = new DynamicParameters();
         dp.AddParam("@UserOftaId", key.UserOftaId, SqlDbType.VarChar);
 
@@ -89,7 +96,11 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(ITilakaRegistrationKey key)
     {
-        var sql = $@"{SelectFromClause()} WHERE aa.RegistrationId = @RegistrationId";
+        var sql = $@"{SelectFromClause()}
+            WHERE
+                aa.RegistrationId = @RegistrationId
+            ORDER BY
+                aa.ExpiredDate DESC";
         var dp = new DynamicParameters();
         dp.AddParam("@RegistrationId", key.RegistrationId, SqlDbType.VarChar);
 
@@ -99,7 +110,11 @@ public class TilakaUserDal: ITilakaUserDal
 
     public TilakaUserModel GetData(ITilakaNameKey key)
     {
-        var sql = $@"{SelectFromClause()} WHERE aa.TilakaName = @TilakaName";
+        var sql = $@"{SelectFromClause()}
+            WHERE
+                aa.TilakaName = @TilakaName
+            ORDER BY
+                aa.ExpiredDate DESC";
         var dp = new DynamicParameters();
         dp.AddParam("@TilakaName", key.TilakaName, SqlDbType.VarChar);
 
@@ -109,7 +124,7 @@ public class TilakaUserDal: ITilakaUserDal
 
     private static string SelectFromClause()
     {
-        return @"SELECT
+        return @"SELECT TOP 1
                 aa.RegistrationId,
                 aa.UserOftaId,
                 aa.TilakaId,
@@ -119,6 +134,7 @@ public class TilakaUserDal: ITilakaUserDal
                 aa.UserState,
                 aa.CertificateState,
                 aa.RevokeReason,
+                aa.NamaKTP,
                 ISNULL(bb.UserOftaName, '') AS UserOftaName,
                 ISNULL(bb.Email, '') AS Email
             FROM
