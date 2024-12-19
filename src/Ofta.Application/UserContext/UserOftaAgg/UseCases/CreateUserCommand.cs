@@ -1,18 +1,20 @@
 ﻿using Dawn;
 using MediatR;
 using Ofta.Application.UserContext.UserOftaAgg.Workers;
+using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
+using Ofta.Domain.KlaimBpjsContext.OrderKlaimBpjsAgg;
+using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
+using Ofta.Domain.UserContext.UserOftaAgg;
+using Polly;
 
 namespace Ofta.Application.UserContext.UserOftaAgg.UseCases;
 
 public record CreateUserCommand(string UserOftaName, string Email) :
-    IRequest<CreatUserResponse>;
+    IRequest<CreateUserResponse>;
 
-public class CreatUserResponse
-{
-    public string UserOftaId { get; set; }
-}
+public record CreateUserResponse(string UserOftaId);
 
-public class CreateUserHanler : IRequestHandler<CreateUserCommand, CreatUserResponse>
+public class CreateUserHanler : IRequestHandler<CreateUserCommand, CreateUserResponse>
 {
     private readonly IUserBuilder _builder;
     private readonly IUserWriter _writer;
@@ -24,25 +26,28 @@ public class CreateUserHanler : IRequestHandler<CreateUserCommand, CreatUserResp
         _writer = writer;
     }
 
-    public Task<CreatUserResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public Task<CreateUserResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        //  GUARD
+        // GUARD
         Guard.Argument(() => request).NotNull()
             .Member(x => x.UserOftaName, y => y.NotEmpty())
             .Member(x => x.Email, y => y.NotEmpty());
         
-        //  BUILD
-        var aggregate = _builder
-            .Create()
-            .UserOftaName(request.UserOftaName)
-            .Email(request.Email)
-            .Build();
+        // BUILD
+        var fallback = Policy<UserOftaModel>
+            .Handle<KeyNotFoundException>()
+            .Fallback(() => _builder
+                .Create()
+                .UserOftaName(request.UserOftaName)
+                .Email(request.Email)
+                .Build());
+        
+        var aggregate = fallback.Execute(() =>
+            _builder.Load(request.Email).Build());
 
-        aggregate =  _writer.Save(aggregate);
-        var response = new CreatUserResponse
-        {
-            UserOftaId = aggregate.UserOftaId
-        };
+        // WRITE
+        aggregate = _writer.Save(aggregate);
+        var response = new CreateUserResponse(aggregate.UserOftaId);
         return Task.FromResult(response);
     }
 }
