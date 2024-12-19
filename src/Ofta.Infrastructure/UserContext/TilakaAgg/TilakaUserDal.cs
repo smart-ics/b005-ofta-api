@@ -24,11 +24,11 @@ public class TilakaUserDal: ITilakaUserDal
         const string sql = @"
             INSERT INTO OFTA_TilakaUserRegistration(
                 RegistrationId, UserOftaId, TilakaId, TilakaName, NomorIdentitas, 
-                ExpiredDate, UserState, CertificateState, RevokeReason
+                ExpiredDate, UserState, CertificateState, RevokeReason, NamaKTP
             )
             VALUES (
                 @RegistrationId, @UserOftaId, @TilakaId, @TilakaName, @NomorIdentitas,
-                @ExpiredDate, @UserState, @CertificateState, @RevokeReason
+                @ExpiredDate, @UserState, @CertificateState, @RevokeReason, @NamaKTP
             )";
 
         var dp = new DynamicParameters();
@@ -41,6 +41,7 @@ public class TilakaUserDal: ITilakaUserDal
         dp.AddParam("@UserState", model.UserState, SqlDbType.Int);
         dp.AddParam("@CertificateState", model.CertificateState, SqlDbType.Int);
         dp.AddParam("@RevokeReason", model.RevokeReason, SqlDbType.VarChar);
+        dp.AddParam("@NamaKTP", model.NamaKTP, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -58,7 +59,8 @@ public class TilakaUserDal: ITilakaUserDal
                     ExpiredDate = @ExpiredDate,
                     UserState = @UserState,
                     CertificateState = @CertificateState,
-                    RevokeReason = @RevokeReason
+                    RevokeReason = @RevokeReason,
+                    NamaKTP = @NamaKTP,
                 WHERE 
                     RegistrationId = @RegistrationId";
 
@@ -72,6 +74,7 @@ public class TilakaUserDal: ITilakaUserDal
         dp.AddParam("@UserState", model.UserState, SqlDbType.Int);
         dp.AddParam("@CertificateState", model.CertificateState, SqlDbType.Int);
         dp.AddParam("@RevokeReason", model.RevokeReason, SqlDbType.VarChar);
+        dp.AddParam("@NamaKTP", model.NamaKTP, SqlDbType.VarChar);
 
         using var conn = new SqlConnection(ConnStringHelper.Get(_opt));
         conn.Execute(sql, dp);
@@ -131,6 +134,7 @@ public class TilakaUserDal: ITilakaUserDal
                 aa.UserState,
                 aa.CertificateState,
                 aa.RevokeReason,
+                aa.NamaKTP
                 ISNULL(bb.UserOftaName, '') AS UserOftaName,
                 ISNULL(bb.Email, '') AS Email
             FROM
