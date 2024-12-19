@@ -60,7 +60,7 @@ public class TilakaUserDal: ITilakaUserDal
                     UserState = @UserState,
                     CertificateState = @CertificateState,
                     RevokeReason = @RevokeReason,
-                    NamaKTP = @NamaKTP,
+                    NamaKTP = @NamaKTP
                 WHERE 
                     RegistrationId = @RegistrationId";
 
