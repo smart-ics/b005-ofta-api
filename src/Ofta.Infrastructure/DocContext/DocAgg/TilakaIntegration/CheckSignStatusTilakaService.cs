@@ -31,8 +31,7 @@ public class CheckSignStatusTilakaService : ICheckSignStatusFromSignProviderServ
         var result = new CheckSignStatusFromSignProviderResponse { DownloadUrl = data?.List_Pdf?.FirstOrDefault()?.Presigned_Url ?? string.Empty };
         return result;
     }
-
-    #region Execute Sign
+    
     private async Task<CheckSignStatusFromTilakaResponse?> GetDownloadUrlTilaka(CheckSignStatusFromSignProviderRequest request)
     {
         //  BUILD REQUEST
@@ -40,18 +39,19 @@ public class CheckSignStatusTilakaService : ICheckSignStatusFromSignProviderServ
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
 
-        var endpoint = _opt.UploadEndpoint + "/checksignstatus";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(token);
-
         var payload = new
         {
             request_id = request.Doc.DocId
         };
-
         var signJson = JsonSerializer.Serialize(payload);
+        
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(token)
+        };
 
-        var req = new RestRequest()
+        var client = new RestClient(options);
+        var req = new RestRequest("/checksignstatus")
             .AddJsonBody(signJson);
 
         req.Method = Method.Post;
@@ -71,9 +71,7 @@ public class CheckSignStatusTilakaService : ICheckSignStatusFromSignProviderServ
         //  RETURN
         return resp;
     }
-    #endregion
-
-    #region RESPONSE COMMAND
+    
     private record CheckSignStatusFromTilakaResponse
     {
         public bool Success { get; set; }
@@ -98,5 +96,4 @@ public class CheckSignStatusTilakaService : ICheckSignStatusFromSignProviderServ
             public string Presigned_Url { get; set; }
         }
     }
-    #endregion
 }

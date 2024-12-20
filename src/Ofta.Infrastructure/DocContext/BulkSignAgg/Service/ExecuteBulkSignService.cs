@@ -31,25 +31,24 @@ public class ExecuteBulkSignService: IExecuteBulkSignService
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
 
-        var endpoint = _opt.UploadEndpoint + "/executesign";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(token);
-
         var payload = new
         {
             request_id = request.BulkSign.BulkSignId,
             user_identifier = request.UserProvider
         };
-
         var jsonPayload = JsonSerializer.Serialize(payload);
-        var req = new RestRequest
+        
+        var options = new RestClientOptions(_opt.BaseApiUrl)
         {
-            Method = Method.Post
+            Authenticator = new JwtAuthenticator(token)
         };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/executesign");
         req.AddJsonBody(jsonPayload);
 
         //  EXECUTE
-        var response = await client.ExecuteAsync(req);
+        var response = await client.ExecutePostAsync(req);
         var jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true

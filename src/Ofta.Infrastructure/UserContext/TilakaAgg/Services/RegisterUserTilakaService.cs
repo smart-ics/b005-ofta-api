@@ -43,11 +43,7 @@ public class RegisterUserTilakaService: IRegisterUserTilakaService
         var tilakaToken = await _tokenService.Execute(TilakaProviderOptions.SECTION_NAME);
         if (tilakaToken is null)
             throw new ArgumentException($"Get tilaka token {_opt.TokenEndPoint} failed");
-
-        var endpoint = _opt.BaseApiUrl + "/registerForKycCheck";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(tilakaToken);
-
+        
         var consentTimestamp = _tglJamDal.Now.ToString(DateFormatEnum.YMD_HMS);
         var consentHash = _opt.ClientID + _opt.ConsentText + _opt.Version + consentTimestamp;
         var reqBody = new
@@ -66,7 +62,13 @@ public class RegisterUserTilakaService: IRegisterUserTilakaService
             consent_timestamp = consentTimestamp
         };
 
-        var req = new RestRequest()
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(tilakaToken)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/registerForKycCheck")
             .AddBody(reqBody, ContentType.Json);
 
         // EXECUTE

@@ -118,17 +118,18 @@ public class ReqSignTilakaService : IReqSignToSignProviderService
         };
 
         var signJson = JsonSerializer.Serialize(payload);
-
-        var endpoint = _opt.UploadEndpoint + "/requestsign";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(token);
-        var req = new RestRequest()
+        
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(token)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/requestsign")
             .AddJsonBody(signJson);
 
-        req.Method = Method.Post;
-
         // EXECUTE
-        var response = await client.ExecuteAsync(req);
+        var response = await client.ExecutePostAsync(req);
 
         var jsonOptions = new JsonSerializerOptions
         {

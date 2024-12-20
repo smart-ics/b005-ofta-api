@@ -37,12 +37,14 @@ public class GetSignatureImageService: IGetSignatureImageService
         var tilakaToken = await _tokenService.Execute(TilakaProviderOptions.SECTION_NAME);
         if (tilakaToken is null) 
             throw new ArgumentException($"Get tilaka token {_opt.TokenEndPoint} failed");
-
-        var endpoint = _opt.BaseApiUrl + "/signing-getsignature";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(tilakaToken);
-
-        var req = new RestRequest()
+        
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(tilakaToken)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/signing-getsignature")
             .AddQueryParameter("user_identifier", request.TilakaName);
         
         // EXECUTE

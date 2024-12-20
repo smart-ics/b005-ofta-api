@@ -33,24 +33,23 @@ public class CheckBulkSignStatusService: ICheckBulkSignStatusService
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
 
-        var endpoint = _opt.UploadEndpoint + "/checksignstatus";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(token);
-
         var payload = new
         {
             request_id = request.BulkSign.BulkSignId
         };
-
         var jsonPayload = JsonSerializer.Serialize(payload);
-        var req = new RestRequest
+        
+        var options = new RestClientOptions(_opt.BaseApiUrl)
         {
-            Method = Method.Post,
+            Authenticator = new JwtAuthenticator(token)
         };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/checksignstatus");
         req.AddJsonBody(jsonPayload);
 
         // EXECUTE
-        var response = await client.ExecuteAsync(req);
+        var response = await client.ExecutePostAsync(req);
         var jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
