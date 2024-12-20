@@ -39,11 +39,13 @@ public class GetSignatureInfoService: IGetSignatureInfoService
         if (tilakaToken is null)
             throw new ArgumentException($"Get tilaka token {_opt.TokenEndPoint} failed");
 
-        var endpoint = _opt.UploadEndpoint + "/getsignatureinfo";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(tilakaToken);
-
-        var req = new RestRequest()
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(tilakaToken)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/getsignatureinfo")
             .AddQueryParameter("id", request.DocumentId);
 
         // EXECUTE

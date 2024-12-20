@@ -42,10 +42,13 @@ public class GetRegService : IGetRegService
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.BaseApiUrl} failed");
 
-        var endpoint = $"{_opt.BaseApiUrl}/api/Reg";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(token);
-        var req = new RestRequest("{regId}")
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(token)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/api/Reg/{regId}")
             .AddUrlSegment("regId", key.RegId);
 
         //  EXECUTE

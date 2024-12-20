@@ -25,7 +25,7 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
         var result = new ExecuteSignToSignProviderResponse { Status = data?.Success == true , Message = data?.Message ?? string.Empty };
         return result;
     }
-    #region Execute Sign
+    
     private async Task<ExecuteSignToTilakaResponse?> ExecuteSign(ExecuteSignToSignProviderRequest request)
     {
         //  BUILD REQUEST
@@ -33,25 +33,24 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
         if (token is null)
             throw new ArgumentException($"Get Token {_opt.TokenEndPoint} failed");
 
-        var endpoint = _opt.UploadEndpoint + "/executesign";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(token);
-
         var payload = new
         {
             request_id = request.Signee.DocSigneeId,
             user_identifier = request.UserProvider
         };
-
         var signJson = JsonSerializer.Serialize(payload);
-
-        var req = new RestRequest()
+        
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(token)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/executesign")
             .AddJsonBody(signJson);
 
-        req.Method = Method.Post;
-
         //  EXECUTE
-        var response = await client.ExecuteAsync(req);
+        var response = await client.ExecutePostAsync(req);
 
         var jsonOptions = new JsonSerializerOptions
         {
@@ -63,10 +62,6 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
         //  RETURN
         return resp;
     }
-    #endregion
-
-
-    #region RESPONSE COMMAND
+    
     private record ExecuteSignToTilakaResponse(bool Success, string Message, string Status);
-    #endregion
 }

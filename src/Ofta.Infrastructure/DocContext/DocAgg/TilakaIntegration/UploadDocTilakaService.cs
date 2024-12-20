@@ -28,7 +28,7 @@ public class UploadDocTilakaService : ISendToSignProviderService
         var result = new SendToSignProviderResponse { UploadedDocId = data?.Filename ?? string.Empty };
         return result;
     }
-    #region UPLOAD FILE
+    
     private async Task<UploadDocToTilakaResponse?> GetDocIdTilaka(SendToSignProviderRequest request)
     {
         //  BUILD REQUEST
@@ -45,17 +45,17 @@ public class UploadDocTilakaService : ISendToSignProviderService
             ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
         var filePathName = fileUrl.Replace(paramStorageUrl.ParamSistemValue, paramStoragePath.ParamSistemValue);
 
-
-        var endpoint = _opt.UploadEndpoint + "/upload";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(token);
-        var req = new RestRequest()
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(token)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/upload")
             .AddFile("file", filePathName);
 
-        req.Method = Method.Post;
-
         //  EXECUTE
-        var response = await client.ExecuteAsync(req);
+        var response = await client.ExecutePostAsync(req);
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
 
@@ -69,10 +69,6 @@ public class UploadDocTilakaService : ISendToSignProviderService
         //  RETURN
         return resp;
     }
-    #endregion
-
-
-    #region RESPONSE COMMAND
+    
     private record UploadDocToTilakaResponse(string Succes, string Message, string Filename);
-    #endregion
 }

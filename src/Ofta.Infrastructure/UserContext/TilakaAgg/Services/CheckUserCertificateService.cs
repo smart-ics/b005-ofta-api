@@ -39,12 +39,14 @@ public class CheckUserCertificateService: ICheckUserCertificateService
         if (tilakaToken is null) 
             throw new ArgumentException($"Get tilaka token {_opt.TokenEndPoint} failed");
 
-        var endpoint = _opt.BaseApiUrl + "/checkcertstatus";
-        var client = new RestClient(endpoint);
-        client.Authenticator = new JwtAuthenticator(tilakaToken);
-
         var reqBody = new { user_identifier = request.TilakaName };
-        var req = new RestRequest()
+        var options = new RestClientOptions(_opt.BaseApiUrl)
+        {
+            Authenticator = new JwtAuthenticator(tilakaToken)
+        };
+        
+        var client = new RestClient(options);
+        var req = new RestRequest("/checkcertstatus")
             .AddBody(reqBody, ContentType.Json);
         
         // EXECUTE
