@@ -76,8 +76,7 @@ public class ReceiveCallbackSignStatusHandler: IRequestHandler<ReceiveCallbackSi
         var fallback = Policy<CallbackSignStatusModel>
             .Handle<KeyNotFoundException>()
             .Fallback(() => _builder
-                .Create(request.RequestId, JsonSerializer.Serialize(request))
-                .UserInfo(new TilakaUserModel(request.UserInfo.UserIdentifier))
+                .Create(request.RequestId)
                 .Build());
         
         var agg = fallback.Execute(() =>
@@ -93,7 +92,9 @@ public class ReceiveCallbackSignStatusHandler: IRequestHandler<ReceiveCallbackSi
 
         agg = _builder
             .Attach(agg)
+            .UserInfo(new TilakaUserModel(request.UserInfo.UserIdentifier))
             .CallbackDate()
+            .JsonPayload(request)
             .Build();
         
         // WRITE

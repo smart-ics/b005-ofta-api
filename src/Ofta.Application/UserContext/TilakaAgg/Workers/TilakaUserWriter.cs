@@ -18,7 +18,7 @@ public class TilakaUserWriter: ITilakaUserWriter
 
     public TilakaUserModel Save(TilakaUserModel model)
     {
-        var db = _tilakaUserDal.GetData((IUserOftaKey)model);
+        var db = _tilakaUserDal.GetData((ITilakaRegistrationKey)model);
         if (db is null)
             _tilakaUserDal.Insert(model);
         else

@@ -17,7 +17,7 @@ public interface ITilakaUserBuilder : INunaBuilder<TilakaUserModel>
     ITilakaUserBuilder Load(string email);
     ITilakaUserBuilder RegistrationId(ITilakaRegistrationKey key);
     ITilakaUserBuilder UserOfta(IUserOftaKey key);
-    ITilakaUserBuilder Identitas(string nomorIdentitas, string fotoKtpBase64);
+    ITilakaUserBuilder Identitas(string namaKTP, string nomorIdentitas, string fotoKtpBase64);
     ITilakaUserBuilder TilakaId(string id);
     ITilakaUserBuilder TilakaName(string name);
     ITilakaUserBuilder UserState(TilakaUserState state);
@@ -108,8 +108,9 @@ public class TilakaUserBuilder: ITilakaUserBuilder
         return this;
     }
 
-    public ITilakaUserBuilder Identitas(string nomorIdentitas, string fotoKtpBase64)
+    public ITilakaUserBuilder Identitas(string namaKTP, string nomorIdentitas, string fotoKtpBase64)
     {
+        _aggregate.NamaKTP = namaKTP;
         _aggregate.NomorIdentitas = nomorIdentitas;
         _aggregate.FotoKtpBase64 = fotoKtpBase64;
         return this;

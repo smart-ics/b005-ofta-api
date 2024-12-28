@@ -50,7 +50,7 @@ public class RegisterUserTilakaService: IRegisterUserTilakaService
         {
             registration_id = request.Model.RegistrationId,
             email = request.Model.Email,
-            name = request.Model.UserOftaName,
+            name = request.Model.NamaKTP,
             company_name = _opt.CompanyName,
             date_expire = request.Model.ExpiredDate.ToString(DateFormatEnum.YMD_HM),
             nik = request.Model.NomorIdentitas,

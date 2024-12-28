@@ -11,6 +11,7 @@ public class TilakaUserModel: ITilakaRegistrationKey, ITilakaNameKey, IUserOftaK
     public string UserOftaId { get; set; }
     public string UserOftaName { get; set; }
     public string Email { get; set; }
+    public string NamaKTP { get; set; }
     public string NomorIdentitas { get; set; }
     public string FotoKtpBase64 { get; set; }
     public string TilakaId { get; set; }
