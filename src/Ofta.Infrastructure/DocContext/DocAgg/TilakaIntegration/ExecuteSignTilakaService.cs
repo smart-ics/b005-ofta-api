@@ -40,7 +40,7 @@ public class ExecuteSignTilakaService : IExecuteSignToSignProviderService
         };
         var signJson = JsonSerializer.Serialize(payload);
         
-        var options = new RestClientOptions(_opt.BaseApiUrl)
+        var options = new RestClientOptions(_opt.UploadEndpoint)
         {
             Authenticator = new JwtAuthenticator(token)
         };
