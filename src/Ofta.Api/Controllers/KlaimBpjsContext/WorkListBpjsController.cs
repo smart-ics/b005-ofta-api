@@ -18,33 +18,33 @@ public class WorkListBpjsController : Controller
 
     [HttpGet("{pageNo}/workListBpjs")]
     public async Task<IActionResult> ListProgress(int pageNo,
-                                                  [FromQuery] string? regId = null,
-                                                  [FromQuery] string? pasienId = null,
-                                                  [FromQuery] string? pasienName = null,
-                                                  [FromQuery] string? layananName = null,
-                                                  [FromQuery] string? dokterName = null,
-                                                  [FromQuery] string? rajalRanap = null,
-                                                  [FromQuery] string? workState = null)
+        [FromQuery] string? regId = null,
+        [FromQuery] string? pasienId = null,
+        [FromQuery] string? pasienName = null,
+        [FromQuery] string? layananName = null,
+        [FromQuery] string? dokterName = null,
+        [FromQuery] string? rajalRanap = null,
+        [FromQuery] string? workState = null,
+        [FromQuery] int sortOrder = 0)
     {
-        var cmd = new ListWorkListBpjsQuery(regId, pasienId, pasienName, layananName, dokterName, 
-                                            rajalRanap, workState,pageNo);
-        var result = await _mediator.Send(cmd);
+        var query = new ListWorkListBpjsQuery(regId, pasienId, pasienName, layananName, dokterName,
+            rajalRanap, workState, sortOrder, pageNo);
+        var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
 
     [HttpGet("workListBpjsRekap")]
     public async Task<IActionResult> RekapProgress([FromQuery] string? regId = null,
-                                                   [FromQuery] string? pasienId = null,
-                                                   [FromQuery] string? pasienName = null,
-                                                   [FromQuery] string? layananName = null,
-                                                   [FromQuery] string? dokterName = null,
-                                                   [FromQuery] string? rajalRanap = null,
-                                                   [FromQuery] string? workState = null)
+        [FromQuery] string? pasienId = null,
+        [FromQuery] string? pasienName = null,
+        [FromQuery] string? layananName = null,
+        [FromQuery] string? dokterName = null,
+        [FromQuery] string? rajalRanap = null,
+        [FromQuery] string? workState = null)
     {
         var cmd = new ListWorkListBpjsRecapQuery(regId!, pasienId!, pasienName!, layananName!, dokterName!,
-                                                 rajalRanap!, workState!);
+            rajalRanap!, workState!);
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-
 }

@@ -7,10 +7,16 @@ using Ofta.Domain.KlaimBpjsContext.WorkListBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.WorkListBpjsAgg.UseCase;
 
-public record ListWorkListBpjsQuery(string? RegId, string? PasienId, string? PasienName,
-                                    string? LayananName, string? DokterName, 
-                                    string? RajalRanap, string? WorkState, 
-                                    int PageNo) : IRequest<IEnumerable<ListWorkListBpjsResponse>>;
+public record ListWorkListBpjsQuery(
+    string? RegId,
+    string? PasienId,
+    string? PasienName,
+    string? LayananName,
+    string? DokterName,
+    string? RajalRanap,
+    string? WorkState,
+    int SortOrder,
+    int PageNo) : IRequest<IEnumerable<ListWorkListBpjsResponse>>;
 
 public record ListWorkListBpjsResponse(
     string OrderKlaimBpjsId,
@@ -35,21 +41,23 @@ public class ListWorkListBpjsHandler : IRequestHandler<ListWorkListBpjsQuery, IE
         _workListBpjsDal = workListBpjsDal;
     }
 
-    public Task<IEnumerable<ListWorkListBpjsResponse>> Handle(ListWorkListBpjsQuery request, CancellationToken cancellationToken)
+    public Task<IEnumerable<ListWorkListBpjsResponse>> Handle(ListWorkListBpjsQuery request,
+        CancellationToken cancellationToken)
     {
         // GUARD
         Guard.Argument(() => request).NotNull()
             .Member(x => x.PageNo, y => y.NotZero());
-        
+
         // QUERY
         if (IsFilterApplied(request))
-            _resultList = _workListBpjsDal.ListData()?.ToList()
-                ?? new List<WorkListBpjsModel>();
+            _resultList = _workListBpjsDal.ListData()?.ToList() ?? [];
         else
-            _resultList = _workListBpjsDal.ListData(request.PageNo)?.ToList()
-                ?? new List<WorkListBpjsModel>();
+            _resultList = _workListBpjsDal.ListData(request.PageNo)?.ToList() ?? [];
 
         _resultList = FilterData(request);
+        _resultList = request.SortOrder == 0
+            ? _resultList.OrderBy(x => x.OrderKlaimBpjsDate).ToList()
+            : _resultList.OrderByDescending(x => x.OrderKlaimBpjsDate).ToList();
 
         //  RESPONSE
         var response = _resultList.Select(x => new ListWorkListBpjsResponse
