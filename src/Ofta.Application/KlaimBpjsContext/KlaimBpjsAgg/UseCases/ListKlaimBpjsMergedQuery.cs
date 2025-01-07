@@ -9,7 +9,7 @@ using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
 [PublicAPI]
-public record ListKlaimBpjsMergedQuery(string TglAwal, string TglAkhir, string rajalRanap)
+public record ListKlaimBpjsMergedQuery(string TglAwal, string TglAkhir, string? RajalRanap, string? DokterName)
     : IRequest<IEnumerable<ListKlaimBpjsMergedResponse>>;
 
 [PublicAPI]
@@ -38,7 +38,8 @@ public class ListKlaimBpjsHandler : IRequestHandler<ListKlaimBpjsMergedQuery, IE
         _guard = guard;
     }
 
-    public Task<IEnumerable<ListKlaimBpjsMergedResponse>> Handle(ListKlaimBpjsMergedQuery request, CancellationToken cancellationToken)
+    public Task<IEnumerable<ListKlaimBpjsMergedResponse>> Handle(ListKlaimBpjsMergedQuery request,
+        CancellationToken cancellationToken)
     {
         //  GUARD
         var guardResult = _guard.Validate(request);
@@ -49,16 +50,20 @@ public class ListKlaimBpjsHandler : IRequestHandler<ListKlaimBpjsMergedQuery, IE
         var periode = new Periode(
             request.TglAwal.ToDate("yyyy-MM-dd"),
             request.TglAkhir.ToDate("yyyy-MM-dd"));
-        var listKlaimBpjs = _klaimBpjsDal.ListData(periode)?.ToList()
-            ?? new List<KlaimBpjsModel>();
 
+        var listKlaimBpjs = _klaimBpjsDal.ListData(periode)?.ToList() ?? [];
         var result = listKlaimBpjs
-                    .Where(x => x.KlaimBpjsState.ToString() == KlaimBpjsStateEnum.Merged.ToString()).ToList();
+            .Where(x => x.KlaimBpjsState.ToString() == KlaimBpjsStateEnum.Merged.ToString()).ToList();
 
-        if (request.rajalRanap != null)
+        if (request.DokterName is { Length: >= 3 })
             result = (from lr in result
-                      where lr.RajalRanap.ToString().Trim() == request.rajalRanap.Trim()
-                      select lr).ToList();
+                where lr.DokterName.ToLower().Trim().Contains(request.DokterName.ToLower().Trim())
+                select lr).ToList();
+        
+        if (request.RajalRanap != null)
+            result = (from lr in result
+                where lr.RajalRanap.ToString().Trim() == request.RajalRanap.Trim()
+                select lr).ToList();
 
         //  RESPONSE
         var response = result.Select(x => new ListKlaimBpjsMergedResponse

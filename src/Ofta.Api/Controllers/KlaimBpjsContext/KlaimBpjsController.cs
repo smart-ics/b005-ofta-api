@@ -17,14 +17,14 @@ public class KlaimBpjsController : Controller
     {
         _mediator = mediator;
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreateKlaimBpjs(KlaimBpjsCreateCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
+
     [HttpPost("scanDraft")]
     public async Task<IActionResult> ScanDraft(KlaimBpjsPrintOutScanCommand cmd)
     {
@@ -32,7 +32,7 @@ public class KlaimBpjsController : Controller
         return Ok(new JSendOk(result));
     }
 
-    
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetKlaimBpjs(string id)
     {
@@ -40,21 +40,21 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
-    
+
     [HttpPatch("addDocType")]
     public async Task<IActionResult> AddDocType(KlaimBpjsDocTypeAddCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
+
     [HttpPatch("removeDocType")]
     public async Task<IActionResult> RemoveDocType(KlaimBpjsDocTypeRemoveCommand cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
+
     [HttpPatch("setDrafter")]
     public async Task<IActionResult> SetDrafter(KlaimBpjsDocTypeSetDrafterCommand cmd)
     {
@@ -68,14 +68,14 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
+
     [HttpPatch("orderDraft")]
     public async Task<IActionResult> OrderDraft(DraftOrderKlaimBpjsCommand cmd)
     {
         await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
     }
-    
+
     [HttpPatch("orderSign")]
     public async Task<IActionResult> OrderSign(KlaimBpjsRequestSignCommand cmd)
     {
@@ -103,13 +103,14 @@ public class KlaimBpjsController : Controller
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
-    
+
     [HttpPatch("finishPrint")]
     public async Task<IActionResult> FinishPrint(KlaimBpjsPrintOutFinishPrintCallback cmd)
     {
         var result = await _mediator.Send(cmd);
         return Ok(new JSendOk(result));
     }
+
     [HttpPatch("mergerFile")]
     public async Task<IActionResult> MergerFile(KlaimBpjsMergerFileCommand cmd)
     {
@@ -119,9 +120,10 @@ public class KlaimBpjsController : Controller
 
     [HttpGet("{tglAwal}/{tglAkhir}")]
     public async Task<IActionResult> ListKlaimBpjsMerged(string tglAwal, string tglAkhir,
-                                                         [FromQuery] string? rajalRanap = null)
+        [FromQuery] string? rajalRanap = null, [FromQuery] string? dokterName = null)
     {
-        var result = await _mediator.Send(new ListKlaimBpjsMergedQuery(tglAwal, tglAkhir, rajalRanap!));
+        var query = new ListKlaimBpjsMergedQuery(tglAwal, tglAkhir, rajalRanap, dokterName);
+        var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
 }
