@@ -45,7 +45,7 @@ public class UploadDocTilakaService : ISendToSignProviderService
             ?? throw new KeyNotFoundException("Parameter StorageUrl not found");
         var filePathName = fileUrl.Replace(paramStorageUrl.ParamSistemValue, paramStoragePath.ParamSistemValue);
 
-        var options = new RestClientOptions(_opt.BaseApiUrl)
+        var options = new RestClientOptions(_opt.UploadEndpoint)
         {
             Authenticator = new JwtAuthenticator(token)
         };

@@ -35,8 +35,6 @@ public class SubmitDocHandler : IRequestHandler<SubmitDocCommand, SubmitDocRespo
         var aggregate = _builder
             .Load(request)
             .Build();
-        if (aggregate.DocState != DocStateEnum.Created)
-            throw new ArgumentException($"Submit failed: DocState has been {aggregate.DocState.ToString()}");
         
         //  BUILD
         aggregate = _builder
