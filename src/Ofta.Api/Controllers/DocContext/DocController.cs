@@ -106,6 +106,14 @@ public class DocController : Controller
         var result = await _mediator.Send(query);
         return Ok(new JSendOk(result));
     }
+    
+    [HttpGet("docNumberPreview/{docTypeId}")]
+    public async Task<IActionResult> GetDocNumberPreview(string docTypeId)
+    {
+        var query = new GetDocNumberPreviewQuery(docTypeId);
+        var result = await _mediator.Send(query);
+        return Ok(new JSendOk(result));
+    }
 
     [HttpPatch("addScope")]
     public async Task<IActionResult> AddScope(AddScopeDocCommand cmd)

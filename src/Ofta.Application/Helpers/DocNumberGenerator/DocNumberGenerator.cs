@@ -187,7 +187,7 @@ public class DocNumberGenerator: IDocNumberGenerator
         return numberValue;
     }
 
-    private string FormattingNumber(string numberFormat, int numberValue, DateTime dateCreated)
+    public string FormattingNumber(string numberFormat, int numberValue, DateTime dateCreated)
     {
         var extractedFormat = numberFormat.Split("/");
         for (var i = 0; i < extractedFormat.Length; i++)
