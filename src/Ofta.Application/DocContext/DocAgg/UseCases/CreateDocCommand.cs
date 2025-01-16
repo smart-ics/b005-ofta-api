@@ -27,12 +27,12 @@ public class CreateDocHandler : IRequestHandler<CreateDocCommand, CreateDocRespo
 
     public Task<CreateDocResponse> Handle(CreateDocCommand request, CancellationToken cancellationToken)
     {
-        //  GUARD
+        // GUARD
         Guard.Argument(() => request).NotNull()
             .Member(x => x.DocTypeId, y => y.NotEmpty())
             .Member(x => x.UserOftaId, y => y.NotEmpty());
         
-        //  BUILD
+        // BUILD
         var aggregate = _docBuilder
             .Create()
             .DocType(request)
@@ -40,8 +40,13 @@ public class CreateDocHandler : IRequestHandler<CreateDocCommand, CreateDocRespo
             .AddJurnal(DocStateEnum.Created, string.Empty)
             .AddScope(request)
             .Build();
+
+        aggregate = _docBuilder
+            .Attach(aggregate)
+            .GenDocNumber(request)
+            .Build();
         
-        //  WRITE
+        // WRITE
         aggregate = _docWriter.Save(aggregate);
         var response = new CreateDocResponse(aggregate.DocId);
         return Task.FromResult(response);

@@ -6,6 +6,7 @@ using Ofta.Application;
 using Nuna.Lib.AutoNumberHelper;
 using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
+using Ofta.Application.Helpers.DocNumberGenerator;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 using Scrutor;
 
@@ -22,7 +23,8 @@ public static class ApplicationService
             .AddMediatR(typeof(ApplicationAssemblyAnchor))
             .AddValidatorsFromAssembly(Assembly.Load(APPLICATION_ASSEMBLY))
             .AddScoped<INunaCounterBL, NunaCounterBL>()
-            .AddScoped<DateTimeProvider, DateTimeProvider>();
+            .AddScoped<DateTimeProvider, DateTimeProvider>()
+            .AddScoped<IDocNumberGenerator, DocNumberGenerator>();
 
         services
             .Scan(selector => selector

@@ -18,6 +18,7 @@ public class DocTypeModel : IDocTypeKey, IDocTypeFileUrl
     public string JenisDokRemoteCetak { get; set; }
     public string DefaultDrafterUserId { get; set; }
     public List<DocTypeTagModel> ListTag { get; set; }
+    public DocTypeNumberFormatModel NumberFormat { get; set; }
 }
 
 public interface IDocTypeFileUrl : IDocTypeKey

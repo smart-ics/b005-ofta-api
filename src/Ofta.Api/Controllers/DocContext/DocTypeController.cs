@@ -52,6 +52,13 @@ public class DocTypeController : Controller
         await _mediator.Send(cmd);
         return Ok(new JSendOk("Done"));
     }
+    
+    [HttpPatch("setAutoNumberFormat")]
+    public async Task<IActionResult> SetAutoNumberFormat(DocTypeSetNumberFormatCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok(new JSendOk("Done"));
+    }
 
     [HttpPatch("addTag")]
     public async Task<IActionResult> AddTagDocType(AddTagDocTypeCommand cmd)

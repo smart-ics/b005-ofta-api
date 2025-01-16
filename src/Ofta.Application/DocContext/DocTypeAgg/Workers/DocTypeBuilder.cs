@@ -1,6 +1,7 @@
 ﻿using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
+using Ofta.Application.Helpers.DocNumberGenerator;
 using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocTypeAgg;
@@ -20,6 +21,7 @@ public interface IDocTypeBuilder : INunaBuilder<DocTypeModel>
     IDocTypeBuilder RemoveTag(string tag);
     IDocTypeBuilder FileUrl(string fileUrl);
     IDocTypeBuilder DefaultDrafter(IUserOftaKey key);
+    IDocTypeBuilder SetDocTypeNumberFormat(string format, ResetByEnum resetBy);
 }
 
 public class DocTypeBuilder : IDocTypeBuilder
@@ -29,15 +31,17 @@ public class DocTypeBuilder : IDocTypeBuilder
     private readonly IDocTypeTagDal _docTypeTagDal;
     private readonly IParamSistemDal _paramSistemDal;
     private readonly IUserOftaDal _userOftaDal;
+    private readonly IDocTypeNumberFormatDal _docTypeNumberFormatDal;
 
     public DocTypeBuilder(IDocTypeDal docTypeDal, 
         IDocTypeTagDal docTypeTagDal,
-        IParamSistemDal paramSistemDal, IUserOftaDal userOftaDal)
+        IParamSistemDal paramSistemDal, IUserOftaDal userOftaDal, IDocTypeNumberFormatDal docTypeNumberFormatDal)
     {
         _docTypeDal = docTypeDal;
         _docTypeTagDal = docTypeTagDal;
         _paramSistemDal = paramSistemDal;
         _userOftaDal = userOftaDal;
+        _docTypeNumberFormatDal = docTypeNumberFormatDal;
     }
 
     public DocTypeModel Build()
@@ -50,6 +54,7 @@ public class DocTypeBuilder : IDocTypeBuilder
     {
         _aggregate = new DocTypeModel
         {
+            NumberFormat = new DocTypeNumberFormatModel(),
             ListTag = new List<DocTypeTagModel>()
         };
         return this;
@@ -69,6 +74,9 @@ public class DocTypeBuilder : IDocTypeBuilder
 
         _aggregate.ListTag = _docTypeTagDal.ListData(key)?.ToList()
                              ?? new List<DocTypeTagModel>();
+
+        _aggregate.NumberFormat = _docTypeNumberFormatDal.GetData(key)
+                                  ?? new DocTypeNumberFormatModel{DocTypeId =_aggregate.DocTypeId};
 
         return this;
     }
@@ -125,6 +133,13 @@ public class DocTypeBuilder : IDocTypeBuilder
             ?? throw new KeyNotFoundException($"User ofta {key.UserOftaId} not found");
 
         _aggregate.DefaultDrafterUserId = user.UserOftaId;
+        return this;
+    }
+
+    public IDocTypeBuilder SetDocTypeNumberFormat(string format, ResetByEnum resetBy)
+    {
+        _aggregate.NumberFormat.Format = format;
+        _aggregate.NumberFormat.ResetBy = resetBy;
         return this;
     }
 }

@@ -4,6 +4,7 @@ using Nuna.Lib.CleanArchHelper;
 using Nuna.Lib.DataTypeExtension;
 using Nuna.Lib.TransactionHelper;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
+using Ofta.Application.Helpers.DocNumberGenerator;
 using Ofta.Domain.DocContext.DocTypeAgg;
 
 namespace Ofta.Application.DocContext.DocTypeAgg.Workers;
@@ -17,16 +18,18 @@ public class DocTypeWriter : IDocTypeWriter
     private readonly IDocTypeTagDal _docTypeTagDal;
     private readonly IValidator<DocTypeModel> _validator;
     private readonly INunaCounterBL _counter;
+    private readonly IDocTypeNumberFormatDal _docTypeNumberFormatDal;
 
     public DocTypeWriter(IDocTypeDal docTypeDal, 
         IDocTypeTagDal docTypeTagDal, 
         IValidator<DocTypeModel> validator, 
-        INunaCounterBL counter)
+        INunaCounterBL counter, IDocTypeNumberFormatDal docTypeNumberFormatDal)
     {
         _docTypeDal = docTypeDal;
         _docTypeTagDal = docTypeTagDal;
         _validator = validator;
         _counter = counter;
+        _docTypeNumberFormatDal = docTypeNumberFormatDal;
     }
 
     public DocTypeModel Save(DocTypeModel model)
@@ -51,6 +54,10 @@ public class DocTypeWriter : IDocTypeWriter
 
         _docTypeTagDal.Delete(model);
         _docTypeTagDal.Insert(model.ListTag);
+
+        model.NumberFormat.DocTypeId = model.DocTypeId;
+        _docTypeNumberFormatDal.Delete(model);
+        _docTypeNumberFormatDal.Insert(model.NumberFormat);
 
         trans.Complete();
         

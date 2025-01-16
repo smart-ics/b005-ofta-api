@@ -4,6 +4,7 @@ using Nuna.Lib.ValidationHelper;
 using Ofta.Application.DocContext.DocAgg.Contracts;
 using Ofta.Application.DocContext.DocTypeAgg.Contracts;
 using Ofta.Application.Helpers;
+using Ofta.Application.Helpers.DocNumberGenerator;
 using Ofta.Application.ParamContext.ConnectionAgg.Contracts;
 using Ofta.Application.UserContext.UserOftaAgg.Contracts;
 using Ofta.Domain.DocContext.DocAgg;
@@ -26,6 +27,7 @@ public interface IDocBuilder : INunaBuilder<DocModel>
     IDocBuilder GenRequestedDocUrl();
     IDocBuilder GenRequestedMergedDocUrl(string mergerName);
     IDocBuilder GenPublishedDocUrl();
+    IDocBuilder GenDocNumber(IDocTypeKey docType);
     IDocBuilder AddSignee(IUserOftaKey userOftaKey, string signTag, SignPositionEnum signPositionEnum, 
                           string signPositionDesc,string signUrl);
     IDocBuilder RemoveSignee(IUserOftaKey userOftaKey);
@@ -52,6 +54,7 @@ public class DocBuilder : IDocBuilder
     private readonly IUserOftaDal _userOftaDal;
     private readonly ITglJamDal _tglJamDal;
     private readonly IParamSistemDal _paramSistemDal;
+    private readonly IDocNumberGenerator _docNumberGenerator;
 
     public DocBuilder(IDocDal docDal, 
         IDocSigneeDal docSigneeDal, 
@@ -60,7 +63,7 @@ public class DocBuilder : IDocBuilder
         IUserOftaDal userDal, 
         ITglJamDal tglJamDal, 
         IParamSistemDal paramSistemDal, 
-        IDocScopeDal docScopeDal)
+        IDocScopeDal docScopeDal, IDocNumberGenerator docNumberGenerator)
     {
         _docDal = docDal;
         _docSigneeDal = docSigneeDal;
@@ -70,6 +73,7 @@ public class DocBuilder : IDocBuilder
         _tglJamDal = tglJamDal;
         _paramSistemDal = paramSistemDal;
         _docScopeDal = docScopeDal;
+        _docNumberGenerator = docNumberGenerator;
     }
 
     public DocModel Build()
@@ -181,6 +185,12 @@ public class DocBuilder : IDocBuilder
             .Replace(" ", "_");
         var publishedDocUrl = $"{storageUrl.ParamSistemValue}/{_aggregate.DocId}_{docTypeName}.pdf";
         _aggregate.PublishedDocUrl = publishedDocUrl;
+        return this;
+    }
+
+    public IDocBuilder GenDocNumber(IDocTypeKey docType)
+    {
+        _aggregate.DocNumber = _docNumberGenerator.Generate(docType, _aggregate.DocDate);
         return this;
     }
 

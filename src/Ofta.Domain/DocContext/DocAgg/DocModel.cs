@@ -25,6 +25,7 @@ public class DocModel : IDocKey, IUserOftaKey, IUploadedDocKey
     public string UploadedDocId { get; set; }
     public string UploadedDocUrl { get; set; }
     public string PublishedDocUrl { get; set; }
+    public string DocNumber { get; set; }
     #endregion
     
     public List<DocSigneeModel> ListSignees { get; set; }

@@ -1,0 +1,8 @@
+CREATE TABLE OFTA_DocTypeNumberFormat(
+    DocTypeId VARCHAR(5) NOT NULL CONSTRAINT DF_OFTA_DocTypeNumberFormat_DocTypeId DEFAULT(''),
+    Format VARCHAR(100) NOT NULL CONSTRAINT DF_OFTA_DocTypeNumberFormat_Format DEFAULT(''),
+    ResetBy INT NOT NULL CONSTRAINT DF_OFTA_DocTypeNumberFormat_ResetBy DEFAULT(0),
+    
+    CONSTRAINT PK_OFTA_DocTypeNumberFormat PRIMARY KEY CLUSTERED(DocTypeId) 
+)
+GO

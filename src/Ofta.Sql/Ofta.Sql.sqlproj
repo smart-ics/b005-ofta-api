@@ -83,6 +83,8 @@
     <Build Include="Tables\DocContext\OFTA_DocScope.sql" />
     <Build Include="Tables\DocContext\OFTA_DocSignee.sql" />
     <Build Include="Tables\DocContext\OFTA_DocType.sql" />
+    <Build Include="Tables\DocContext\OFTA_DocTypeNumberFormat.sql" />
+    <Build Include="Tables\DocContext\OFTA_DocTypeNumberValue.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeTag.sql" />
     <Build Include="Tables\DocContext\OFTA_DocTypeUrl.sql" />
     <Build Include="Tables\DocContext\OFTA_DraftOrder.sql" />
