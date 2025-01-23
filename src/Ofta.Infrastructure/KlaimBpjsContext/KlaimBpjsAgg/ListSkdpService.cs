@@ -20,15 +20,13 @@ public class ListSkdpService : IListSkdpService
     {
         const string sql = @"
             SELECT 
-	            NoSuratKontrol,bb.kodereg as RegId, IsSpri
+                NoSuratKontrol, KodeReg AS RegId, IsSPRI
             FROM 
-	            vclaim_sep aa  
-	            left join vclaim_skdp bb on aa.FS_NO_SKDP = bb.NoSuratKontrol
-	            left join vclaim_dokter_dpjp cc on bb.kodedokter = cc.fs_kd_dpjp
+                vclaim_skdp
             WHERE  
-	            aa.FS_KD_REG  = @regId 
-	            AND tglvoid = '3000-01-01' 
-	            AND isskdphidok = '0'";
+                KodeReg  = @regId 
+                AND tglvoid = '3000-01-01' 
+                AND isSKDPHIDOK = '0'";
 
         var dp = new DynamicParameters();
         dp.AddParam("@regId", req, SqlDbType.VarChar);
