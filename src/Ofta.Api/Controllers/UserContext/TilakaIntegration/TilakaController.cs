@@ -5,7 +5,7 @@ using Ofta.Application.DocContext.BulkSignAgg.UseCases;
 using Ofta.Application.DocContext.DocAgg.UseCases;
 using Ofta.Application.UserContext.TilakaAgg.UseCases;
 
-namespace Ofta.Api.Controllers.DocContext.TilakaIntegration;
+namespace Ofta.Api.Controllers.UserContext.TilakaIntegration;
 
 [Route("api/[controller]")]
 [ApiController]

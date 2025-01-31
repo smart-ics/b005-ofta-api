@@ -12,6 +12,7 @@ namespace Ofta.Application.UserContext.TilakaAgg.UseCases;
 public record TilakaCheckExistingAccountCommand(string Email): IRequest<TilakaCheckExistingAccountResponse>;
 
 public record TilakaCheckExistingAccountResponse(
+    string RegistrationId,
     string NomorIdentitas,
     string Email,
     string TilakaName,
@@ -55,6 +56,7 @@ public class TilakaCheckExistingAccountHandler: IRequestHandler<TilakaCheckExist
         // WRITE
         _ = _writer.Save(aggregate);
         var response = new TilakaCheckExistingAccountResponse(
+            aggregate.RegistrationId,
             aggregate.NomorIdentitas, 
             aggregate.Email,
             aggregate.TilakaName,
