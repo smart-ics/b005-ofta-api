@@ -164,6 +164,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
                 DocTypeId = c.DocTypeId,
                 DocTypeName = c.DocTypeName,
                 DrafterUserId = c.DrafterUserId,
+                ToBePrinted = c.ToBePrinted,
                 ListPrintOut = listPrintOut
                     .Where(x => x.KlaimBpjsDocTypeId == c.KlaimBpjsDocTypeId)
                     .Select(y => new KlaimBpjsPrintOutModel
