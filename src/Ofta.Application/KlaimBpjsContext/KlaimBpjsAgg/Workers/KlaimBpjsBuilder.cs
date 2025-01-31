@@ -29,7 +29,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder UserOfta(IUserOftaKey userOftaKey);
     IKlaimBpjsBuilder OrderKlaimBpjs(IOrderKlaimBpjsKey orderKlaimBpjsKey);
     
-    IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey);
+    IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey, bool toBePrinted);
     IKlaimBpjsBuilder RemoveDocType(int noUrut);
     IKlaimBpjsBuilder SetDocTypeDrafter(IDocTypeKey docTypeKey, IUserOftaKey userOftaKey);
     
@@ -209,7 +209,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
         return this;
     }
 
-    public IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey)
+    public IKlaimBpjsBuilder AddDocType(IDocTypeKey docTypeKey, bool toBePrinted)
     {
         var klaimDoc = _agg.ListDocType.FirstOrDefault(c => c.DocTypeId == docTypeKey.DocTypeId);
         if (klaimDoc is not null)
@@ -229,6 +229,7 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             DocTypeId = docType.DocTypeId,
             DocTypeName = docType.DocTypeName,
             DrafterUserId = docType.DefaultDrafterUserId,
+            ToBePrinted = toBePrinted,
             ListPrintOut = new List<KlaimBpjsPrintOutModel>()
         });
         return this;

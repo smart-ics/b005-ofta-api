@@ -30,6 +30,7 @@ public class AddQueueRemoteCetak_OnKlaimBpjsPrintOutScannReffidEventHandler : IN
     {
         var remoteAddr = _appSettingService.RemoteCetakAddress;
         var printOut = notification.Aggregate.ListDocType
+            .Where(x => x.ToBePrinted)
             .SelectMany(hdr => hdr.ListPrintOut, (h, d) => new { h.DocTypeId, h.DocTypeName, d.PrintOutReffId });
 
         foreach (var item in printOut)

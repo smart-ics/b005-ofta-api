@@ -67,7 +67,7 @@ public class KlaimBpjsCreateHandler : IRequestHandler<KlaimBpjsCreateCommand, Kl
         {
             klaimBpjs = _builder
                 .Attach(klaimBpjs)
-                .AddDocType(x)
+                .AddDocType(x, x.ToBePrinted)
                 .Build();
         });
         

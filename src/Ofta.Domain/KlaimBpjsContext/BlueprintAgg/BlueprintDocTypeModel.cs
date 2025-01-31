@@ -9,6 +9,7 @@ public class BlueprintDocTypeModel : IBlueprintKey, IDocTypeKey
     public int NoUrut { get; set; }
     public string DocTypeId { get; set; }
     public string DocTypeName { get; set; }
+    public bool ToBePrinted { get; set; }
     
     public List<BlueprintSigneeModel> ListSignee { get; set; }
 }
