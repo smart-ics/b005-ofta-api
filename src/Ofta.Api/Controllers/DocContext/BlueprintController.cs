@@ -44,6 +44,20 @@ public class BlueprintController : Controller
         return Ok();
     }
     
+    [HttpPatch("setToBePrinted")]
+    public async Task<IActionResult> SetToBePrinted(SetToBePrintedBlueprintCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok();
+    }
+    
+    [HttpPatch("unsetToBePrinted")]
+    public async Task<IActionResult> UnsetToBePrinted(UnsetToBePrintedBlueprintCommand cmd)
+    {
+        await _mediator.Send(cmd);
+        return Ok();
+    }
+    
     [HttpPatch("addSignee")]
     public async Task<IActionResult> AddSignee(AddSigneeBlueprintCommand cmd)
     {

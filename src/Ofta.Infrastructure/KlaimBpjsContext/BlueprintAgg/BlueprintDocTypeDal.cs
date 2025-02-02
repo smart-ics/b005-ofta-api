@@ -28,7 +28,7 @@ public class BlueprintDocTypeDal : IBlueprintDocTypeDal
         bcp.AddMap("BlueprintDocTypeId", "BlueprintDocTypeId");
         bcp.AddMap("NoUrut", "NoUrut");
         bcp.AddMap("DocTypeId", "DocTypeId");
-        
+        bcp.AddMap("ToBePrinted", "ToBePrinted");
 
         var fetched = listModel.ToList();   
         bcp.BatchSize = fetched.Count;
@@ -57,7 +57,7 @@ public class BlueprintDocTypeDal : IBlueprintDocTypeDal
         const string sql = @"
             SELECT
                 aa.BlueprintId, aa.BlueprintDocTypeId,
-                aa.NoUrut, aa.DocTypeId, 
+                aa.NoUrut, aa.DocTypeId, aa.ToBePrinted,
                 ISNULL(bb.DocTypeName, '') AS DocTypeName
             FROM
                 OFTA_BlueprintDocType aa

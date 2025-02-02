@@ -20,6 +20,8 @@ public interface IBlueprintBuilder : INunaBuilder<BlueprintModel>
     IBlueprintBuilder AddSignee(IDocTypeKey docTypeKey, string email, 
         string signTag, SignPositionEnum signPosition);
     IBlueprintBuilder RemoveSignee(IDocTypeKey docTypeKey, string email);
+    IBlueprintBuilder SetToBePrinted(IDocTypeKey docTypeKey);
+    IBlueprintBuilder UnsetToBePrinted(IDocTypeKey docTypeKey);
 }
 
 public class BlueprintBuilder : IBlueprintBuilder
@@ -158,6 +160,26 @@ public class BlueprintBuilder : IBlueprintBuilder
             return this;
         
         docType.ListSignee.RemoveAll(x => x.Email == email);
+        return this;
+    }
+
+    public IBlueprintBuilder SetToBePrinted(IDocTypeKey docTypeKey)
+    {
+        var docType = _agg.ListDocType.FirstOrDefault(x => x.DocTypeId == docTypeKey.DocTypeId);
+        if (docType is null)
+            return this;
+
+        docType.ToBePrinted = true;
+        return this;
+    }
+
+    public IBlueprintBuilder UnsetToBePrinted(IDocTypeKey docTypeKey)
+    {
+        var docType = _agg.ListDocType.FirstOrDefault(x => x.DocTypeId == docTypeKey.DocTypeId);
+        if (docType is null)
+            return this;
+
+        docType.ToBePrinted = false;
         return this;
     }
 }
