@@ -18,8 +18,16 @@ public class ReffIdFinderSbpk: IReffIdFinderSbpk
     public IEnumerable<string> Find(string regId, string docTypeCode)
     {
         var result = _resumeAdminService.Execute(regId)
-                     ??_resumeService.Execute(regId)
-                     ?? new List<ResumeDto>();
-        return result.Select(x => x.ResumeId ?? string.Empty);
+             ??_resumeService.Execute(regId)
+             ?? new List<ResumeDto>();
+        
+        return result.Select(x =>
+        {
+            if (!string.IsNullOrEmpty(x.ResumeId))
+            {
+                return x.ResumeId = x.ResumeId + "-" + docTypeCode;
+            }
+            return string.Empty;
+        });
     }
 }
