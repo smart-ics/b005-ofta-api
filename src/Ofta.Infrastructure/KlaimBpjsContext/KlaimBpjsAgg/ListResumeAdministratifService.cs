@@ -4,6 +4,7 @@ using Ofta.Infrastructure.Helpers;
 using RestSharp;
 using Mapster;
 using System.Text.Json;
+using Nuna.Lib.DataTypeExtension;
 using Nuna.Lib.ValidationHelper;
 
 namespace Ofta.Infrastructure.KlaimBpjsContext.KlaimBpjsAgg;
@@ -47,8 +48,9 @@ public class ListResumeAdministratifService : IListResumeAdministratifService
         //  RETURN 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
-        var data = JsonSerializer.Serialize(response.Content);
-        return JSendResponse.Read(response);
+
+        var listResume = JSendResponse.Read(response);
+        return listResume.IsNullOrEmpty() ? null : listResume;
     }
 }
 

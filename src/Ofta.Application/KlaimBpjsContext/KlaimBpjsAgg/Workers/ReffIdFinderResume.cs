@@ -1,5 +1,4 @@
-﻿
-using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
+﻿using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 

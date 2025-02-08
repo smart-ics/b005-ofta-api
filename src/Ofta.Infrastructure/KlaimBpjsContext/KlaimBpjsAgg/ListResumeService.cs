@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using Nuna.Lib.DataTypeExtension;
 using Nuna.Lib.ValidationHelper;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Infrastructure.Helpers;
@@ -46,7 +47,8 @@ public class ListResumeService: IListResumeService
         //  RETURN 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
-        var data = JsonSerializer.Serialize(response.Content);
-        return JSendResponse.Read(response);
+        
+        var listResume = JSendResponse.Read(response);
+        return listResume.IsNullOrEmpty() ? null : listResume;
     }
 }
