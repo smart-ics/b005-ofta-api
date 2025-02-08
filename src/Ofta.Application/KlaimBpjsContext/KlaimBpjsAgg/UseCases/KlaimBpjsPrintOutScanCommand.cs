@@ -71,7 +71,7 @@ public class KlaimBpjsPrintOutScanHandler : IRequestHandler<KlaimBpjsPrintOutSca
             var docTypeCode = _docTypeBuilder.Load(new DocTypeModel(docType.DocTypeId)).Build();
 
             var listReffId = _finderFactory
-                .Factory(docType,docType)
+                .Factory(docType, docType)
                 .Find(klaimBpjs.RegId, docTypeCode.DocTypeCode)
                 .ToList();
             listReffId.ForEach(reffId =>

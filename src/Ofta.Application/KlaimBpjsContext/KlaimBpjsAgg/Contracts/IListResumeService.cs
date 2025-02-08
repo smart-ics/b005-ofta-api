@@ -11,6 +11,10 @@ public class ResumeDto
     public string DokterId { get; set; }
     public string DokterName { get; set; }
 }
+public interface IListResumeAdministratifService : INunaService<IEnumerable<ResumeDto>, string>
+{
+}
+
 public interface IListResumeService : INunaService<IEnumerable<ResumeDto>, string>
 {
 }

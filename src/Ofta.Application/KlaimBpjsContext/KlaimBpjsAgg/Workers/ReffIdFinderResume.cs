@@ -1,5 +1,4 @@
-﻿
-using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
+﻿using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 
@@ -7,16 +6,20 @@ public interface IReffIdFinderResume : IReffIdFinderAction { }
 
 public class ReffIdFinderResume : IReffIdFinderResume
 {
-    private readonly IListResumeService _service;
+    private readonly IListResumeAdministratifService _resumeAdminService;
+    private readonly IListResumeService _resumeService;
 
-    public ReffIdFinderResume(IListResumeService service)
+    public ReffIdFinderResume(IListResumeAdministratifService resumeAdminService, IListResumeService resumeService)
     {
-        _service = service;
+        _resumeAdminService = resumeAdminService;
+        _resumeService = resumeService;
     }
 
     public IEnumerable<string> Find(string regId, string docTypeCode)
     {
-        var result = _service.Execute(regId) ?? new List<ResumeDto>();
+        var result = _resumeAdminService.Execute(regId)
+            ??_resumeService.Execute(regId)
+            ?? new List<ResumeDto>();
         return result.Select(x => x.ResumeId ?? string.Empty);
     }
 }

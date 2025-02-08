@@ -22,6 +22,8 @@ SELECT 'DTX0F', 'Ass Awal Medis IGD', 1, 1, '<url_ofta_storage_lokasi>', 'printS
 SELECT 'DTX10', 'Hasil Lab Luar', 1, 1, '<url_ofta_storage_lokasi>', 'printOtherDoc', '06' , '' UNION ALL
 SELECT 'DTX11', 'Hasil Rad Luar', 1, 1, '<url_ofta_storage_lokasi>', 'printOtherDoc', '08' , '' UNION ALL
 SELECT 'DTX12', 'Hasil PA Lab Luar', 1, 1, '<url_ofta_storage_lokasi>', 'printOtherDoc', '11' , '' UNION ALL
-SELECT 'DTX13', 'Other Doc', 1, 1, '<url_ofta_storage_lokasi>', 'printOtherDoc','14', '' UNION ALL
-SELECT 'DTX14', 'Resume Medis', 1, 1, '<url_ofta_storage_lokasi>', 'printResume','Resume', ''
+SELECT 'DTX13', 'Other Doc', 1, 1, '<url_ofta_storage_lokasi>', 'printOtherDoc', '14', '' UNION ALL
+SELECT 'DTX14', 'Resume Medis', 1, 1, '<url_ofta_storage_lokasi>', 'printResume', 'Resume', '' UNION ALL
+SELECT 'DTX15', 'Assesment', 1, 1, '<url_ofta_storage_lokasi>', '', 'AS001', '' UNION ALL
+SELECT 'DTX16', 'SBPK', 1, 1, '<url_ofta_storage_lokasi>', 'printSbpk', 'Sbpk', ''
 GO

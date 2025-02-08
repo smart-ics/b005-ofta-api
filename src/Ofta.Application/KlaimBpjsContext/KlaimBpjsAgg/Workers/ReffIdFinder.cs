@@ -1,5 +1,4 @@
-﻿using Nuna.Lib.CleanArchHelper;
-using Ofta.Domain.DocContext.DocTypeAgg;
+﻿using Ofta.Domain.DocContext.DocTypeAgg;
 using Ofta.Domain.KlaimBpjsContext.KlaimBpjsAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
@@ -7,7 +6,6 @@ namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Workers;
 public interface IReffIdFinderAction
 {
     IEnumerable<string> Find(string regId, string docTypeCode);
-    
 }
 
 public interface IFactoryPattern<out TOut, in TIn1, in TIn2>
@@ -35,6 +33,8 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
     private readonly IReffIdFinderCppt _cpptFinder;
     private readonly IReffIdFinderAssesment _assesmentFinder;
     private readonly IReffIdFinderOtherDoc _reffIdFinderOtherDoc;
+    private readonly IReffIdFinderSbpk _sbpkFinder;
+    
     public ReffIdFinderFactory(IReffIdFinderTextEklaim textEklaim,
         IReffIdFinderNotaBill notaBill,
         IReffIdFinderResep resepFinder,
@@ -48,7 +48,7 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
         IReffIdFinderSep sepFinder, 
         IReffIdFinderCppt cpptFinder,
         IReffIdFinderAssesment assesmentFinder,
-        IReffIdFinderOtherDoc reffIdFinderOtherDoc)
+        IReffIdFinderOtherDoc reffIdFinderOtherDoc, IReffIdFinderSbpk sbpkFinder)
     {
         _notaBillFinder = notaBill;
         _resepFinder = resepFinder;
@@ -64,6 +64,7 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
         _cpptFinder = cpptFinder;
         _assesmentFinder = assesmentFinder;
         _reffIdFinderOtherDoc = reffIdFinderOtherDoc;
+        _sbpkFinder = sbpkFinder;
     }
 
     public IReffIdFinderAction Factory(IKlaimBpjsKey klaimBpjsKey, IDocTypeKey docTypeKey)
@@ -88,6 +89,7 @@ public class ReffIdFinderFactory : IReffIdFinderFactory
             "DTX11" => _reffIdFinderOtherDoc,
             "DTX12" => _reffIdFinderOtherDoc,
             "DTX13" => _reffIdFinderOtherDoc,
+            "DTX16" => _sbpkFinder,
             _ => new ReffIdFinderDefault()
         };
 }
@@ -98,7 +100,5 @@ public class ReffIdFinderDefault : IReffIdFinderAction
     {
         return new List<string>();
     }
-
-    
 }
 

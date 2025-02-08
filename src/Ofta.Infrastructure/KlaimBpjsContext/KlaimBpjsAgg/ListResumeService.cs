@@ -1,14 +1,14 @@
-﻿using Microsoft.Extensions.Options;
+using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Nuna.Lib.DataTypeExtension;
+using Nuna.Lib.ValidationHelper;
 using Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.Contracts;
 using Ofta.Infrastructure.Helpers;
 using RestSharp;
-using Mapster;
-using System.Text.Json;
-using Nuna.Lib.ValidationHelper;
 
 namespace Ofta.Infrastructure.KlaimBpjsContext.KlaimBpjsAgg;
 
-public class ListResumeService : IListResumeService
+public class ListResumeService: IListResumeService
 {
     private readonly Emr25Options _opt;
 
@@ -37,7 +37,7 @@ public class ListResumeService : IListResumeService
     private async Task<IEnumerable<ResumeRespDto>> ListResume(string regId)
     {
         //BUILD
-        var endPoint = $"{_opt.BaseApiUrl}/api/ResumeMedis/ListAdministratif/{regId}/Register";
+        var endPoint = $"{_opt.BaseApiUrl}/api/ResumeMedis/List/{regId}/Register";
         var client = new RestClient(endPoint);
         var req = new RestRequest();
 
@@ -47,20 +47,8 @@ public class ListResumeService : IListResumeService
         //  RETURN 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
             return null;
-        var data = JsonSerializer.Serialize(response.Content);
-
         
-
-        return JSendResponse.Read(response);
+        var listResume = JSendResponse.Read(response);
+        return listResume.IsNullOrEmpty() ? null : listResume;
     }
-}
-
-public class ResumeRespDto
-{
-    public string ResumeId { get; set; }
-    public string TglJam { get; set; }
-    public string LayananId { get; set; }
-    public string LayananName { get; set; }
-    public string DokterId { get; set; }
-    public string DokterName { get; set; }
 }
