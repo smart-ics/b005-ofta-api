@@ -36,6 +36,7 @@ public interface IKlaimBpjsBuilder : INunaBuilder<KlaimBpjsModel>
     IKlaimBpjsBuilder AddPrintOut(IDocTypeKey docTypeKey, string printReffId);
     IKlaimBpjsBuilder RemovePrintOut(string printOutReffId);
     IKlaimBpjsBuilder FinishPrintOut(string printOutReffId);
+    IKlaimBpjsBuilder AddSignedDocToPrintOut(string printOutReffId, IDocKey doc);
 
     IKlaimBpjsBuilder PrintDoc(IDocTypeKey docTypeKey, string reffId);
     
@@ -301,6 +302,24 @@ public class KlaimBpjsBuilder : IKlaimBpjsBuilder
             ?? throw new KeyNotFoundException($"Reff ID not found: '{printOutReffId}'");
         
         thisPrintOut.PrintState = PrintStateEnum.Printed;
+        return this;
+    }
+
+    public IKlaimBpjsBuilder AddSignedDocToPrintOut(string printOutReffId, IDocKey doc)
+    {
+        var thisPrintOut = 
+            _agg.ListDocType
+                .SelectMany(x => x.ListPrintOut)
+                .FirstOrDefault(y => y.PrintOutReffId == printOutReffId)
+            ?? throw new KeyNotFoundException($"Reff ID not found: '{printOutReffId}'");
+
+        var signedDoc = _docBuilder
+            .Load(doc)
+            .Build();
+        
+        thisPrintOut.DocId = signedDoc.DocId;
+        thisPrintOut.DocUrl = signedDoc.RequestedDocUrl;
+        
         return this;
     }
 
