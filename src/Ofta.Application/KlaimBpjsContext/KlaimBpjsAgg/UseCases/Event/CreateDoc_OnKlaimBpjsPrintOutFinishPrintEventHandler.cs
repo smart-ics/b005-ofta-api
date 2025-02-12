@@ -119,40 +119,29 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             QrOption = "QRONLY"
         };
 
-        if (doc.DocTypeId == "DTX0C")
+        switch (signPosition)
         {
-            signPositionDesc.Width = _appSetting.SignPositionResep.Width;
-            signPositionDesc.Height = _appSetting.SignPositionResep.Height;
-            signPositionDesc.CoordinateX = _appSetting.SignPositionResep.CoordinateX;
-            signPositionDesc.CoordinateY = _appSetting.SignPositionResep.CoordinateY;
-            signPositionDesc.PageNumber = _appSetting.SignPositionResep.PageNumber;
-        }
-        else
-        {
-            switch (signPosition)
-            {
-                case SignPositionEnum.SignLeft:
-                    signPositionDesc.Width = _appSetting.SignPositionLeft.Width;
-                    signPositionDesc.Height = _appSetting.SignPositionLeft.Height;
-                    signPositionDesc.CoordinateX = _appSetting.SignPositionLeft.CoordinateX;
-                    signPositionDesc.CoordinateY = _appSetting.SignPositionLeft.CoordinateY;
-                    signPositionDesc.PageNumber = _appSetting.SignPositionLeft.PageNumber;
-                    break;
-                case SignPositionEnum.SignCenter:
-                    signPositionDesc.Width = _appSetting.SignPositionCenter.Width;
-                    signPositionDesc.Height = _appSetting.SignPositionCenter.Height;
-                    signPositionDesc.CoordinateX = _appSetting.SignPositionCenter.CoordinateX;
-                    signPositionDesc.CoordinateY = _appSetting.SignPositionCenter.CoordinateY;
-                    signPositionDesc.PageNumber = _appSetting.SignPositionCenter.PageNumber;
-                    break;
-                case SignPositionEnum.SignRight:
-                    signPositionDesc.Width = _appSetting.SignPositionRight.Width;
-                    signPositionDesc.Height = _appSetting.SignPositionRight.Height;
-                    signPositionDesc.CoordinateX = _appSetting.SignPositionRight.CoordinateX;
-                    signPositionDesc.CoordinateY = _appSetting.SignPositionRight.CoordinateY;
-                    signPositionDesc.PageNumber = _appSetting.SignPositionRight.PageNumber;
-                    break;
-            }
+            case SignPositionEnum.SignLeft:
+                signPositionDesc.Width = _appSetting.SignPositionLeft.Width;
+                signPositionDesc.Height = _appSetting.SignPositionLeft.Height;
+                signPositionDesc.CoordinateX = _appSetting.SignPositionLeft.CoordinateX;
+                signPositionDesc.CoordinateY = _appSetting.SignPositionLeft.CoordinateY;
+                signPositionDesc.PageNumber = _appSetting.SignPositionLeft.PageNumber;
+                break;
+            case SignPositionEnum.SignCenter:
+                signPositionDesc.Width = _appSetting.SignPositionCenter.Width;
+                signPositionDesc.Height = _appSetting.SignPositionCenter.Height;
+                signPositionDesc.CoordinateX = _appSetting.SignPositionCenter.CoordinateX;
+                signPositionDesc.CoordinateY = _appSetting.SignPositionCenter.CoordinateY;
+                signPositionDesc.PageNumber = _appSetting.SignPositionCenter.PageNumber;
+                break;
+            case SignPositionEnum.SignRight:
+                signPositionDesc.Width = _appSetting.SignPositionRight.Width;
+                signPositionDesc.Height = _appSetting.SignPositionRight.Height;
+                signPositionDesc.CoordinateX = _appSetting.SignPositionRight.CoordinateX;
+                signPositionDesc.CoordinateY = _appSetting.SignPositionRight.CoordinateY;
+                signPositionDesc.PageNumber = _appSetting.SignPositionRight.PageNumber;
+                break;
         }
         
 
