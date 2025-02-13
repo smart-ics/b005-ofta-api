@@ -6,7 +6,7 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record KlaimBpjsPrintOutFinishPrintCallback(string KlaimBpjsId, string PrintOutReffId, string Base64Content, string User, string SignPosition)
+public record KlaimBpjsPrintOutFinishPrintCallback(string KlaimBpjsId, string PrintOutReffId, string Base64Content, string User)
     : IRequest, IKlaimBpjsKey;
 
 public class KlaimBpjsPrintOutFinishPrintHandler : IRequestHandler<KlaimBpjsPrintOutFinishPrintCallback>
@@ -59,6 +59,5 @@ public class FinishPrintDocKlaimBpjsGuard : AbstractValidator<KlaimBpjsPrintOutF
         RuleFor(x => x.KlaimBpjsId).NotEmpty();
         RuleFor(x => x.PrintOutReffId).NotEmpty();
         RuleFor(x => x.Base64Content).NotEmpty();
-        RuleFor(x => x.User).NotEmpty();
     }
 }
