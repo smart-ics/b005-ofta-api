@@ -53,6 +53,7 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             .Fallback(() => _docBuilder
                 .Create()
                 .DocType(new DocTypeModel(docType.DocTypeId))
+                .DocName(cmd.DocName)
                 .User(agg)
                 .AddJurnal(DocStateEnum.Created, string.Empty)
                 .Build());
@@ -63,6 +64,7 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         // doc
         doc = _docBuilder
             .Attach(doc)
+            .DocName(cmd.DocName)
             .AddJurnal(DocStateEnum.Submited, string.Empty)
             .Build();
         doc = _docWriter.Save(doc);

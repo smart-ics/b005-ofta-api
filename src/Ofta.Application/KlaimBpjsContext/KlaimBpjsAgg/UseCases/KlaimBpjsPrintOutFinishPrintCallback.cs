@@ -6,7 +6,7 @@ using Ofta.Domain.UserContext.UserOftaAgg;
 
 namespace Ofta.Application.KlaimBpjsContext.KlaimBpjsAgg.UseCases;
 
-public record KlaimBpjsPrintOutFinishPrintCallback(string KlaimBpjsId, string PrintOutReffId, string Base64Content, string User)
+public record KlaimBpjsPrintOutFinishPrintCallback(string KlaimBpjsId, string PrintOutReffId, string Base64Content, string User, string DocName)
     : IRequest, IKlaimBpjsKey;
 
 public class KlaimBpjsPrintOutFinishPrintHandler : IRequestHandler<KlaimBpjsPrintOutFinishPrintCallback>
