@@ -33,8 +33,7 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         _userOftaDal = userOftaDal;
         _userOftaMappingDal = userOftaMappingDal;
     }
-
-
+    
     public Task Handle(FinishedPrintDocKlaimBpjsEvent notification, CancellationToken cancellationToken)
     {
         // BUILD
@@ -54,6 +53,7 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
             .Fallback(() => _docBuilder
                 .Create()
                 .DocType(new DocTypeModel(docType.DocTypeId))
+                .DocName(cmd.DocName)
                 .User(agg)
                 .AddJurnal(DocStateEnum.Created, string.Empty)
                 .Build());
@@ -64,19 +64,23 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         // doc
         doc = _docBuilder
             .Attach(doc)
+            .DocName(cmd.DocName)
             .AddJurnal(DocStateEnum.Submited, string.Empty)
             .Build();
         doc = _docWriter.Save(doc);
         
-        var userSigns = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
-        if (userSigns.UserSign1 != string.Empty)
-            doc = AddSigneeAndScope(doc, userSigns.UserSign1, SignPositionEnum.SignLeft);
+        var userSignees = JsonConvert.DeserializeObject<UserSignee>(notification.Command.User);
+        if (userSignees != null)
+        {
+            if (userSignees.UserSign1.UserId != string.Empty)
+                doc = AddSigneeAndScope(doc, userSignees.UserSign1, SignPositionEnum.SignLeft);
         
-        if (userSigns.UserSign2 != string.Empty)
-            doc = AddSigneeAndScope(doc, userSigns.UserSign2, SignPositionEnum.SignCenter);
+            if (userSignees.UserSign2.UserId != string.Empty)
+                doc = AddSigneeAndScope(doc, userSignees.UserSign2, SignPositionEnum.SignCenter);
         
-        if (userSigns.UserSign3 != string.Empty)
-            doc = AddSigneeAndScope(doc, userSigns.UserSign3, SignPositionEnum.SignRight);
+            if (userSignees.UserSign3.UserId != string.Empty)
+                doc = AddSigneeAndScope(doc, userSignees.UserSign3, SignPositionEnum.SignRight);
+        }
         
         doc = _docBuilder.Attach(doc)
             .GenRequestedDocUrl()
@@ -95,9 +99,9 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         return Task.CompletedTask;
     }
 
-    private DocModel AddSigneeAndScope(DocModel doc, string user, SignPositionEnum signPosition)
+    private DocModel AddSigneeAndScope(DocModel doc, UserSigneeDto user, SignPositionEnum signPosition)
     {
-        var listUserOftaMapping = _userOftaMappingDal.ListData(user) ?? new List<UserOftaMappingModel>();
+        var listUserOftaMapping = _userOftaMappingDal.ListData(user.UserId) ?? new List<UserOftaMappingModel>();
         var userOftaMapping = listUserOftaMapping.FirstOrDefault();
 
         if (userOftaMapping is null)
@@ -111,50 +115,13 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
         var signPositionDesc = new SignPositionDesc
         {
             UserIdentifier = userOfta.Email,
-            Width = 0,
-            Height = 0,
-            CoordinateX = 0,
-            CoordinateY = 0,
-            PageNumber = 0,
+            Width = _appSetting.SignPositionLeft.Width,
+            Height = _appSetting.SignPositionLeft.Height,
+            CoordinateX = user.SignPosition.X,
+            CoordinateY = user.SignPosition.Y,
+            PageNumber = user.SignPosition.PageNumber,
             QrOption = "QRONLY"
         };
-
-        if (doc.DocTypeId == "DTX0C")
-        {
-            signPositionDesc.Width = _appSetting.SignPositionResep.Width;
-            signPositionDesc.Height = _appSetting.SignPositionResep.Height;
-            signPositionDesc.CoordinateX = _appSetting.SignPositionResep.CoordinateX;
-            signPositionDesc.CoordinateY = _appSetting.SignPositionResep.CoordinateY;
-            signPositionDesc.PageNumber = _appSetting.SignPositionResep.PageNumber;
-        }
-        else
-        {
-            switch (signPosition)
-            {
-                case SignPositionEnum.SignLeft:
-                    signPositionDesc.Width = _appSetting.SignPositionLeft.Width;
-                    signPositionDesc.Height = _appSetting.SignPositionLeft.Height;
-                    signPositionDesc.CoordinateX = _appSetting.SignPositionLeft.CoordinateX;
-                    signPositionDesc.CoordinateY = _appSetting.SignPositionLeft.CoordinateY;
-                    signPositionDesc.PageNumber = _appSetting.SignPositionLeft.PageNumber;
-                    break;
-                case SignPositionEnum.SignCenter:
-                    signPositionDesc.Width = _appSetting.SignPositionCenter.Width;
-                    signPositionDesc.Height = _appSetting.SignPositionCenter.Height;
-                    signPositionDesc.CoordinateX = _appSetting.SignPositionCenter.CoordinateX;
-                    signPositionDesc.CoordinateY = _appSetting.SignPositionCenter.CoordinateY;
-                    signPositionDesc.PageNumber = _appSetting.SignPositionCenter.PageNumber;
-                    break;
-                case SignPositionEnum.SignRight:
-                    signPositionDesc.Width = _appSetting.SignPositionRight.Width;
-                    signPositionDesc.Height = _appSetting.SignPositionRight.Height;
-                    signPositionDesc.CoordinateX = _appSetting.SignPositionRight.CoordinateX;
-                    signPositionDesc.CoordinateY = _appSetting.SignPositionRight.CoordinateY;
-                    signPositionDesc.PageNumber = _appSetting.SignPositionRight.PageNumber;
-                    break;
-            }
-        }
-        
 
         var signPositionDescJson = JsonConvert.SerializeObject(signPositionDesc);
             
@@ -171,9 +138,22 @@ public class CreateDoc_OnKlaimBpjsPrintOutFinishPrintEventHandler
 
 public class UserSignee
 {
-    public string UserSign1 { get; set; }
-    public string UserSign2 { get; set; }
-    public string UserSign3 { get; set; }
+    public UserSigneeDto UserSign1 { get; set; }
+    public UserSigneeDto UserSign2 { get; set; }
+    public UserSigneeDto UserSign3 { get; set; }
+}
+
+public class UserSigneeDto
+{
+    public string UserId { get; set; }
+    public UserSigneePosition SignPosition { get; set; }
+}
+
+public class UserSigneePosition
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int PageNumber { get; set; }
 }
 
 internal class SignPositionDesc
